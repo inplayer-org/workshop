@@ -7,6 +7,10 @@ import (
 )
 
 func Hello(shape geometry.Shape) {
+<<<<<<< HEAD
 	fmt.Printf("asdad area: %f\n", shape.Area())
+=======
+	fmt.Printf("Sssehape area: %f\n", shape.Area())
+>>>>>>> promena
 	fmt.Printf("Shape perimeter: %f\n", shape.Perim())
 }
