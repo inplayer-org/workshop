@@ -7,6 +7,6 @@ import (
 )
 
 func Hello(shape geometry.Shape) {
-	fmt.Printf("Sssehape area: %f\n", shape.Area())
+	fmt.Printf("asdad area: %f\n", shape.Area())
 	fmt.Printf("Shape perimeter: %f\n", shape.Perim())
 }
