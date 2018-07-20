@@ -1,7 +1,6 @@
 package main
 
 import "fmt"
-import . "./allPackages"
 
 func main() {
 	//Da se napravat fukncii kako fmt.Println(funkcijaA())
