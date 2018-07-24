@@ -15,7 +15,7 @@
 
 
 <ul>
-    <li>**Dino**</li>
+    <li>Dino</li>
     <ul>
         <li>Random Problems (Site zadachi i random proekti koi nemaat konkretna odredena grupa)</li>
           <ul>
@@ -34,7 +34,7 @@
 
 
 <ul>
-    <li>**Elena**</li>
+    <li>Elena</li>
     <ul>
         <li>Random Problems (Site zadachi i random proekti koi nemaat konkretna odredena grupa)</li>
           <ul>
@@ -50,7 +50,7 @@
     </ul>
 </ul>
 <ul>
-    <li>**Gligor**</li>
+    <li>Gligor</li>
     <ul>
         <li>Random Problems (Site zadachi i random proekti koi nemaat konkretna odredena grupa)</li>
           <ul>
@@ -66,7 +66,7 @@
     </ul>
 </ul>
 <ul>
-    <li>**Darko**</li>
+    <li>Darko</li>
     <ul>
         <li>Random Problems (Site zadachi i random proekti koi nemaat konkretna odredena grupa)</li>
           <ul>
