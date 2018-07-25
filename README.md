@@ -1,4 +1,4 @@
-  Intership workshop
+  Internship workshop
   ==================
   Mesto za chuvanje na site kodovi od bilo kakvi vezhbi
 
@@ -15,7 +15,7 @@
 
 
 <ul>
-    <li>Dino</li>
+    <li><b>Dino</b></li>
     <ul>
         <li>Random Problems (Site zadachi i random proekti koi nemaat konkretna odredena grupa)</li>
           <ul>
@@ -34,7 +34,7 @@
 
 
 <ul>
-    <li>Elena</li>
+    <li><b>Elena</b></li>
     <ul>
         <li>Random Problems (Site zadachi i random proekti koi nemaat konkretna odredena grupa)</li>
           <ul>
@@ -50,7 +50,7 @@
     </ul>
 </ul>
 <ul>
-    <li>Gligor</li>
+    <li><b>Gligor</b></li>
     <ul>
         <li>Random Problems (Site zadachi i random proekti koi nemaat konkretna odredena grupa)</li>
           <ul>
@@ -66,7 +66,7 @@
     </ul>
 </ul>
 <ul>
-    <li>Darko</li>
+    <li><b>Darko</b></li>
     <ul>
         <li>Random Problems (Site zadachi i random proekti koi nemaat konkretna odredena grupa)</li>
           <ul>
