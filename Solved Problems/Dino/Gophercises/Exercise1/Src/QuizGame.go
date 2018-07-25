@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -57,6 +58,9 @@ func questions(correctness chan<- bool, questChan chan<- bool, quizData []exerci
 }
 
 func quizExecution(quizData []exercises) {
+	fmt.Print("\nPress Enter when you are ready to start ")
+	fmt.Scanln()
+	fmt.Println()
 	correctness := make(chan bool)
 	questChan := make(chan bool)
 	timerChan := time.NewTimer(time.Second * 10)
@@ -81,6 +85,8 @@ func dataReader(procitaj string) []exercises {
 	csvFile, err := os.Open(procitaj)
 	check(err)
 	csvReader := csv.NewReader(bufio.NewReader(csvFile))
+	filter, err := regexp.Compile("([0-9]+)|(\\+|\\*|-|/|\\^)|([0-9]+)") // Filter for all unnecessary characters in the question
+	check(err)
 	for {
 		readRow, err := csvReader.Read()
 		if err == io.EOF {
@@ -88,17 +94,41 @@ func dataReader(procitaj string) []exercises {
 		} else {
 			check(err)
 		}
-		exercisesCreator := exercises{question: readRow[0], answer: readRow[1]}
+		questionParser := strings.Join(filter.FindAllString(readRow[0], -1), "")
+		fmt.Println("Question parser =", questionParser, "Read row =", readRow[0])
+		exercisesCreator := exercises{question: questionParser, answer: readRow[1]}
 		returnData = append(returnData, exercisesCreator)
 	}
 	check(csvFile.Close())
 	return returnData
 }
 
-func main() {
-	dataBase := dataReader("../Csv/Problems1.csv")
-	fmt.Print("Press Enter when you are ready to start ")
-	fmt.Scanln()
-	quizExecution(dataBase)
+func repeatQuiz() bool {
+	var retake string
+	fmt.Scanln(&retake)
+	retake = strings.ToUpper(retake)
+	for retake != "Y" && retake != "N" {
+		fmt.Print("Invalid value, please enter (y/n).. ")
+		fmt.Scanln(&retake)
+		retake = strings.ToUpper(retake)
+	}
+	if retake == "N" {
+		return false
+	}
+	return true
+}
 
+func quizLifeCycle() {
+	dataBase := dataReader("../Csv/Problems2.csv")
+	start := true
+	for start {
+		quizExecution(dataBase)
+		fmt.Print("\nDo you want to retake the quiz ? (y/n) ")
+		start = repeatQuiz()
+	}
+	fmt.Println("Thanks for playing !")
+}
+
+func main() {
+	quizLifeCycle()
 }
