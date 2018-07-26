@@ -3,12 +3,16 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"regexp"
 	"strings"
 	"time"
+
+	quizI "repo.inplayer.com/workshop/Solved_Problems/Dino/Gophercises/Exercise1/Pkg/QuizInterface"
 )
 
 type exercises struct {
@@ -41,44 +45,66 @@ func result(correctness <-chan bool, done chan<- int, maxQuestions int) {
 	}()
 }
 
-func questions(correctness chan<- bool, questChan chan<- bool, quizData []exercises) {
+func questions(correctness chan<- bool, questChan chan<- bool, quizData []exercises, nextCase <-chan bool, random bool) {
 	reader := bufio.NewReader(os.Stdin)
-	for questionNumber := range quizData {
+	var indexRange []int
+	if random {
+		indexRange = randomizeQuestions(len(quizData))
+	} else {
+		for i := range quizData {
+			indexRange = append(indexRange, i)
+
+		}
+	}
+	for _, questionNumber := range indexRange {
 		fmt.Printf("%s = ", quizData[questionNumber].question)
 		attemptedAnswer, _, err := reader.ReadLine()
 		check(err)
 		trimmedAnswer := strings.Replace(string(attemptedAnswer), " ", "", -1)
-		if trimmedAnswer == quizData[questionNumber].answer {
-			correctness <- true
-		} else {
-			correctness <- false
+		select {
+		case <-nextCase:
+			return
+		default:
+			if trimmedAnswer == quizData[questionNumber].answer {
+				correctness <- true
+			} else {
+				correctness <- false
+			}
 		}
 	}
 	questChan <- true
 }
 
-func quizExecution(quizData []exercises, hiScore chan<- int) {
+func quizExecution(quizData []exercises, hiScore chan<- int, random bool, getTimer int) {
 	fmt.Print("\nPress Enter when you are ready to start ")
 	fmt.Scanln()
 	fmt.Println()
 	correctness := make(chan bool)
 	questChan := make(chan bool)
-	timerChan := time.NewTimer(time.Second * 10)
+	timerChan := time.NewTimer(time.Second * time.Duration(getTimer))
+	nextCase := make(chan bool)
 	done := make(chan int)
 	go result(correctness, done, len(quizData))
-	go questions(correctness, questChan, quizData)
+	go questions(correctness, questChan, quizData, nextCase, random)
 	select {
 	case <-questChan:
 		fmt.Printf("\n\tYou gave answer to all possible questions\n")
 		close(correctness)
 	case <-timerChan.C:
-		fmt.Printf("\n\tYour time ran out\n")
+		fmt.Printf("\n\tYour time ran out, press enter to continue\n")
+		nextCase <- false
 		close(correctness)
 	}
 	correctAnswers := <-done
 	hiScore <- correctAnswers
 	close(done)
 
+}
+
+func randomizeQuestions(permRange int) []int {
+	rand.Seed(time.Now().UnixNano())
+	indexes := rand.Perm(permRange)
+	return indexes
 }
 
 func dataReader(procitaj string) []exercises {
@@ -104,51 +130,30 @@ func dataReader(procitaj string) []exercises {
 	return returnData
 }
 
-func findHighScore(hiScore <-chan int, end chan<- bool, contin chan<- bool) {
-	highScore := -1
-	for score := range hiScore {
-		time.Sleep(time.Second * 2)
-		fmt.Println()
-		if highScore < score {
-			highScore = score
-			fmt.Println("Congratulations !! NEW HIGHEST SCORE ", highScore)
-		} else {
-			fmt.Println("Your highest score remains", highScore)
-		}
-		contin <- true
-	}
-	fmt.Println("Your highest score was", highScore)
-	end <- true
-}
-
-func repeatQuiz() bool {
-	var retake string
-	fmt.Scanln(&retake)
-	retake = strings.ToUpper(retake)
-	for retake != "Y" && retake != "N" {
-		fmt.Print("Invalid value, please enter (y/n).. ")
-		fmt.Scanln(&retake)
-		retake = strings.ToUpper(retake)
-	}
-	if retake == "N" {
-		return false
-	}
-	return true
-}
-
 func quizLifeCycle() {
-	dataBase := dataReader("../Csv/Problems2.csv")
+	fileName := "../Csv/"
+	flagFile := flag.String("Questions", "Problems1", "Problems1,Problems2")
+	random := flag.Bool("Random", false, "true or false")
+	getTimer := flag.Int("Timer", 30, "Set the duration of the timer")
+	flag.Parse()
+	fmt.Println()
+	fmt.Println("To get info about setting flag values initialize the program with -f from command line")
+	fmt.Println("Questions base:", *flagFile)
+	fmt.Println("Random questions:", *random)
+	fmt.Println("Timer set to:", *getTimer)
+	fileName += *flagFile + ".csv"
+	dataBase := dataReader(fileName)
 	start := true
 	hiScore := make(chan int)
 	end := make(chan bool)
 	contin := make(chan bool)
-	go findHighScore(hiScore, end, contin)
+	go quizI.FindHighScore(hiScore, end, contin)
 	for start {
-		quizExecution(dataBase, hiScore)
+		quizExecution(dataBase, hiScore, *random, *getTimer)
 		<-contin
 		time.Sleep(time.Second * 2)
 		fmt.Print("\nDo you want to retake the quiz ? (y/n) ")
-		start = repeatQuiz()
+		start = quizI.RepeatQuiz()
 	}
 	close(hiScore)
 	<-end
