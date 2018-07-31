@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func RepeatQuiz() bool {
+func Repeat() bool {
 	var retake string
 	fmt.Scanln(&retake)
 	retake = strings.ToUpper(retake)

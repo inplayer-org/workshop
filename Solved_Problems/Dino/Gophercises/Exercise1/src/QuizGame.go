@@ -147,7 +147,7 @@ func quizLifeCycle() {
 		<-contin
 		time.Sleep(time.Second * 2)
 		fmt.Print("\nDo you want to retake the quiz ? (y/n) ")
-		start = quizI.RepeatQuiz()
+		start = quizI.Repeat()
 	}
 	close(hiScore)
 	<-end
@@ -156,5 +156,7 @@ func quizLifeCycle() {
 }
 
 func main() {
+
+	quizI.LoginSystem()
 	quizLifeCycle()
 }
