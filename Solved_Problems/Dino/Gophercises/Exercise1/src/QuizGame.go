@@ -128,7 +128,7 @@ func dataReader(procitaj string) []exercises {
 	return returnData
 }
 
-func quizLifeCycle() {
+func quizLifeCycle(user_id int) {
 	fileName := "../csv/"
 	flagFile := flag.String("Questions", "Problems1", "Problems1,Problems2")
 	random := flag.Bool("Random", false, "true or false")
@@ -141,7 +141,7 @@ func quizLifeCycle() {
 	hiScore := make(chan int)
 	end := make(chan bool)
 	contin := make(chan bool)
-	go quizI.FindHighScore(hiScore, end, contin)
+	go quizI.FindHighScore(hiScore, end, contin, user_id)
 	for start {
 		quizExecution(dataBase, hiScore, *random, *getTimer)
 		<-contin
@@ -157,6 +157,6 @@ func quizLifeCycle() {
 
 func main() {
 
-	quizI.LoginSystem()
-	quizLifeCycle()
+	user_id := quizI.LoginSystem()
+	quizLifeCycle(user_id)
 }

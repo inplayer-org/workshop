@@ -18,14 +18,27 @@ func printErr(e error) {
 	}
 }
 
-func FindHighScore(hiScore <-chan int, end chan<- bool, contin chan<- bool) {
-	highScore := -1
+func FindHighScore(hiScore <-chan int, end chan<- bool, contin chan<- bool, user_id int) {
+	connectionAccount := "root:112234@/quiz_game_base"
+	dataBase := openBase(connectionAccount)
+	highScoreRow := dataBase.QueryRow("SELECT `high_score` FROM high_scores WHERE `user_id`=(?)", user_id)
+	var highScore int
+	err := highScoreRow.Scan(&highScore)
+	printErr(err)
 	for score := range hiScore {
 		time.Sleep(time.Second * 2)
+		_, err = dataBase.Exec("INSERT INTO scores_history (`score`,`date_played`,`user_id`) VALUES ((?),now(),(?))", score, user_id)
 		fmt.Println()
 		if highScore < score {
 			highScore = score
+			fmt.Println(user_id)
 			fmt.Println("Congratulations !! NEW HIGHEST SCORE ", highScore)
+			scoreIdRow := dataBase.QueryRow("SELECT `score_id` FROM scores_history ORDER BY score_id DESC LIMIT 1")
+			var score_id int
+			err = scoreIdRow.Scan(&score_id)
+			printErr(err)
+			_, err = dataBase.Exec("UPDATE high_scores SET `high_score`=(?),`history_id`=(?) WHERE `user_id`=(?)", highScore, score_id, user_id)
+			printErr(err)
 		} else {
 			fmt.Println("Your highest score remains", highScore)
 		}
@@ -45,12 +58,12 @@ func openBase(client string) *sql.DB {
 
 }
 
-func LoginSystem() {
+func LoginSystem() int {
 	connectionAccount := "root:112234@/quiz_game_base"
 	userInputReader := bufio.NewReader(os.Stdin)
 	dataBase := openBase(connectionAccount)
 	successfulLogin := false
-
+	var user_id int
 	for !successfulLogin {
 		username := handleUsername()
 
@@ -63,27 +76,32 @@ func LoginSystem() {
 			if !Repeat() {
 				continue
 			} else {
-				username = createAccount(dataBase)
+				user_id = createAccount(dataBase)
 				break
 			}
 		}
-
-		if len(userPassword) == 0 {
-			fmt.Println("user", username, "doesn't exist in our database")
-			fmt.Println(userPassword)
-			os.Exit(1)
-		} else {
+		for {
 			passEntry, _, err := userInputReader.ReadLine()
 			printErr(err)
 			if string(passEntry) == userPassword {
 				fmt.Println("Login successful")
+				getIdRow := dataBase.QueryRow("SELECT `user_id` FROM users WHERE `username`=(?)", username)
+				err = getIdRow.Scan(&user_id)
+				fmt.Println(err)
+				successfulLogin = !successfulLogin
+				break
 			} else {
 				fmt.Println("Invalid password")
+				fmt.Println("Do you want to try again ? (y/n)..")
+				if !Repeat() {
+					break
+				} else {
+					continue
+				}
 			}
 		}
-
-		os.Exit(4)
 	}
+	return user_id
 }
 
 func validateInput(input string, maxCharacters int) bool {
@@ -94,58 +112,7 @@ func validateInput(input string, maxCharacters int) bool {
 	return true
 }
 
-func handleUsername() string {
-	userInputReader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter your username : ")
-	input, _, err := userInputReader.ReadLine()
-	printErr(err)
-	username := string(input)
-
-	for validateInput(username, 16) {
-		fmt.Println("Invalid input, username has to be less than 16 characters and more than 3 characters")
-		fmt.Print("Enter your username : ")
-		input, _, err := userInputReader.ReadLine()
-		printErr(err)
-		username = string(input)
-	}
-	return username
-}
-
-func handlePassword() string {
-	userInputReader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter your password : ")
-	input, _, err := userInputReader.ReadLine()
-	printErr(err)
-	pass := string(input)
-
-	for validateInput(pass, 16) {
-		fmt.Println("Invalid input, password has to be less than 16 characters and more than 3 characters")
-		fmt.Print("Enter your password : ")
-		input, _, err := userInputReader.ReadLine()
-		printErr(err)
-		pass = string(input)
-	}
-	return pass
-}
-
-func handleFullName() string {
-	userInputReader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter your Full Name : ")
-	input, _, err := userInputReader.ReadLine()
-	printErr(err)
-	full_name := string(input)
-
-	for validateInput(full_name, 32) {
-		fmt.Println("Invalid input, Full Name has to be less than 32 characters and more than 3 characters")
-		fmt.Print("Enter your Full Name : ")
-		input, _, err := userInputReader.ReadLine()
-		printErr(err)
-		full_name = string(input)
-	}
-	return full_name
-}
-
-func createAccount(dataBase *sql.DB) string {
+func createAccount(dataBase *sql.DB) int {
 	accountCredentials := []string{} // [0] = username, [1] = pass, [2] = full_name
 	fmt.Println("\nACCOUNT CREATION MENU : ")
 	accountCredentials = append(accountCredentials, handleUsername())
@@ -166,5 +133,5 @@ func createAccount(dataBase *sql.DB) string {
 	}
 	fmt.Printf("\nAccount Created !\n\n Your info :\n\n User_Id : %d\n Username : %s\n Password : %s\n Full Name: : %s\n High Score: 0\n", userId, accountCredentials[0], accountCredentials[1], accountCredentials[2])
 
-	return accountCredentials[0]
+	return userId
 }
