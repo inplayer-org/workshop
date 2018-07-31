@@ -13,6 +13,7 @@ import (
 	"time"
 
 	quizI "repo.inplayer.com/workshop/Solved_Problems/Dino/Gophercises/Exercise1/pkg/QuizInterface"
+	qPrint "repo.inplayer.com/workshop/Solved_Problems/Dino/Gophercises/Exercise1/pkg/QuizPrint"
 )
 
 type exercises struct {
@@ -37,10 +38,7 @@ func result(correctness <-chan bool, done chan<- int, maxQuestions int) {
 				answersData[1]++
 			}
 		}
-		fmt.Printf("\n\nYour Results:\n")
-		fmt.Printf("%31s %4d\n", "Correct answers :", answersData[0])
-		fmt.Printf("%31s %4d\n", "Incorrect answers :", answersData[1])
-		fmt.Printf("%31s %4d\n", "Questions present in the base :", answersData[2])
+		qPrint.Results(answersData[0], answersData[1], answersData[2])
 		done <- answersData[0]
 	}()
 }
@@ -136,11 +134,7 @@ func quizLifeCycle() {
 	random := flag.Bool("Random", false, "true or false")
 	getTimer := flag.Int("Timer", 30, "Set the duration of the timer")
 	flag.Parse()
-	fmt.Println()
-	fmt.Println("To get info about setting flag values initialize the program with -f from command line")
-	fmt.Println("Questions base:", *flagFile)
-	fmt.Println("Random questions:", *random)
-	fmt.Println("Timer set to:", *getTimer)
+	qPrint.InitializationPrint(*flagFile, *random, *getTimer)
 	fileName += *flagFile + ".csv"
 	dataBase := dataReader(fileName)
 	start := true
