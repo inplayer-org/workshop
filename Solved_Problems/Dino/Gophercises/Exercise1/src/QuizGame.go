@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	quizI "repo.inplayer.com/workshop/Solved_Problems/Dino/Gophercises/Exercise1/Pkg/QuizInterface"
+	quizI "repo.inplayer.com/workshop/Solved_Problems/Dino/Gophercises/Exercise1/pkg/QuizInterface"
 )
 
 type exercises struct {
@@ -131,7 +131,7 @@ func dataReader(procitaj string) []exercises {
 }
 
 func quizLifeCycle() {
-	fileName := "../Csv/"
+	fileName := "../csv/"
 	flagFile := flag.String("Questions", "Problems1", "Problems1,Problems2")
 	random := flag.Bool("Random", false, "true or false")
 	getTimer := flag.Int("Timer", 30, "Set the duration of the timer")
