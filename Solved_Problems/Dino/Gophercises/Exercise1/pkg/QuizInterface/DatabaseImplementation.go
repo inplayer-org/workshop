@@ -156,7 +156,15 @@ func createAccount(dataBase *sql.DB) string {
 	if err != nil {
 		panic("SOMETHING WENT WRONG WHEN CREATING THE ACCOUNT")
 	}
-	fmt.Printf("\nAccount Created !\n\n Your info :\n\n Username : %s\n Password : %s\n Full Name: : %s\n", accountCredentials[0], accountCredentials[1], accountCredentials[2])
+	userIdRow := dataBase.QueryRow("SELECT `user_id` FROM users WHERE `username`=(?)", accountCredentials[0])
+	var userId int
+	err = userIdRow.Scan(&userId)
+	printErr(err)
+	_, err = dataBase.Exec("INSERT INTO high_scores (`user_id`) VALUE ((?))", userId)
+	if err != nil {
+		panic("SOMETHING WENT WRONG WHEN CREATING THE ACCOUNT")
+	}
+	fmt.Printf("\nAccount Created !\n\n Your info :\n\n User_Id : %d\n Username : %s\n Password : %s\n Full Name: : %s\n High Score: 0\n", userId, accountCredentials[0], accountCredentials[1], accountCredentials[2])
 
 	return accountCredentials[0]
 }
