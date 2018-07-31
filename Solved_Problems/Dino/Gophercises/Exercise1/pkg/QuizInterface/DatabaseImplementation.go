@@ -31,7 +31,6 @@ func FindHighScore(hiScore <-chan int, end chan<- bool, contin chan<- bool, user
 		fmt.Println()
 		if highScore < score {
 			highScore = score
-			fmt.Println(user_id)
 			fmt.Println("Congratulations !! NEW HIGHEST SCORE ", highScore)
 			scoreIdRow := dataBase.QueryRow("SELECT `score_id` FROM scores_history ORDER BY score_id DESC LIMIT 1")
 			var score_id int
@@ -77,17 +76,25 @@ func LoginSystem() int {
 				continue
 			} else {
 				user_id = createAccount(dataBase)
+				fmt.Println("\nLoging in...\n")
+				time.Sleep(time.Second * 2)
+				fmt.Println("Login successful !")
+				time.Sleep(time.Second * 1)
 				break
 			}
 		}
 		for {
+			fmt.Print("Enter your password : ")
 			passEntry, _, err := userInputReader.ReadLine()
 			printErr(err)
+			fmt.Println("\nLoging in...\n")
+			time.Sleep(time.Second * 2)
 			if string(passEntry) == userPassword {
-				fmt.Println("Login successful")
+				fmt.Println("Login successful !")
 				getIdRow := dataBase.QueryRow("SELECT `user_id` FROM users WHERE `username`=(?)", username)
 				err = getIdRow.Scan(&user_id)
-				fmt.Println(err)
+				printErr(err)
+				time.Sleep(time.Second * 1)
 				successfulLogin = !successfulLogin
 				break
 			} else {
