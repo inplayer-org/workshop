@@ -44,6 +44,8 @@ func FindHighScore(hiScore <-chan int, end chan<- bool, contin chan<- bool, user
 		contin <- true
 	}
 	fmt.Println("Your highest score was", highScore)
+	err = dataBase.Close()
+	printErr(err)
 	end <- true
 }
 
@@ -108,6 +110,8 @@ func LoginSystem() int {
 			}
 		}
 	}
+	err := dataBase.Close()
+	printErr(err)
 	return user_id
 }
 

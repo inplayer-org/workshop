@@ -159,4 +159,6 @@ func main() {
 
 	user_id := quizI.LoginSystem()
 	quizLifeCycle(user_id)
+	qPrint.PrintPublicUser(user_id)
+	qPrint.PrintTop10()
 }
