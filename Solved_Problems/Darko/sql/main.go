@@ -2,184 +2,161 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
-	"regexp"
+	"log"
+	"net/http"
+	"text/template"
 
-	_ "github.com/lib/pq"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "darko123"
-	dbname   = "test_base"
-)
-
-func must(err error) {
-	if err != nil {
-		panic(err)
-	}
+type Employee struct {
+	Id    int
+	Name  string
+	City string
 }
 
-
-
-func getPhone(db *sql.DB, id int) (string, error) {
-	var number string
-	row := db.QueryRow("SELECT * FROM phone_numbers WHERE id=$1", id)
-	err := row.Scan(&id, &number)
+func dbConn() (db *sql.DB) {
+	dbDriver := "mysql"
+	dbUser := "root"
+	dbPass := "darko123"
+	dbName := "goblog"
+	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
 	if err != nil {
-		return "", err
+		panic(err.Error())
 	}
-	return number, nil
+	return db
 }
 
-func findPhone(db *sql.DB, number string) (*phone, error) {
-	var p phone
-	row := db.QueryRow("SELECT * FROM phone_numbers WHERE value=$1", number)
-	err := row.Scan(&p.id, &p.number)
+var tmpl = template.Must(template.ParseGlob("form/*"))
+
+func Index(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	selDB, err := db.Query("SELECT * FROM Employee ORDER BY id DESC")
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		} else {
-			return nil, err
+		panic(err.Error())
+	}
+	emp := Employee{}
+	res := []Employee{}
+	for selDB.Next() {
+		var id int
+		var name, city string
+		err = selDB.Scan(&id, &name, &city)
+		if err != nil {
+			panic(err.Error())
 		}
+		emp.Id = id
+		emp.Name = name
+		emp.City = city
+		res = append(res, emp)
 	}
-	return &p, nil
+	tmpl.ExecuteTemplate(w, "Index", res)
+	defer db.Close()
 }
 
-func updatePhone(db *sql.DB, p phone) error {
-	statement := `UPDATE phone_numbers SET value=$2 WHERE id=$1`
-	_, err := db.Exec(statement, p.id, p.number)
-	return err
-}
-
-func deletePhone(db *sql.DB, id int) error {
-	statement := `DELETE FROM phone_numbers WHERE id=$1`
-	_, err := db.Exec(statement, id)
-	return err
-}
-
-type phone struct {
-	id     int
-	number string
-}
-
-func allPhones(db *sql.DB) ([]phone, error) {
-	rows, err := db.Query("SELECT id, value FROM phone_numbers")
+func Show(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	nId := r.URL.Query().Get("id")
+	selDB, err := db.Query("SELECT * FROM Employee WHERE id=?", nId)
 	if err != nil {
-		return nil, err
+		panic(err.Error())
 	}
-	defer rows.Close()
-
-	var ret []phone
-	for rows.Next() {
-		var p phone
-		if err := rows.Scan(&p.id, &p.number); err != nil {
-			return nil, err
+	emp := Employee{}
+	for selDB.Next() {
+		var id int
+		var name, city string
+		err = selDB.Scan(&id, &name, &city)
+		if err != nil {
+			panic(err.Error())
 		}
-		ret = append(ret, p)
+		emp.Id = id
+		emp.Name = name
+		emp.City = city
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return ret, nil
+	tmpl.ExecuteTemplate(w, "Show", emp)
+	defer db.Close()
 }
 
-func insertPhone(db *sql.DB, phone string) (int, error) {
-	statement := `INSERT INTO phone_numbers(value) VALUES($1) RETURNING id`
-	var id int
-	err := db.QueryRow(statement, phone).Scan(&id)
+func New(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "New", nil)
+}
+
+func Edit(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	nId := r.URL.Query().Get("id")
+	selDB, err := db.Query("SELECT * FROM Employee WHERE id=?", nId)
 	if err != nil {
-		return -1, err
+		panic(err.Error())
 	}
-	return id, nil
+	emp := Employee{}
+	for selDB.Next() {
+		var id int
+		var name, city string
+		err = selDB.Scan(&id, &name, &city)
+		if err != nil {
+			panic(err.Error())
+		}
+		emp.Id = id
+		emp.Name = name
+		emp.City = city
+	}
+	tmpl.ExecuteTemplate(w, "Edit", emp)
+	defer db.Close()
 }
 
-func createPhoneNumbersTable(db *sql.DB) error {
-	statement := `
-    CREATE TABLE IF NOT EXISTS phone_numbers (
-      id SERIAL,
-      value VARCHAR(255)
-    )`
-	_, err := db.Exec(statement)
-	return err
+func Insert(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	if r.Method == "POST" {
+		name := r.FormValue("name")
+		city := r.FormValue("city")
+		insForm, err := db.Prepare("INSERT INTO Employee(name, city) VALUES(?,?)")
+		if err != nil {
+			panic(err.Error())
+		}
+		insForm.Exec(name, city)
+		log.Println("INSERT: Name: " + name + " | City: " + city)
+	}
+	defer db.Close()
+	http.Redirect(w, r, "/", 301)
 }
 
-func resetDB(db *sql.DB, name string) error {
-	_, err := db.Exec("DROP DATABASE IF EXISTS " + name)
+func Update(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	if r.Method == "POST" {
+		name := r.FormValue("name")
+		city := r.FormValue("city")
+		id := r.FormValue("uid")
+		insForm, err := db.Prepare("UPDATE Employee SET name=?, city=? WHERE id=?")
+		if err != nil {
+			panic(err.Error())
+		}
+		insForm.Exec(name, city, id)
+		log.Println("UPDATE: Name: " + name + " | City: " + city)
+	}
+	defer db.Close()
+	http.Redirect(w, r, "/", 301)
+}
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	emp := r.URL.Query().Get("id")
+	delForm, err := db.Prepare("DELETE FROM Employee WHERE id=?")
 	if err != nil {
-		return err
+		panic(err.Error())
 	}
-	return createDB(db, name)
-}
-
-func createDB(db *sql.DB, name string) error {
-	_, err := db.Exec("CREATE DATABASE " + name)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func normalize(phone string) string {
-	re := regexp.MustCompile("\\D")
-	return re.ReplaceAllString(phone, "")
+	delForm.Exec(emp)
+	log.Println("DELETE")
+	defer db.Close()
+	http.Redirect(w, r, "/", 301)
 }
 
 func main() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s sslmode=disable", host, port, user, password)
-	db, err := sql.Open("postgres", psqlInfo)
-	must(err)
-	err = resetDB(db, dbname)
-	must(err)
-	db.Close()
-
-	psqlInfo = fmt.Sprintf("%s dbname=%s", psqlInfo, dbname)
-	db, err = sql.Open("postgres", psqlInfo)
-	must(err)
-	defer db.Close()
-
-	must(createPhoneNumbersTable(db))
-	_, err = insertPhone(db, "1234567890")
-	must(err)
-	_, err = insertPhone(db, "123 456 7891")
-	must(err)
-	id, err := insertPhone(db, "(123) 456 7892")
-	must(err)
-	_, err = insertPhone(db, "(123) 456-7893")
-	must(err)
-	_, err = insertPhone(db, "123-456-7894")
-	must(err)
-	_, err = insertPhone(db, "123-456-7890")
-	must(err)
-	_, err = insertPhone(db, "1234567892")
-	must(err)
-	_, err = insertPhone(db, "(123)456-7892")
-	must(err)
-
-	number, err := getPhone(db, id)
-	must(err)
-	fmt.Println("Number is...", number)
-
-	phones, err := allPhones(db)
-	must(err)
-	for _, p := range phones {
-		fmt.Printf("Working on... %+v\n", p)
-		number := normalize(p.number)
-		if number != p.number {
-			fmt.Println("Updating or removing...", number)
-			existing, err := findPhone(db, number)
-			must(err)
-			if existing != nil {
-				must(deletePhone(db, p.id))
-			} else {
-				p.number = number
-				must(updatePhone(db, p))
-			}
-		} else {
-			fmt.Println("No changes required")
-		}
-	}
+	log.Println("Server started on: http://localhost:3606")
+	http.HandleFunc("/", Index)
+	http.HandleFunc("/show", Show)
+	http.HandleFunc("/new", New)
+	http.HandleFunc("/edit", Edit)
+	http.HandleFunc("/insert", Insert)
+	http.HandleFunc("/update", Update)
+	http.HandleFunc("/delete", Delete)
+	http.ListenAndServe(":3606", nil)
 }
-
