@@ -161,4 +161,6 @@ func main() {
 	quizLifeCycle(user_id)
 	qPrint.PrintPublicUser(user_id)
 	qPrint.PrintTop10()
+	qPrint.ListAllUsers()
+	qPrint.GetBestScoreHistory(user_id)
 }
