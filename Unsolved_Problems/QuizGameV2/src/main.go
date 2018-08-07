@@ -22,29 +22,29 @@ func errorHandler(err error) {
 		fmt.Println("ERROR :", err)
 	}
 }
-func CreateQuestionStructure(fileName string) []questionStructure {
+func createQuestionStructure(fileName string) []questionStructure { //Creates slice of QuestionStructure from a CSV file with (filename)
 	file, err := os.Open(fileName)
 	errorHandler(err)
 	csvReader := csv.NewReader(bufio.NewReader(file))
 	sliceOfQuestionStructures := []questionStructure{}
 	for {
-		readRow, err := csvReader.Read()
+		readRow, err := csvReader.Read() //readRow is a row from CSV file where readRow[0] is the unfiltered question and readRow[1] is the answer
 		if err == io.EOF {
-			break
+			break //End the endless loop when csvReader tries to read EOF
 		} else {
 			errorHandler(err)
 		}
-		sliceOfQuestionStructures = append(sliceOfQuestionStructures, QuestionsSlice(readRow))
+		sliceOfQuestionStructures = append(sliceOfQuestionStructures, createQuestionStructureEntry(readRow))
 	}
 	return sliceOfQuestionStructures
 }
 
-func QuestionsSlice(readRow []string) questionStructure {
-	return questionStructure{question: Filter(readRow[0]), answer: readRow[1]}
+func createQuestionStructureEntry(read []string) questionStructure { //Creates QuestionStructure entry that is appended to the slice of all questions present
+	return questionStructure{question: filterQuestion(readRow[0]), answer: readRow[1]}
 }
-func Filter(readRow string) string {
-	re := regexp.MustCompile("([0-9]+)|(\\+|\\*|-|/|\\^)|([0-9]+)")
-	return strings.Join(re.FindAllString(readRow, -1), "")
+func filterQuestion(unfilteredQuestion string) string { //Remove all unnecessary characters from the question
+	regexpFilter := regexp.MustCompile("([0-9]+)|(\\+|\\*|-|/|\\^)|([0-9]+)")
+	return strings.Join(regexpFilter.FindAllString(unfilteredQuestion, -1), "")
 }
 
 func createTimer(timeDuration int) *time.Timer {
@@ -146,6 +146,6 @@ func main() {
 	quizTimerDuration := flag.Int("Timer", 30, "Set the duration of the timer")
 	flag.Parse()
 	fileName += *flagFile + ".csv"
-	quizProgramController(CreateQuestionStructure(fileName), *quizTimerDuration)
+	quizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
 
 }
