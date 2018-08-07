@@ -24,5 +24,5 @@ func main() {
 	quizTimerDuration := flag.Int("Timer", 30, "Set the duration of the timer")
 	flag.Parse()
 	fileName += *flagFile + ".csv"
-	startProgram(CSV(*flagFile), quizTimerDuration)
+	//startProgram(CSV(*flagFile), quizTimerDuration)
 }
