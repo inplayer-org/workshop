@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	qPrint "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizPrint"
 )
 
 type questionStructure struct { //Structure for parsing questions from CSV file
@@ -39,7 +41,7 @@ func createQuestionStructure(fileName string) []questionStructure { //Creates sl
 	return sliceOfQuestionStructures
 }
 
-func createQuestionStructureEntry(read []string) questionStructure { //Creates QuestionStructure entry that is appended to the slice of all questions present
+func createQuestionStructureEntry(readRow []string) questionStructure { //Creates QuestionStructure entry that is appended to the slice of all questions present
 	return questionStructure{question: filterQuestion(readRow[0]), answer: readRow[1]}
 }
 func filterQuestion(unfilteredQuestion string) string { //Remove all unnecessary characters from the question
@@ -50,10 +52,6 @@ func filterQuestion(unfilteredQuestion string) string { //Remove all unnecessary
 func createTimer(timeDuration int) *time.Timer {
 	newTimer := time.NewTimer(time.Second * time.Duration(timeDuration))
 	return newTimer
-}
-
-func printQuestion(currentQuestion questionStructure) {
-	fmt.Printf("%s = ", currentQuestion.question)
 }
 
 func registerUserAnswer() string {
@@ -75,11 +73,12 @@ func checkAnswerCorrectness(attemptedAnswer string, correctAnswer string) bool {
 }
 
 func quizLifeCycle(questionBase []questionStructure, endQuizByQuestionsChannel chan<- bool, hasTimerFinished <-chan bool, waitingTheScore chan<- int) {
+
 	currentScore := 0
 
 	for questionNumber := range questionBase {
 
-		printQuestion(questionBase[questionNumber])
+		qPrint.PrintQuestion(questionBase[questionNumber].question)
 
 		attemptedAnswer := registerUserAnswer()
 		correctAnswer := questionBase[questionNumber].answer
@@ -141,11 +140,19 @@ func quizProgramController(questionBase []questionStructure, quizTimerDuration i
 }
 
 func main() {
-	fileName := "../csv/"
+
+	//Initializing flags
 	flagFile := flag.String("Questions", "Problems1", "Problems1,Problems2")
 	quizTimerDuration := flag.Int("Timer", 30, "Set the duration of the timer")
 	flag.Parse()
+
+	//Parsing the csv file name
+	fileName := "../csv/"
 	fileName += *flagFile + ".csv"
+
+	//Priting current quiz settings (Printing the flags) and waits user to press Enter to continue
+	qPrint.PrintCurrentSettings(*flagFile, *quizTimerDuration)
+
 	quizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
 
 }
