@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"database/sql"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -10,11 +11,18 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type questionStructure struct { //Structure for parsing questions from CSV file
 	question string
 	answer   string
+}
+
+type Player struct {
+	Name  string
+	Score int
 }
 
 func errorHandler(err error) {
@@ -39,7 +47,7 @@ func createQuestionStructure(fileName string) []questionStructure { //Creates sl
 	return sliceOfQuestionStructures
 }
 
-func createQuestionStructureEntry(read []string) questionStructure { //Creates QuestionStructure entry that is appended to the slice of all questions present
+func createQuestionStructureEntry(readRow []string) questionStructure { //Creates QuestionStructure entry that is appended to the slice of all questions present
 	return questionStructure{question: filterQuestion(readRow[0]), answer: readRow[1]}
 }
 func filterQuestion(unfilteredQuestion string) string { //Remove all unnecessary characters from the question
@@ -112,7 +120,7 @@ func controlQuizEnding(endQuizByQuestionsChannel <-chan bool, endQuizByTimeChann
 	}
 }
 
-func quizProgramController(questionBase []questionStructure, quizTimerDuration int) {
+func quizProgramController(questionBase []questionStructure, quizTimerDuration int) int {
 
 	//Controling whether the quiz is ended by running out of time or by answering all possible questions in the database
 	endQuizByTimeChannel := createTimer(quizTimerDuration)
@@ -137,15 +145,41 @@ func quizProgramController(questionBase []questionStructure, quizTimerDuration i
 	close(endQuizByQuestionsChannel)
 	close(hasTimerFinished)
 	close(waitingTheScore)
+	return newestPlayScore
 
+}
+func dbConnect() (db *sql.DB) {
+	db, err := sql.Open("mysql", "root:1111@tcp(127.0.0.1:3306)/QuizGame")
+	if err != nil {
+		panic(err.Error())
+	}
+	return db
+}
+
+//Insert name and score of the PLayer in table HighScores
+func insertIntoHighScores(db *sql.DB, name string, score int) {
+	_, err := db.Exec("INSERT INTO HighScores(score,name) VALUES (?,?)", score, name)
+	errorHandler(err)
+}
+
+func EntryName() string {
+	fmt.Println("Entry name:")
+	reader := bufio.NewReader(os.Stdin)
+	name, _, err := reader.ReadLine()
+	errorHandler(err)
+	return string(name)
 }
 
 func main() {
+	db := dbConnect()
+	defer db.Close()
 	fileName := "../csv/"
 	flagFile := flag.String("Questions", "Problems1", "Problems1,Problems2")
 	quizTimerDuration := flag.Int("Timer", 30, "Set the duration of the timer")
 	flag.Parse()
 	fileName += *flagFile + ".csv"
-	quizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
+	name := EntryName()
+	score := quizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
+	insertIntoHighScores(db, name, score)
 
 }
