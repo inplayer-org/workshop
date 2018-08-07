@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"database/sql"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	qPrint "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizPrint"
 )
 
@@ -111,7 +113,7 @@ func controlQuizEnding(endQuizByQuestionsChannel <-chan bool, endQuizByTimeChann
 	}
 }
 
-func quizProgramController(questionBase []questionStructure, quizTimerDuration int) {
+func quizProgramController(questionBase []questionStructure, quizTimerDuration int) int {
 
 	//Controling whether the quiz is ended by running out of time or by answering all possible questions in the database
 	endQuizByTimeChannel := createTimer(quizTimerDuration)
@@ -136,10 +138,34 @@ func quizProgramController(questionBase []questionStructure, quizTimerDuration i
 	close(endQuizByQuestionsChannel)
 	close(hasTimerFinished)
 	close(waitingTheScore)
+	return newestPlayScore
 
+}
+func dbConnect() (db *sql.DB) {
+	db, err := sql.Open("mysql", "root:112234@tcp(127.0.0.1:3306)/QuizGame")
+	errorHandler(err)
+	return db
+}
+
+//Insert current name and score of the PLayer in table HighScores
+func insertIntoHighScores(db *sql.DB, name string, score int) {
+	_, err := db.Exec("INSERT INTO HighScores(score,name) VALUES (?,?)", score, name)
+	errorHandler(err)
+}
+
+func EntryName() string {
+	fmt.Println("Entry name:")
+	reader := bufio.NewReader(os.Stdin)
+	name, _, err := reader.ReadLine()
+	errorHandler(err)
+	return string(name)
 }
 
 func main() {
+
+	//Opening connection to the database
+	db := dbConnect()
+	defer db.Close()
 
 	//Initializing flags
 	flagFile := flag.String("Questions", "Problems1", "Problems1,Problems2")
@@ -153,6 +179,9 @@ func main() {
 	//Priting current quiz settings (Printing the flags) and waits user to press Enter to continue
 	qPrint.PrintCurrentSettings(*flagFile, *quizTimerDuration)
 
-	quizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
+	//Receving the user name and score from current play and inserting it into the database
+	name := EntryName()
+	score := quizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
+	insertIntoHighScores(db, name, score)
 
 }
