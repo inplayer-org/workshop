@@ -13,6 +13,7 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	qBases "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizDataBases"
 	qPrint "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizPrint"
 )
 
@@ -141,11 +142,6 @@ func quizProgramController(questionBase []questionStructure, quizTimerDuration i
 	return newestPlayScore
 
 }
-func dbConnect() (db *sql.DB) {
-	db, err := sql.Open("mysql", "root:112234@tcp(127.0.0.1:3306)/QuizGame")
-	errorHandler(err)
-	return db
-}
 
 //Insert current name and score of the PLayer in table HighScores
 func insertIntoHighScores(db *sql.DB, name string, score int) {
@@ -164,7 +160,7 @@ func EntryName() string {
 func main() {
 
 	//Opening connection to the database
-	db := dbConnect()
+	db := qBases.DataBaseConnect()
 	defer db.Close()
 
 	//Initializing flags
