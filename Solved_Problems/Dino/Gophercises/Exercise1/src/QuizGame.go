@@ -17,8 +17,8 @@ import (
 )
 
 type exercises struct {
-	question string
-	answer   string
+	Question string
+	Answer   string
 }
 
 func check(e error) {
@@ -55,7 +55,7 @@ func questions(correctness chan<- bool, questChan chan<- bool, quizData []exerci
 		}
 	}
 	for _, questionNumber := range indexRange {
-		fmt.Printf("%s = ", quizData[questionNumber].question)
+		fmt.Printf("%s = ", quizData[questionNumber].Question)
 		attemptedAnswer, _, err := reader.ReadLine()
 		check(err)
 		trimmedAnswer := strings.Replace(string(attemptedAnswer), " ", "", -1)
@@ -63,7 +63,7 @@ func questions(correctness chan<- bool, questChan chan<- bool, quizData []exerci
 		case <-nextCase:
 			return
 		default:
-			if trimmedAnswer == quizData[questionNumber].answer {
+			if trimmedAnswer == quizData[questionNumber].Answer {
 				correctness <- true
 			} else {
 				correctness <- false
@@ -121,7 +121,7 @@ func dataReader(procitaj string) []exercises {
 		}
 		questionParser := strings.Join(filter.FindAllString(readRow[0], -1), "")
 		//	fmt.Println("Question parser =", questionParser, "Read row =", readRow[0])
-		exercisesCreator := exercises{question: questionParser, answer: readRow[1]}
+		exercisesCreator := exercises{question: questionParser, Answer: readRow[1]}
 		returnData = append(returnData, exercisesCreator)
 	}
 	check(csvFile.Close())

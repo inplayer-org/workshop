@@ -2,24 +2,28 @@ package main
 
 import (
 	"bufio"
-	"database/sql"
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"html/template"
 	"io"
+	"log"
+	"net/http"
 	"os"
 	"regexp"
 	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	qInsert "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/mySql/insertIntoHighScores"
+	qPrintTop10 "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/mySql/printTop10"
 	qBases "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizDataBases"
 	qPrint "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizPrint"
 )
 
 type questionStructure struct { //Structure for parsing questions from CSV file
-	question string
-	answer   string
+	Question string
+	Answer   string
 }
 
 func errorHandler(err error) {
@@ -45,7 +49,7 @@ func createQuestionStructure(fileName string) []questionStructure { //Creates sl
 }
 
 func createQuestionStructureEntry(readRow []string) questionStructure { //Creates QuestionStructure entry that is appended to the slice of all questions present
-	return questionStructure{question: filterQuestion(readRow[0]), answer: readRow[1]}
+	return questionStructure{Question: filterQuestion(readRow[0]), Answer: readRow[1]}
 }
 func filterQuestion(unfilteredQuestion string) string { //Remove all unnecessary characters from the question
 	regexpFilter := regexp.MustCompile("([0-9]+)|(\\+|\\*|-|/|\\^)|([0-9]+)")
@@ -81,10 +85,10 @@ func quizLifeCycle(questionBase []questionStructure, endQuizByQuestionsChannel c
 
 	for questionNumber := range questionBase {
 
-		qPrint.PrintQuestion(questionBase[questionNumber].question)
+		qPrint.PrintQuestion(questionBase[questionNumber].Question)
 
 		attemptedAnswer := registerUserAnswer()
-		correctAnswer := questionBase[questionNumber].answer
+		correctAnswer := questionBase[questionNumber].Answer
 
 		select {
 		case <-hasTimerFinished:
@@ -143,18 +147,61 @@ func quizProgramController(questionBase []questionStructure, quizTimerDuration i
 
 }
 
-//Insert current name and score of the PLayer in table HighScores
-func insertIntoHighScores(db *sql.DB, name string, score int) {
-	_, err := db.Exec("INSERT INTO HighScores(score,name) VALUES (?,?)", score, name)
-	errorHandler(err)
-}
-
 func EntryName() string {
-	fmt.Println("Entry name:")
+	fmt.Println(" Entry name:")
 	reader := bufio.NewReader(os.Stdin)
 	name, _, err := reader.ReadLine()
 	errorHandler(err)
 	return string(name)
+}
+
+//Entry to choose if you want to play in terminal-1 or on web-0
+func EntryForWebOrTerminal() string {
+	fmt.Println("Enter 1 for playing in terminal or Enter 0 for web")
+	reader := bufio.NewReader(os.Stdin)
+	entry, _, err := reader.ReadLine()
+	errorHandler(err)
+	return string(entry)
+}
+
+var tmpl = template.Must(template.ParseGlob("../tmpl/*"))
+
+func Index(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "Index", nil)
+}
+
+func Start(fileName string) func(w http.ResponseWriter, r *http.Request) {
+	sliceOfQuestionStructures := []questionStructure{}
+	sliceOfQuestionStructures = createQuestionStructure(fileName)
+	j := 0
+	correct := 0
+	start := time.Now()
+	quizDuration := start.Add(time.Second * 30)
+	return func(w http.ResponseWriter, r *http.Request) {
+		t := time.Now()
+		if r.Method == "GET" {
+			tmpl.ExecuteTemplate(w, "Start", sliceOfQuestionStructures[0])
+		} else {
+			j = j + 1
+			odg := sliceOfQuestionStructures[j-1].Answer
+			if r.FormValue("Answer") == odg {
+				correct++
+			}
+			if (r.FormValue("Next") == "Next") && (j < len(sliceOfQuestionStructures)) && (t.Sub(start) < quizDuration.Sub(start)) {
+				tmpl.ExecuteTemplate(w, "Start", sliceOfQuestionStructures[j])
+
+			} else if t.Sub(start) > quizDuration.Sub(start) {
+				tmpl.ExecuteTemplate(w, "TimeRanOut", nil)
+
+			} else {
+				//v := string(correct)
+				log.Println("+++++++++++++++++++++++")
+				fmt.Fprintf(w, "resi")
+			}
+			//tmpl.ExecuteTemplate(w, "TimeRanOut", nil)
+		}
+	}
+
 }
 
 func main() {
@@ -172,12 +219,29 @@ func main() {
 	fileName := "../csv/"
 	fileName += *flagFile + ".csv"
 
-	//Priting current quiz settings (Printing the flags) and waits user to press Enter to continue
-	qPrint.PrintCurrentSettings(*flagFile, *quizTimerDuration)
+	//Choose to play in terminal or on web
+	entry1or0 := EntryForWebOrTerminal()
+	for {
+		if entry1or0 == "1" {
+			//Priting current quiz settings (Printing the flags) and waits user to press Enter to continue
+			qPrint.PrintCurrentSettings(*flagFile, *quizTimerDuration)
 
-	//Receving the user name and score from current play and inserting it into the database
-	name := EntryName()
-	score := quizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
-	insertIntoHighScores(db, name, score)
+			//Receving the user name and score from current play and inserting it into the database
+			name := EntryName()
+			score := quizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
+			qInsert.InsertIntoHighScores(db, name, score)
 
+			//Print top 10 PLayers
+			qPrintTop10.PrintTop10(db)
+		} else if entry1or0 == "0" {
+			log.Println("SERVER started on localhost:3010")
+			http.HandleFunc("/", Index)
+			http.HandleFunc("/start", Start(fileName))
+			http.ListenAndServe(":3010", nil)
+		} else {
+			fmt.Println("You have to enter 0 or 1")
+			entry1or0 = EntryForWebOrTerminal()
+		}
+
+	}
 }
