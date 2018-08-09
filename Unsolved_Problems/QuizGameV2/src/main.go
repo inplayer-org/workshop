@@ -52,6 +52,7 @@ func filterQuestion(unfilteredQuestion string) string { //Remove all unnecessary
 	return strings.Join(regexpFilter.FindAllString(unfilteredQuestion, -1), "")
 }
 
+//Checks if the user input is equal to the required input
 func checkAnswerCorrectness(attemptedAnswer string, correctAnswer string) bool {
 	if attemptedAnswer == correctAnswer {
 		return true
@@ -59,6 +60,7 @@ func checkAnswerCorrectness(attemptedAnswer string, correctAnswer string) bool {
 	return false
 }
 
+//Determines whether the program should execute the terminal version or the web version of the quiz
 func executeGame(chosePlatform bool, currentQuestionsData []questionStructure, quizTimerDuration int, db *sql.DB, fileName string) {
 	if chosePlatform {
 		executeGameInTerminal(currentQuestionsData, quizTimerDuration, db)
@@ -98,6 +100,8 @@ func main() {
 	currentQuestionsData := createQuestionStructure(fileName)
 
 	//Choose to play in terminal or on web
-	gamePlatform := choseGamePlatform()
+	gamePlatform := choseGamePlatform() //Returns true for terminal and false for web
+
+	//Executes the game on the type of a platform that the user chose to play on
 	executeGame(gamePlatform, currentQuestionsData, *quizTimerDuration, db, fileName)
 }

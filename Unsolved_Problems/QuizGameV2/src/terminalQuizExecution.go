@@ -64,7 +64,7 @@ func controlQuizEnding(endQuizByQuestionsChannel <-chan bool, endQuizByTimeChann
 	}
 }
 
-func QuizProgramController(questionBase []questionStructure, quizTimerDuration int) int {
+func quizProgramController(questionBase []questionStructure, quizTimerDuration int) int {
 
 	//Controling whether the quiz is ended by running out of time or by answering all possible questions in the database
 	endQuizByTimeChannel := createTimer(quizTimerDuration)
@@ -95,7 +95,7 @@ func QuizProgramController(questionBase []questionStructure, quizTimerDuration i
 func executeGameInTerminal(currentQuestionsData []questionStructure, quizTimerDuration int, db *sql.DB) {
 
 	//Receving the user name and score from current play and inserting it into the database
-	score := QuizProgramController(currentQuestionsData, quizTimerDuration)
+	score := quizProgramController(currentQuestionsData, quizTimerDuration)
 	name := qInput.EnterPlayerName()
 	qMySql.InsertIntoHighScores(db, name, score)
 

@@ -7,16 +7,17 @@
   <link rel="stylesheet" href="../css/default.css">
 </head>
 
+
 <script>
   window.onload = function(){
-    setTimeout(quizStart,5000);
+    var timeLeft = parseFloat(`{{.}}`);
+    setTimeout(quizStart,1000*timeLeft);
+  }
+  function quizStart(){
+  document.getElementById('qBody').style.display = "none";
   }
 </script>
-<script>
-function quizStart(){
-  document.getElementById('qBody').style.display = "none";
-}
-</script>
+
 <body>
   <div class="wrapper">
     <header>
@@ -31,7 +32,7 @@ function quizStart(){
         <div class="question">
          {{.}}
         </div>
-        <input type="number" name="answer" value="" placeholder="Answer here">
+        <input type="number" id="timeLeft" name="answer" value="{{.}}" placeholder="Answer Here">
       </form>
     </div>
   </div>
