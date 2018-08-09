@@ -170,12 +170,17 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "Index", nil)
 }
 
+type Duration int64
+
+func Timee() time.Time {
+	return time.Now()
+}
 func Start(fileName string) func(w http.ResponseWriter, r *http.Request) {
 	sliceOfQuestionStructures := []questionStructure{}
 	sliceOfQuestionStructures = createQuestionStructure(fileName)
 	j := 0
 	correct := 0
-	start := time.Now()
+	start := Timee()
 	quizDuration := start.Add(time.Second * 30)
 	return func(w http.ResponseWriter, r *http.Request) {
 		t := time.Now()
@@ -183,10 +188,11 @@ func Start(fileName string) func(w http.ResponseWriter, r *http.Request) {
 			tmpl.ExecuteTemplate(w, "Start", sliceOfQuestionStructures[0])
 		} else {
 			j = j + 1
-			odg := sliceOfQuestionStructures[j-1].Answer
-			if r.FormValue("Answer") == odg {
+			ans := sliceOfQuestionStructures[j-1].Answer
+			if r.FormValue("Answer") == ans {
 				correct++
 			}
+
 			if (r.FormValue("Next") == "Next") && (j < len(sliceOfQuestionStructures)) && (t.Sub(start) < quizDuration.Sub(start)) {
 				tmpl.ExecuteTemplate(w, "Start", sliceOfQuestionStructures[j])
 
@@ -194,12 +200,12 @@ func Start(fileName string) func(w http.ResponseWriter, r *http.Request) {
 				tmpl.ExecuteTemplate(w, "TimeRanOut", nil)
 
 			} else {
-				//v := string(correct)
-				log.Println("+++++++++++++++++++++++")
+
 				fmt.Fprintf(w, "resi")
 			}
-			//tmpl.ExecuteTemplate(w, "TimeRanOut", nil)
+
 		}
+		log.Println("CORRECT:", correct)
 	}
 
 }
