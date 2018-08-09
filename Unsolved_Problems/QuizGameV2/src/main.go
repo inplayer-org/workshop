@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"database/sql"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	qInput "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizInput"
 	qMySql "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizMySQL"
+	qPrint "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizPrint"
 )
 
 type questionStructure struct { //Structure for parsing questions from CSV file
@@ -57,6 +59,23 @@ func checkAnswerCorrectness(attemptedAnswer string, correctAnswer string) bool {
 	return false
 }
 
+func executeGame(chosePlatform bool, currentQuestionsData []questionStructure, quizTimerDuration int, db *sql.DB, fileName string) {
+	if chosePlatform {
+		executeGameInTerminal(currentQuestionsData, quizTimerDuration, db)
+	} else {
+		executeGameOnWeb(fileName)
+	}
+}
+
+func choseGamePlatform() bool {
+	fmt.Println("Type either \"Terminal\" or \"Web\" to chose the platform you are going to play on")
+	choosePlatform := qInput.ChooseBetweenTwo("Terminal", "Web") //Terminal returns true, Web returns false
+	fmt.Println()
+	fmt.Print("Press Enter when you are ready to start ")
+	fmt.Scanln()
+	return choosePlatform
+}
+
 func main() {
 
 	//Opening connection to the database
@@ -72,13 +91,13 @@ func main() {
 	fileName := "../csv/"
 	fileName += *flagFile + ".csv"
 
-	//Choose to play in terminal or on web
-	fmt.Println("\nType either \"Terminal\" or \"Web\" to chose the platform you are going to play on")
-	choosePlatform := qInput.ChooseBetweenTwo("Terminal", "Web") //Terminal returns true, Web returns false
-	if choosePlatform {
-		executeGameInTerminal(*flagFile, *quizTimerDuration, fileName, db)
-	} else {
-		executeGameOnWeb(fileName)
-	}
+	//Priting current quiz settings (Printing the flags) and waits user to press Enter to continue
+	qPrint.PrintCurrentSettings(*flagFile, *quizTimerDuration)
 
+	//Create the question structure for the quiz
+	currentQuestionsData := createQuestionStructure(fileName)
+
+	//Choose to play in terminal or on web
+	gamePlatform := choseGamePlatform()
+	executeGame(gamePlatform, currentQuestionsData, *quizTimerDuration, db, fileName)
 }

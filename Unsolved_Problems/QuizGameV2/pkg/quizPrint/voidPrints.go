@@ -14,6 +14,4 @@ func PrintCurrentSettings(fileName string, quizTimerDuration int) {
 	fmt.Println("Questions base:", fileName)
 	fmt.Println("Timer set to:", quizTimerDuration, "seconds")
 	fmt.Println()
-	fmt.Print("Press Enter when you are ready to start ")
-	fmt.Scanln()
 }

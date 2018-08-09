@@ -92,13 +92,10 @@ func QuizProgramController(questionBase []questionStructure, quizTimerDuration i
 	return newestPlayScore
 
 }
-func executeGameInTerminal(flagFile string, quizTimerDuration int, fileName string, db *sql.DB) {
-
-	//Priting current quiz settings (Printing the flags) and waits user to press Enter to continue
-	qPrint.PrintCurrentSettings(flagFile, quizTimerDuration)
+func executeGameInTerminal(currentQuestionsData []questionStructure, quizTimerDuration int, db *sql.DB) {
 
 	//Receving the user name and score from current play and inserting it into the database
-	score := QuizProgramController(createQuestionStructure(fileName), quizTimerDuration)
+	score := QuizProgramController(currentQuestionsData, quizTimerDuration)
 	name := qInput.EnterPlayerName()
 	qMySql.InsertIntoHighScores(db, name, score)
 
