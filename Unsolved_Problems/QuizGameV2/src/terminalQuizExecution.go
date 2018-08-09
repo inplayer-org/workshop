@@ -1,12 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	qInput "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizInput"
+	qMySql "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizMySQL"
 	qPrint "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizPrint"
 )
 
@@ -89,4 +91,17 @@ func QuizProgramController(questionBase []questionStructure, quizTimerDuration i
 	close(waitingTheScore)
 	return newestPlayScore
 
+}
+func executeGameInTerminal(flagFile string, quizTimerDuration int, fileName string, db *sql.DB) {
+
+	//Priting current quiz settings (Printing the flags) and waits user to press Enter to continue
+	qPrint.PrintCurrentSettings(flagFile, quizTimerDuration)
+
+	//Receving the user name and score from current play and inserting it into the database
+	score := QuizProgramController(createQuestionStructure(fileName), quizTimerDuration)
+	name := qInput.EnterPlayerName()
+	qMySql.InsertIntoHighScores(db, name, score)
+
+	//Print top 10 PLayers
+	qMySql.PrintTop10(db)
 }

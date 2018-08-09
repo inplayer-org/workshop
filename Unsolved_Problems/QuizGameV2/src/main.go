@@ -5,19 +5,14 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"html/template"
 	"io"
-	"log"
-	"net/http"
 	"os"
 	"regexp"
 	"strings"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	qInput "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizInput"
 	qMySql "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizMySQL"
-	qPrint "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizPrint"
 )
 
 type questionStructure struct { //Structure for parsing questions from CSV file
@@ -62,50 +57,6 @@ func checkAnswerCorrectness(attemptedAnswer string, correctAnswer string) bool {
 	return false
 }
 
-var tmpl = template.Must(template.ParseGlob("../tmpl/*"))
-
-func Index(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "Index", nil)
-}
-
-func Timee() time.Time {
-	return time.Now()
-}
-func Start(fileName string) func(w http.ResponseWriter, r *http.Request) {
-	sliceOfQuestionStructures := []questionStructure{}
-	sliceOfQuestionStructures = createQuestionStructure(fileName)
-	j := 0
-	correct := 0
-	start := Timee()
-	quizDuration := start.Add(time.Second * 30)
-	return func(w http.ResponseWriter, r *http.Request) {
-		t := time.Now()
-		if r.Method == "GET" {
-			tmpl.ExecuteTemplate(w, "Start", sliceOfQuestionStructures[0])
-		} else {
-			j = j + 1
-			ans := sliceOfQuestionStructures[j-1].Answer
-			if r.FormValue("Answer") == ans {
-				correct++
-			}
-
-			if (r.FormValue("Next") == "Next") && (j < len(sliceOfQuestionStructures)) && (t.Sub(start) < quizDuration.Sub(start)) {
-				tmpl.ExecuteTemplate(w, "Start", sliceOfQuestionStructures[j])
-
-			} else if t.Sub(start) > quizDuration.Sub(start) {
-				tmpl.ExecuteTemplate(w, "TimeRanOut", nil)
-
-			} else {
-
-				fmt.Fprintf(w, "resi")
-			}
-
-		}
-		log.Println("CORRECT:", correct)
-	}
-
-}
-
 func main() {
 
 	//Opening connection to the database
@@ -122,28 +73,11 @@ func main() {
 	fileName += *flagFile + ".csv"
 
 	//Choose to play in terminal or on web
-	entry1or0 := qInput.EntryForWebOrTerminal()
-	for {
-		if entry1or0 == "1" {
-			//Priting current quiz settings (Printing the flags) and waits user to press Enter to continue
-			qPrint.PrintCurrentSettings(*flagFile, *quizTimerDuration)
-
-			//Receving the user name and score from current play and inserting it into the database
-			score := QuizProgramController(createQuestionStructure(fileName), *quizTimerDuration)
-			name := qInput.EnterPlayerName()
-			qMySql.InsertIntoHighScores(db, name, score)
-
-			//Print top 10 PLayers
-			qMySql.PrintTop10(db)
-		} else if entry1or0 == "0" {
-			log.Println("SERVER started on localhost:3010")
-			http.HandleFunc("/", Index)
-			http.HandleFunc("/start", Start(fileName))
-			http.ListenAndServe(":3010", nil)
-		} else {
-			fmt.Println("You have to enter 0 or 1")
-			entry1or0 = qInput.EntryForWebOrTerminal()
-		}
-
+	choosePlatform := qInput.ChooseBetweenTwo("Terminal", "Web")
+	if choosePlatform {
+		executeGameInTerminal(*flagFile, *quizTimerDuration, fileName, db)
+	} else {
+		executeGameOnWeb(fileName)
 	}
+
 }
