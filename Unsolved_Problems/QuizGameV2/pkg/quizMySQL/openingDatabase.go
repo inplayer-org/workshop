@@ -1,4 +1,4 @@
-package quizdatabases
+package quizmysql
 
 import (
 	"database/sql"
