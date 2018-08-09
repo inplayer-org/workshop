@@ -73,7 +73,8 @@ func main() {
 	fileName += *flagFile + ".csv"
 
 	//Choose to play in terminal or on web
-	choosePlatform := qInput.ChooseBetweenTwo("Terminal", "Web")
+	fmt.Println("\nType either \"Terminal\" or \"Web\" to chose the platform you are going to play on")
+	choosePlatform := qInput.ChooseBetweenTwo("Terminal", "Web") //Terminal returns true, Web returns false
 	if choosePlatform {
 		executeGameInTerminal(*flagFile, *quizTimerDuration, fileName, db)
 	} else {

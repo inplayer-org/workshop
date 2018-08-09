@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Quiz Questions Page</title>
+  <link rel="stylesheet" href="../css/default.css">
+</head>
+
+<script>
+  window.onload = function(){
+    setTimeout(quizStart,5000);
+  }
+</script>
+<script>
+function quizStart(){
+  document.getElementById('qBody').style.display = "none";
+}
+</script>
+<body>
+  <div class="wrapper">
+    <header>
+      <div class="quizNameWrapper">
+        <div class="quizName">
+          Quiz Game
+        </div>
+      </div>
+    </header>
+    <div class="quizBody" id="qBody">
+      <form class="quizForm" method="POST" target="_self" id="qStart">
+        <div class="question">
+         {{.}}
+        </div>
+        <input type="number" name="answer" value="" placeholder="Answer here">
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>
