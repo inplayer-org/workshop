@@ -65,16 +65,15 @@ func executeGame(chosePlatform bool, currentQuestionsData []questionStructure, q
 	if chosePlatform {
 		executeGameInTerminal(currentQuestionsData, quizTimerDuration, db)
 	} else {
-		executeGameOnWeb(fileName)
+		executeGameOnWeb(fileName, db)
 	}
 }
 
+//Waits user input to determine the platform that the game will be played
 func choseGamePlatform() bool {
 	fmt.Println("Type either \"Terminal\" or \"Web\" to chose the platform you are going to play on")
 	choosePlatform := qInput.ChooseBetweenTwo("Terminal", "Web") //Terminal returns true, Web returns false
 	fmt.Println()
-	fmt.Print("Press Enter when you are ready to start ")
-	fmt.Scanln()
 	return choosePlatform
 }
 

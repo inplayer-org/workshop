@@ -94,6 +94,10 @@ func quizProgramController(questionBase []questionStructure, quizTimerDuration i
 }
 func executeGameInTerminal(currentQuestionsData []questionStructure, quizTimerDuration int, db *sql.DB) {
 
+	//Make sure the user is ready to start a game
+	fmt.Print("Press Enter when you are ready to start ")
+	fmt.Scanln()
+
 	//Receving the user name and score from current play and inserting it into the database
 	score := quizProgramController(currentQuestionsData, quizTimerDuration)
 	name := qInput.EnterPlayerName()
