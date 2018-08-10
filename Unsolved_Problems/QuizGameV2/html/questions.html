@@ -33,16 +33,17 @@
         <div class="question">
          {{.Question}}
         </div>
-        <input type="number" id="timeLeft" name="answer" value="{{.}}" placeholder="Answer Here">
+        <input type="number" id="timeLeft" name="answer" value="" placeholder="Answer Here">
       </form>
       </div>
-      <form class="quizForm" method="POST" target="_self" id="submitUserForm" action="/submitScore" style="display:none;" id="submitUserForm">
+      <form class="quizForm" method="GET" target="_self" id="submitUserForm" action="/submitScore" style="display:none;" id="submitUserForm">
         <div class="question" style="font-size: 70%;">
          Your Score &nbsp;<b>{{.CurrentScore}}</b>
         </div>
         <div class="question nameInput" style="font-size: 70%;">
           Your Name &nbsp;
          <input type="text" id="submitScoreForUser" name="name" value="" placeholder="Your Name">
+         <input type="hidden" name="finalScore" value="{{.CurrentScore}}">
         </div>
       </form>
     </div>

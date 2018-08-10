@@ -17,6 +17,14 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	htmls.ExecuteTemplate(w, "menu.html", nil)
 }
 
+func submitScoreHandler(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		fmt.Println("submit score Handler Form =", r.Form)
+		htmls.ExecuteTemplate(w, "menu.html", nil)
+	}
+}
+
 func highScoreHandler(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -49,18 +57,26 @@ type WebStructure struct {
 func Questions(sliceOfQuestionStructures []questionStructure, timerDuration int) func(w http.ResponseWriter, r *http.Request) {
 	j := 0
 	i := len(sliceOfQuestionStructures)
+	startingLen := len(sliceOfQuestionStructures)
+	score := 0
 	start := time.Now()
 	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
 		if i != 0 {
-			r.ParseForm()
+			if i != startingLen {
+				fmt.Println("r.Form.Val(answer) = ", r.FormValue("answer"), "sliceOfQuestionsStructures[", j-1, "].Answer =", sliceOfQuestionStructures[j-1].Answer)
+				if r.FormValue("answer") == sliceOfQuestionStructures[j-1].Answer {
+					score++
+				}
+			}
 			fmt.Println(len(sliceOfQuestionStructures), j)
 			pominatoVreme := time.Since(start).Seconds()
-			fmt.Println(pominatoVreme)
-			fmt.Println("len", i)
-			send := WebStructure{Question: sliceOfQuestionStructures[j].Question, TimeLeft: float64(timerDuration) - pominatoVreme, CurrentScore: 0}
+			//fmt.Println(pominatoVreme)
+			fmt.Println("len = ", i)
+			send := WebStructure{Question: sliceOfQuestionStructures[j].Question, TimeLeft: float64(timerDuration) - pominatoVreme, CurrentScore: score}
 			j = j + 1
-			i = i - 1
-			log.Println("timer =", send.TimeLeft)
+			i--
+			//log.Println("timer =", send.TimeLeft)
 			htmls.ExecuteTemplate(w, "questions.html", send)
 			fmt.Println(r.Form["answer"])
 			fmt.Println(send)
@@ -70,19 +86,20 @@ func Questions(sliceOfQuestionStructures []questionStructure, timerDuration int)
 	}
 }
 
-func serveCss(w http.ResponseWriter, r *http.Request) {
+func serveCSS(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "../css/default.css")
 
 }
 
 func executeGameOnWeb(currentQuestionsData []questionStructure, quizTimerDuration int, db *sql.DB) {
 	log.Println("SERVER started on localhost:3010")
+	log.Println(currentQuestionsData)
 	http.HandleFunc("/", Index)
-	http.HandleFunc("/css/", serveCss)
-	http.HandleFunc("/rankings", highScoreHandler(db))
-	http.HandleFunc("/findPlayer", findUsersTop10Plays(db))
-	http.HandleFunc("/showPlayer", showUsersTop10Plays(db))
+	http.HandleFunc("/css/", serveCSS)
+	http.HandleFunc("/rankings/", highScoreHandler(db))
+	http.HandleFunc("/findPlayer/", findUsersTop10Plays(db))
+	http.HandleFunc("/showPlayer/", showUsersTop10Plays(db))
 	http.HandleFunc("/question/", Questions(currentQuestionsData, quizTimerDuration))
-	http.HandleFunc("/submitScore", highScoreHandler(db))
+	http.HandleFunc("/submitScore/", submitScoreHandler(db))
 	http.ListenAndServe(":3010", nil)
 }
