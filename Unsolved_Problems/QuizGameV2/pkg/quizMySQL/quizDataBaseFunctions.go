@@ -52,7 +52,7 @@ func PrintTop10(db *sql.DB) {
 	fmt.Println("----------------------------------------")
 }
 
-//GetTop10PlaysOfUser - return the top 10 scores by a user in a sorted and ranked order
+//GetTop10PlaysOfUser - return the top 10 scores by a user in a sorted and ranked order (DA SE DOSREDI)
 func GetTop10PlaysOfUser(db *sql.DB, user string) []Player {
 	top10, err := db.Query("SELECT score,name FROM HighScores WHERE name=(?) ORDER BY score DESC LIMIT 10", user)
 	errorHandler(err)

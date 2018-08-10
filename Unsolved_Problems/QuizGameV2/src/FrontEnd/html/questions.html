@@ -10,7 +10,7 @@
 
 <script>
   window.onload = function(){
-    var timeLeft = parseFloat(`{{.}}`);
+    var timeLeft = parseFloat(`{{.TimeLeft}}`);
     setTimeout(quizStart,1000*timeLeft);
   }
   function quizStart(){
@@ -28,9 +28,9 @@
       </div>
     </header>
     <div class="quizBody" id="qBody">
-      <form class="quizForm" method="POST" target="_self" id="qStart">
+      <form class="quizForm" method="POST" target="_self" id="qStart" action="/questions/">
         <div class="question">
-         {{.}}
+         {{.Question}}
         </div>
         <input type="number" id="timeLeft" name="answer" value="{{.}}" placeholder="Answer Here">
       </form>

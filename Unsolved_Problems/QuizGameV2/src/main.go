@@ -65,7 +65,7 @@ func executeGame(chosePlatform bool, currentQuestionsData []questionStructure, q
 	if chosePlatform {
 		executeGameInTerminal(currentQuestionsData, quizTimerDuration, db)
 	} else {
-		executeGameOnWeb(fileName, db)
+		executeGameOnWeb(currentQuestionsData, quizTimerDuration, db)
 	}
 }
 
@@ -103,4 +103,10 @@ func main() {
 
 	//Executes the game on the type of a platform that the user chose to play on
 	executeGame(gamePlatform, currentQuestionsData, *quizTimerDuration, db, fileName)
+
+	sliceOfQuestionStructures := []questionStructure{}
+	sliceOfQuestionStructures = createQuestionStructure(fileName)
+	for _, i := range sliceOfQuestionStructures {
+		fmt.Println("++++++++++++++++++++=", i.Question)
+	}
 }
