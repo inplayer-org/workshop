@@ -10,11 +10,12 @@
 
 <script>
   window.onload = function(){
-    var timeLeft = parseFloat(`{{.}}`);
+    var timeLeft = parseFloat(`{{.TimeLeft}}`);
     setTimeout(quizStart,1000*timeLeft);
   }
   function quizStart(){
   document.getElementById('qBody').style.display = "none";
+  document.getElementById('submitUserForm').style.display = "flex";
   }
 </script>
 
@@ -30,20 +31,18 @@
     <div class="quizBody" id="qBody">
       <form class="quizForm" method="POST" target="_self" id="qStart">
         <div class="question">
-         {{.}}
+         {{.Question}}
         </div>
-        <input type="number" id="timeLeft" name="answer" value="0" placeholder="Answer Here">
-        </div>
+        <input type="number" id="timeLeft" name="answer" value="{{.}}" placeholder="Answer Here">
       </form>
-      <form class="quizForm" method="POST" target="_self" id="qStart" action="/submitScore">
-        <div class="question">
-         Your Score <b>{{.}}</b>
+      </div>
+      <form class="quizForm" method="POST" target="_self" id="submitUserForm" action="/submitScore" style="display:none;" id="submitUserForm">
+        <div class="question" style="font-size: 70%;">
+         Your Score &nbsp;<b>{{.CurrentScore}}</b>
         </div>
-        <div class="question">
-          Your Name  
+        <div class="question nameInput" style="font-size: 70%;">
+          Your Name &nbsp;
          <input type="text" id="submitScoreForUser" name="name" value="" placeholder="Your Name">
-        </div>
-
         </div>
       </form>
     </div>

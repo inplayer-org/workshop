@@ -17,11 +17,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	htmls.ExecuteTemplate(w, "menu.html", nil)
 }
 
-type questions struct {
-	Prasanja []string
-	Timer    *time.Timer
-}
-
 func highScoreHandler(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -46,8 +41,9 @@ func findUsersTop10Plays(db *sql.DB) func(w http.ResponseWriter, r *http.Request
 }
 
 type WebStructure struct {
-	Question string
-	TimeLeft float64
+	Question     string
+	TimeLeft     float64
+	CurrentScore int
 }
 
 func Questions(sliceOfQuestionStructures []questionStructure, timerDuration int) func(w http.ResponseWriter, r *http.Request) {
@@ -61,12 +57,13 @@ func Questions(sliceOfQuestionStructures []questionStructure, timerDuration int)
 			pominatoVreme := time.Since(start).Seconds()
 			fmt.Println(pominatoVreme)
 			fmt.Println("len", i)
-			t, _ := template.ParseFiles("FrontEnd/html/questions.html")
-			send := WebStructure{Question: sliceOfQuestionStructures[j].Question, TimeLeft: float64(timerDuration) - pominatoVreme}
+			send := WebStructure{Question: sliceOfQuestionStructures[j].Question, TimeLeft: float64(timerDuration) - pominatoVreme, CurrentScore: 0}
 			j = j + 1
 			i = i - 1
-			t.Execute(w, send)
+			log.Println("timer =", send.TimeLeft)
+			htmls.ExecuteTemplate(w, "questions.html", send)
 			fmt.Println(r.Form["answer"])
+			fmt.Println(send)
 		} else {
 			http.Redirect(w, r, "/action/", 301)
 		}
@@ -85,6 +82,7 @@ func executeGameOnWeb(currentQuestionsData []questionStructure, quizTimerDuratio
 	http.HandleFunc("/rankings", highScoreHandler(db))
 	http.HandleFunc("/findPlayer", findUsersTop10Plays(db))
 	http.HandleFunc("/showPlayer", showUsersTop10Plays(db))
-	http.HandleFunc("/questions/", Questions(currentQuestionsData, quizTimerDuration))
+	http.HandleFunc("/question/", Questions(currentQuestionsData, quizTimerDuration))
+	http.HandleFunc("/submitScore", highScoreHandler(db))
 	http.ListenAndServe(":3010", nil)
 }
