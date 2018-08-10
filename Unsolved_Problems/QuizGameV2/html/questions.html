@@ -33,6 +33,18 @@
          {{.}}
         </div>
         <input type="number" id="timeLeft" name="answer" value="0" placeholder="Answer Here">
+        </div>
+      </form>
+      <form class="quizForm" method="POST" target="_self" id="qStart" action="/submitScore">
+        <div class="question">
+         Your Score <b>{{.}}</b>
+        </div>
+        <div class="question">
+          Your Name  
+         <input type="text" id="submitScoreForUser" name="name" value="" placeholder="Your Name">
+        </div>
+
+        </div>
       </form>
     </div>
   </div>
