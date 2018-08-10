@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	qMySql "repo.inplayer.com/workshop/Unsolved_Problems/QuizGameV2/pkg/quizMySQL"
@@ -21,7 +22,10 @@ func submitScoreHandler(db *sql.DB) func(w http.ResponseWriter, r *http.Request)
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		fmt.Println("submit score Handler Form =", r.Form)
-		htmls.ExecuteTemplate(w, "menu.html", nil)
+		score, err := strconv.Atoi(r.FormValue("finalScore"))
+		errorHandler(err)
+		qMySql.InsertIntoHighScores(db, r.FormValue("name"), score)
+		http.Redirect(w, r, "/rankings", 301)
 	}
 }
 
@@ -62,13 +66,13 @@ func Questions(sliceOfQuestionStructures []questionStructure, timerDuration int)
 	start := time.Now()
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		if i != 0 {
-			if i != startingLen {
-				fmt.Println("r.Form.Val(answer) = ", r.FormValue("answer"), "sliceOfQuestionsStructures[", j-1, "].Answer =", sliceOfQuestionStructures[j-1].Answer)
-				if r.FormValue("answer") == sliceOfQuestionStructures[j-1].Answer {
-					score++
-				}
+		if i != startingLen {
+			fmt.Println("r.Form.Val(answer) = ", r.FormValue("answer"), "sliceOfQuestionsStructures[", j-1, "].Answer =", sliceOfQuestionStructures[j-1].Answer)
+			if r.FormValue("answer") == sliceOfQuestionStructures[j-1].Answer {
+				score++
 			}
+		}
+		if i != 0 {
 			fmt.Println(len(sliceOfQuestionStructures), j)
 			pominatoVreme := time.Since(start).Seconds()
 			//fmt.Println(pominatoVreme)
@@ -81,7 +85,8 @@ func Questions(sliceOfQuestionStructures []questionStructure, timerDuration int)
 			fmt.Println(r.Form["answer"])
 			fmt.Println(send)
 		} else {
-			http.Redirect(w, r, "/action/", 301)
+			send := WebStructure{Question: "ended", TimeLeft: 0.00, CurrentScore: score}
+			htmls.ExecuteTemplate(w, "questions.html", send)
 		}
 	}
 }
