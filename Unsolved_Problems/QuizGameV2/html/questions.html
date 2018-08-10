@@ -10,13 +10,14 @@
 
 <script>
   window.onload = function(){
+    document.getElementById('currentAnswer').focus();
     var timeLeft = parseFloat(`{{.TimeLeft}}`);
     setTimeout(quizStart,1000*timeLeft);
-  }
+  };
   function quizStart(){
   document.getElementById('qBody').style.display = "none";
   document.getElementById('submitUserForm').style.display = "flex";
-  }
+};
 </script>
 
 <body>
@@ -33,7 +34,7 @@
         <div class="question">
          {{.Question}}
         </div>
-        <input type="number" id="timeLeft" name="answer" value="" placeholder="Answer Here">
+        <input type="number" id="currentAnswer" name="answer" value="" placeholder="Answer Here">
       </form>
       </div>
       <form class="quizForm" method="GET" target="_self" id="submitUserForm" action="/submitScore" style="display:none;" id="submitUserForm">

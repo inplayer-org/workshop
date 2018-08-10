@@ -106,5 +106,5 @@ func executeGameOnWeb(currentQuestionsData []questionStructure, quizTimerDuratio
 	http.HandleFunc("/showPlayer/", showUsersTop10Plays(db))
 	http.HandleFunc("/question/", Questions(currentQuestionsData, quizTimerDuration))
 	http.HandleFunc("/submitScore/", submitScoreHandler(db))
-	http.ListenAndServe(":3010", nil)
+	http.ListenAndServe(":3000", nil)
 }
