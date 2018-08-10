@@ -104,4 +104,10 @@ func main() {
 
 	//Executes the game on the type of a platform that the user chose to play on
 	executeGame(gamePlatform, currentQuestionsData, *quizTimerDuration, db, fileName)
+
+	sliceOfQuestionStructures := []questionStructure{}
+	sliceOfQuestionStructures = createQuestionStructure(fileName)
+	for _, i := range sliceOfQuestionStructures {
+		fmt.Println("++++++++++++++++++++=", i.Question)
+	}
 }

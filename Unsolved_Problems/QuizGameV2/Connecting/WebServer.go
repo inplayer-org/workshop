@@ -102,6 +102,19 @@ func endHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
+// func questionsHandler(fileName string) func(w http.ResponseWriter, r *http.Request) {
+// 	return func(w http.Response, r *http.Request) {
+// 		r.ParseForm()
+// 		p.prashanja = p.prashanja[1:]
+// 		fmt.Println("1")
+// 		pominatoVreme := time.Since(start).Seconds()
+// 		fmt.Println(pominatoVreme)
+// 		t, _ := template.ParseFiles("FrontEnd/html/questions.html")
+// 		send := webStructure{question: p.prashanja[0], timeLeft: 15.00 - pominatoVreme}
+// 		t.Execute(w, send.timeLeft)
+// 		fmt.Println(r.Form)
+// 	}
+// }
 func main() {
 	start = time.Now()
 	var quest questions
@@ -109,10 +122,6 @@ func main() {
 	questions := createQuestionStructure(file)
 	fmt.Println(questions)
 	control = true
-	quest.prashanja = append(quest.prashanja, "prvo")
-	quest.prashanja = append(quest.prashanja, "vtoro")
-	quest.prashanja = append(quest.prashanja, "treto")
-	quest.prashanja = append(quest.prashanja, "cetvrto")
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/action/", actionHandler)
 	http.HandleFunc("/css/", serveCss)
