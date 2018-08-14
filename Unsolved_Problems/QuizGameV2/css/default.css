@@ -1,3 +1,16 @@
+.goHome{
+  float: right;
+  display: block;
+}
+
+.goHome{
+  position: absolute;
+  border-radius: 2000px;
+  background-image: url("./homeButton.png");
+  background-repeat: no-repeat;
+  width: 400px;
+  height: 400px;
+}
 
 .wrapper{
   padding: 10px;
