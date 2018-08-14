@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Quiz Questions Page</title>
+  <link rel="stylesheet" href="../css/default.css">
+</head>
+
+
+<script>
+  window.onload = function(){
+    document.getElementById('currentAnswer').focus();
+    var timeLeft = parseFloat(`{{.TimeLeft}}`);
+    setTimeout(quizStart,1000*timeLeft);
+  };
+  function quizStart(){
+  document.getElementById('qBody').style.display = "none";
+  document.getElementById('submitUserForm').style.display = "flex";
+};
+</script>
+
+<body>
+  <div class="wrapper">
+    <header>
+      <div class="quizNameWrapper">
+        <div class="quizName">
+          Quiz Game
+        </div>
+      </div>
+    </header>
+    <div class="quizBody" id="qBody">
+      <form class="quizForm" method="POST" target="_self" id="qStart">
+        <div class="question">
+         {{.Question}}
+        </div>
+        <input type="number" id="currentAnswer" name="answer" value="" placeholder="Answer Here">
+      </form>
+      </div>
+      <form class="quizForm" method="GET" target="_self" id="submitUserForm" action="/submitScore" style="display:none;" id="submitUserForm">
+        <div class="question" style="font-size: 70%;">
+         Your Score &nbsp;<b>{{.CurrentScore}}</b>
+        </div>
+        <div class="question nameInput" style="font-size: 70%;">
+          Your Name &nbsp;
+         <input type="text" id="submitScoreForUser" name="name" value="" placeholder="Your Name">
+         <input type="hidden" name="finalScore" value="{{.CurrentScore}}">
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+.goHome{
+  float: right;
+  display: block;
+}
+
+.goHome{
+  position: absolute;
+  border-radius: 2000px;
+  background-image: url("./homeButton.png");
+  background-repeat: no-repeat;
+  width: 400px;
+  height: 400px;
+}
+
+.wrapper{
+  padding: 10px;
+  width: 100%;
+  background-color: rgba(68, 115, 185, 0.43);
+  text-align: center;
+  font-family: Georgia,Helvetica;
+  margin: 0px;
+  border-radius: 30px;
+}
+
+div{
+  align-items: center;
+  justify-content: center;
+}
+
+.quizNameWrapper{
+  display: flex;
+  width: 100%;
+  height: 350px;
+}
+.quizName{
+  display: flex;
+  border-radius: 30px;
+  background-color: rgb(129, 224, 237);
+    font-size: 150px;
+    width: 95%;
+    height: 95%;
+  text-align: center;
+  text-shadow: 2px 4px rgba(33, 12, 52, 0.84);
+}
+
+form{
+  align-items: center;
+  justify-content: center;
+  display:  inline-flex;
+  width: 100%;
+  height: 200px;
+  font-size: 80px;
+  border-radius: 30px;
+  background-color: rgb(50, 80, 148);
+}
+
+.question{
+  display: flex;
+  width: 50%;
+  background-color: rgba(66, 146, 180, 0.8);
+  border-radius: 30px;
+  margin: 10px;
+}
+
+input{
+  display: flex;
+  width: 40%;
+  text-align: center;
+  font-size: 80px;
+}
+
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+input[type='submit']{
+  flex: 0 1 100%;
+}
+
+input[type='text']{
+  font-size: 30px;
+  background-color: rgb(224, 224, 224)
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+form .selectionTab{
+  flex: 1 0 48%;
+  background-color: rgba(0, 235, 251, 0.6);
+  width: 48%;
+  height: 170px;
+  margin: 5px;
+}
+
+.selectionTab{
+  align-items: center;
+  justify-content: center;
+  display: inline-flex;
+  border: solid black 5px;
+  border-radius: 30px;
+  background-color: rgb(224, 206, 76);
+  height: 200px;
+  width: 30%;
+  color: rgb(218, 102, 27);
+  font-size: 40px;
+  text-shadow: 2px 2px rgba(246, 2, 2, 0.65);
+}
+
+.selectionTab:hover{
+  border-color: red;
+
+}
+
+#qLanding:hover{
+  cursor: pointer;
+  background: rgba(247, 222, 92, 0.56);
+  font-style: italic;
+}
+
+#top10{
+  width: 98%;
+  border: solid rgb(10, 15, 45) 3px;
+  border-radius: 30px;
+  border-spacing: 0px;
+  background-color: rgba(217, 235, 77, 0.65);
+  font-size: 30px;
+
+}
+
+tr:first-child > td:first-child{
+  color: red;
+  font-weight: bold;
+}
+tr:first-child > td{
+  font-size: 40px;
+  font-weight: bold;
+  background-color: rgba(235, 155, 61, 0.86);
+}
+
+th:first-child{
+  border-top-left-radius: 30px;
+}
+
+th:last-child{
+  border-top-right-radius: 30px;
+}
+
+tr:last-child > td:first-child{
+  border-bottom-left-radius: 30px;
+}
+tr:last-child > td:last-child{
+  border-bottom-right-radius: 30px;
+}
+td,th{
+  border: solid rgb(30, 37, 103) 1.5px;
+}
