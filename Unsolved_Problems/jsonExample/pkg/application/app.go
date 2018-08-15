@@ -35,11 +35,11 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/TVOJASTRUKTURA", a.GetEmployers).Methods("GET")
-	a.Router.HandleFunc("/TVOJASTRUKTURA", a.CreateEmployers).Methods("POST")
-	a.Router.HandleFunc("/TVOJASTRUKTURA/{id:[0-9]+}", a.GetEmployer).Methods("GET")
-	a.Router.HandleFunc("/TVOJASTRUKTURA/{id:[0-9]+}", a.CreateEmployer).Methods("PUT")
-	a.Router.HandleFunc("/TVOJASTRUKTURA/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE")
+/*	a.Router.HandleFunc("/TVOJA", a.GetEmployers).Methods("GET")
+	a.Router.HandleFunc("/TVOJA", a.CreateEmployers).Methods("POST")
+	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.GetEmployer).Methods("GET")
+	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.UpdateEmployer).Methods("PUT")
+	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE") */
 }
 
 func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
