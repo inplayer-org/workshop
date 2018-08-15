@@ -10,6 +10,7 @@ import (
 
 	"encoding/json"
 	"strconv"
+	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/test"
 )
 
 type App struct {
@@ -35,55 +36,28 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-/*	a.Router.HandleFunc("/TVOJA", a.GetEmployers).Methods("GET")
-	a.Router.HandleFunc("/TVOJA", a.CreateEmployers).Methods("POST")
-	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.GetEmployer).Methods("GET")
-	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.UpdateEmployer).Methods("PUT")
-	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE") */
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipment).Methods("GET")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.UpdateEquipment).Methods("PUT")
+
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.DeleteEquipment).Methods("DELETE")
+
 }
 
-func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 
-
-	Employers, err := GetEmployers(a.DB)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	respondWithJSON(w, http.StatusOK, Employers)
-}
-
-func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
-//	var e Employers (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&e); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	defer r.Body.Close()
-
-	if err := u.CreateEmployers(a.DB); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	respondWithJSON(w, http.StatusCreated, e)
-}
-
-func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
+func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid employer ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid Equipment ID")
 		return
 	}
 
-//	e := employer{ID: id} (CHECK ZA TVOJTA STRUCT)
-	if err := e.GetEmployer(a.DB); err != nil {
+	    e := test.Equipment{EmployerID: id}
+	if err := e.Get(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			respondWithError(w, http.StatusNotFound, "Employer not found")
+			respondWithError(w, http.StatusNotFound, "equipment not found")
+
 		default:
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -92,24 +66,25 @@ func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJSON(w, http.StatusOK, e)
 }
-func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
+func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid Employer ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid Equipment ID")
 		return
 	}
 
-//	var e employer(CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	 var e test.Equipment
+	e.EmployerID = id
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
 		return
 	}
 	defer r.Body.Close()
-	e.ID = id
+	// e.EmployerID = id
 
-	if err := e.UpdateEmployer(a.DB); err != nil {
+	if err := e.Update(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -117,7 +92,7 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, e)
 }
 
-func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
+func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -125,8 +100,8 @@ func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	e := employer{ID: id} (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<
-	if err := e.DeleteEmployer(a.DB); err != nil {
+	 e := test.Equipment{EmployerID: id}
+	if err := e.Delete(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -134,14 +109,15 @@ func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
+
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-response, _ := json.Marshal(payload)
+	response, _ := json.Marshal(payload)
 
-w.Header().Set("Content-Type", "application/json")
-w.WriteHeader(code)
-w.Write(response)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }
