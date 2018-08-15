@@ -7,23 +7,23 @@ import (
 
 type Equipment struct {
 
-	EmployerID int
-	Copmuters int
-	Monitors int
-	Mouses int
-	Keyboards int
-	Headsets int
+	EmployerID int `json:"employer_id"`
+	Copmuters int `json:"copmuters"`
+	Monitors int `json:"monitors"`
+	Mouses int `json:"mouses"`
+	Keyboards int `json:"keyboards"`
+	Headsets int `json:"headsets"`
 
 }
 
-func (e *Equipment) get(db *sql.DB) error {
+func (e *Equipment) Get(db *sql.DB) error {
 
-	query := fmt.Sprintf("SELECT employer_id,computer,monitor,mouse,keyboard,headset FROM position_info WHERE employer_id=%d",e.EmployerID)
+	query := fmt.Sprintf("SELECT employer_id,computer,monitor,mouse,keyboard,headset FROM equipment WHERE employer_id=%d",e.EmployerID)
 	return db.QueryRow(query).Scan(&e.EmployerID,&e.Copmuters,&e.Monitors,&e.Mouses,&e.Keyboards,&e.Headsets)
 
 }
 
-func (e *Equipment) create(db *sql.DB) error {
+func (e *Equipment) Create(db *sql.DB) error {
 
 	query := fmt.Sprintf("INSERT INTO equipment(employer_id,computer,monitor,mouse,keyboard,headset) VALUES(%d,%d,%d,%d,%d,%d)",&e.EmployerID,&e.Copmuters,&e.Monitors,&e.Mouses,&e.Keyboards,&e.Headsets)
 	_,err:= db.Exec(query)
@@ -31,23 +31,24 @@ func (e *Equipment) create(db *sql.DB) error {
 
 }
 
-func (e *Equipment) update(db *sql.DB) error {
-
-	query := fmt.Sprintf("UPDATE equipment SET employer_id=%d,computer=%d,monitor=%d,mouse=%d,keyboard=%d,headset=%d",&e.EmployerID,&e.Copmuters,&e.Monitors,&e.Mouses,&e.Keyboards,&e.Headsets)
+func (e *Equipment) Update(db *sql.DB) error {
+	//fmt.Println(e.Copmuters)
+	query := fmt.Sprintf("UPDATE equipment SET computer=%d,monitor=%d,mouse=%d,keyboard=%d,headset=%d WHERE employer_id=%d",e.Copmuters,e.Monitors,e.Mouses,e.Keyboards,e.Headsets,e.EmployerID)
 	_,err:= db.Exec(query)
+	//fmt.Println(err)
 	return err
 
 }
 
-func (e *Equipment) delete(db *sql.DB) error{
+func (e *Equipment) Delete(db *sql.DB) error{
 
-query:=fmt.Sprintf("DELETE FROM equipment WHERE employer_id=%d",e.EmployerID)
-_,err:=db.Exec(query)
-return err
+	query:=fmt.Sprintf("DELETE FROM equipment WHERE employer_id=%d",e.EmployerID)
+	_,err:=db.Exec(query)
+	return err
 
 }
 
-func getAllEquipments(db *sql.DB) ([]Equipment,error){
+func GetAllEquipments(db *sql.DB) ([]Equipment,error){
 
 	query:=fmt.Sprintf("	SELECT employer_id,computer,monitor,mouse,keyboard,headset FROM equipment")
 	rows,err:=db.Query(query)
@@ -237,3 +238,4 @@ type EmployerInfo struct {
 	Equipment *[]Equipment
 
 }
+
