@@ -10,6 +10,7 @@ import (
 
 	"encoding/json"
 	"strconv"
+	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/test"
 )
 
 type App struct {
@@ -35,8 +36,10 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipments).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipment).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.UpdateEquipment).Methods("PUT")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.CreateEquipment).Methods("POST")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.DeleteEquipment).Methods("DELETE")
 
 }
@@ -50,11 +53,12 @@ func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	e := equipment{ID: id} (CHECK ZA TVOJTA STRUCT)
-	if err := e.GetEquipment(a.DB); err != nil {
+	    e := test.Equipment{EmployerID: id}
+	if err := e.Get(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "equipment not found")
+
 		default:
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -71,16 +75,17 @@ func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	var e equipment(CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	 var e test.Equipment
+	e.EmployerID = id
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
 		return
 	}
 	defer r.Body.Close()
-//	e.ID = id (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	// e.EmployerID = id
 
-	if err := e.UpdateEquipment(a.DB); err != nil {
+	if err := e.Update(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -96,13 +101,41 @@ func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	e := equipment{ID: id} (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<
-	if err := e.DeleteEquipment(a.DB); err != nil {
+	 e := test.Equipment{EmployerID: id}
+	if err := e.Delete(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+}
+func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
+
+
+	equipments, err := test.GetAllEquipments(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, equipments)
+}
+
+func (a *App) CreateEquipment(w http.ResponseWriter, r *http.Request) {
+	var e test.Equipment
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&e); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+
+	if err := e.Create(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, e)
 }
 
 
@@ -111,10 +144,10 @@ func respondWithError(w http.ResponseWriter, code int, message string) {
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-response, _ := json.Marshal(payload)
+	response, _ := json.Marshal(payload)
 
-w.Header().Set("Content-Type", "application/json")
-w.WriteHeader(code)
-w.Write(response)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
 }
 
