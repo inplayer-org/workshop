@@ -4,5 +4,5 @@ package structures
 type Food struct{
 	FoodID int `json:"foodid"`
 	Type string `json:"type"`
-	Name string `json:"type"`
+	Name string `json:"name"`
 }
