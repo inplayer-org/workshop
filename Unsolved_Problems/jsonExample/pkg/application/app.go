@@ -46,7 +46,103 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.UpdatePosition).Methods("PUT")
 	a.Router.HandleFunc("/position", a.CreatePosition).Methods("POST")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.DeletePosition).Methods("DELETE")
+	a.Router.HandleFunc("/employer/contracts", a.GetContracts).Methods("GET")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.GetContract).Methods("GET")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.UpdateContract).Methods("PUT")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.CreateContract).Methods("POST")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.DeleteContract).Methods("DELETE")
 }
+func (a *App) GetContracts(w http.ResponseWriter, r *http.Request) {
+
+
+	contratcs, err := testing.GetAllEquipments(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, contratcs)
+}
+func (a *App) GetContract(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Contract ID")
+		return
+	}
+
+	c := testing.Contract{EmployerID: id}
+	if err := c.Get(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "Contract not found")
+
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, c)
+}
+func (a *App) UpdateContract(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Contract ID")
+		return
+	}
+
+	var c testing.Contract
+	c.EmployerID = id
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&c); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
+		return
+	}
+	defer r.Body.Close()
+	// c.EmployerID = id
+
+	if err := c.Update(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, c)
+}
+func (a *App) CreateContract(w http.ResponseWriter, r *http.Request) {
+	var c testing.Contract
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&c); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+
+	if err := c.Create(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, c)
+}
+func (a *App) DeleteContract(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Contract ID")
+		return
+	}
+
+	c := testing.Contract{EmployerID: id}
+	if err := c.Delete(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+}
+
 
 func (a *App) GetPositions(w http.ResponseWriter, r *http.Request) {
 
@@ -59,6 +155,7 @@ func (a *App) GetPositions(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJSON(w, http.StatusOK, positions)
 }
+
 func (a *App) GetPosition(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name, err := vars["name"]
@@ -239,7 +336,6 @@ func (a *App) CreateEquipment(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, e)
 }
 
-*/
 
 
 
