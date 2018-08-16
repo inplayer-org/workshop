@@ -142,3 +142,27 @@ func SelectAnimalsEatCertainFood(db *sql.DB, foodName string) []string {
 	return animals
 
 }
+
+//Select all food that have certain type
+func SelectAllFoodByType(db *sql.DB, typeFood string) []string {
+	rows, err := db.Query("SELECT foodName, count(foodName) FROM Food WHERE type=(?) GROUP BY foodName", typeFood)
+	errorHandler(err)
+	var food []string
+	for rows.Next() {
+		var name string
+		var count int
+		err := rows.Scan(&name, &count)
+		errorHandler(err)
+		food = append(food, name)
+	}
+	return food
+
+}
+
+//Insert eat with Structue Animal and Structure Food
+func InsertEat(db *sql.DB, animal structures.Animal, food structures.Food) {
+	f := food
+	a := animal
+	_, err := db.Exec("INSERT INTO Eat(animalID,foodID)  VALUES (?,?)", a.AnimalID, f.FoodID)
+	errorHandler(err)
+}
