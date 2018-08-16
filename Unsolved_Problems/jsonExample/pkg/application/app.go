@@ -46,7 +46,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.UpdatePosition).Methods("PUT")
 	a.Router.HandleFunc("/position", a.CreatePosition).Methods("POST")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.DeletePosition).Methods("DELETE")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/contracts", a.GetContracts).Methods("GET")
+	a.Router.HandleFunc("/contracts", a.GetContracts).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.GetContract).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.UpdateContract).Methods("PUT")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.CreateContract).Methods("POST")

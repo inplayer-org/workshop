@@ -66,8 +66,9 @@ func (c *Contract) Delete(db *sql.DB) error{
 
 func GetAllContracts(db *sql.DB) ([]Contract,error){
 fmt.Println("test")
-	query:=fmt.Sprintf("    SELECT contract.contract_number,contract.employer_id,contract.date_of_contract,contract.expiring_date,contract.salary,contract.emp_position,position_info.emp_position,position_info.description FROM contract INNER JOIN position_info ON contract.emp_position=position_info.emp_position")
+	query:=fmt.Sprintf("    SELECT contract_number,employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract")
 	rows,err:=db.Query(query)
+
 fmt.Println(rows)
 	if err!=nil{
 		fmt.Println(err)
@@ -76,20 +77,26 @@ fmt.Println(rows)
 
 	defer rows.Close()
 
-	return rowsToContracts(rows)
+	return rowsToContracts(db,rows)
+
 }
 
-func rowsToContracts(rows *sql.Rows) ([]Contract, error) {
+func rowsToContracts(db *sql.DB,rows *sql.Rows) ([]Contract, error) {
 
 	var contracts []Contract
 
 	for rows.Next() {
 		var c Contract
-		err:=rows.Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName,&c.Position.Name,&c.Position.Description)
+		err:=rows.Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName)
 
 		if err!=nil {
 			return nil,err
 		}
+		var p Position
+		query:=fmt.Sprintf("SELECT emp_position,description FROM position_info WHERE emp_position='%s'",c.PositionName)
+		err=db.QueryRow(query).Scan(&p.Name,&p.Description)
+
+		c.Position=&p
 
 		contracts=append(contracts,c)
 	}
