@@ -54,12 +54,45 @@ func AddFood(w http.ResponseWriter,req *http.Request){
 
 func DeleteFood(w http.ResponseWriter,req *http.Request){
 
-/*	var food structures.Food
+	param := mux.Vars(req)
+	for i,food := range foods {
+		if strconv.Itoa(food.FoodID) == param["id"]{
+			foods = append(foods[:i],foods[i+1:]...)
+			w.WriteHeader(http.StatusAccepted)
+			json.NewEncoder(w).Encode(food)
+			return
+		}
+	}
+	w.WriteHeader(http.StatusNoContent)
+
+
+}
+
+func UpdateFood(w http.ResponseWriter,req *http.Request){
 
 	param := mux.Vars(req)
-
-	for()*/
+	var updFood structures.Food
+	json.NewDecoder(req.Body).Decode(&updFood)
+	if strconv.Itoa(updFood.FoodID) != param["id"]{
+		w.WriteHeader(http.StatusConflict)
+		var differences []structures.Food
+		parID,_ := strconv.Atoi(param["id"])
+		differences = append(differences,structures.Food{FoodID:parID,})
+		differences = append(differences,updFood)
+		json.NewEncoder(w).Encode(differences)
+		return
+	}
+	for i,food := range foods{
+		if strconv.Itoa(food.FoodID) == param["id"]{
+			foods[i] = updFood
+			w.WriteHeader(http.StatusAccepted)
+			json.NewEncoder(w).Encode(updFood)
+			return
+		}
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
+
 
 
 func main() {
@@ -79,7 +112,8 @@ func main() {
 	router.HandleFunc("/foods",GetFoods).Methods("GET")
 	router.HandleFunc("/foods/{id}",GetFood).Methods("GET")
 	router.HandleFunc("/foods/{id}",AddFood).Methods("POST")
-
+	router.HandleFunc("/foods/{id}",DeleteFood).Methods("DELETE")
+	router.HandleFunc("/foods/{id}",UpdateFood).Methods("PUT")
 
 	http.ListenAndServe(":8889", router)
 
