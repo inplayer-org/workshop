@@ -35,11 +35,11 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-/*	a.Router.HandleFunc("/TVOJA", a.GetEmployers).Methods("GET")
+	a.Router.HandleFunc("/TVOJA", a.GetEmployers).Methods("GET")
 	a.Router.HandleFunc("/TVOJA", a.CreateEmployers).Methods("POST")
 	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.GetEmployer).Methods("GET")
 	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.UpdateEmployer).Methods("PUT")
-	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE") */
+	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE")
 }
 
 func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +55,7 @@ func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
-//	var e Employers (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<
+	var e Employers (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -79,7 +79,7 @@ func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	e := employer{ID: id} (CHECK ZA TVOJTA STRUCT)
+	e := employer{ID: id} (CHECK ZA TVOJTA STRUCT)
 	if err := e.GetEmployer(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -100,7 +100,7 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	var e employer(CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	var e employer(CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<<
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
@@ -125,7 +125,7 @@ func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	e := employer{ID: id} (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<
+	e := employer{ID: id} (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<
 	if err := e.DeleteEmployer(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
