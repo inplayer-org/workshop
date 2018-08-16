@@ -35,27 +35,27 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/TVOJA", a.GetEmployers).Methods("GET")
-	a.Router.HandleFunc("/TVOJA", a.CreateEmployers).Methods("POST")
-	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.GetEmployer).Methods("GET")
-	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.UpdateEmployer).Methods("PUT")
-	a.Router.HandleFunc("/TVOJA/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE")
+	a.Router.HandleFunc("/employers", a.GetEmployers).Methods("GET")
+	a.Router.HandleFunc("/employer", a.CreateEmployers).Methods("POST")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.GetEmployer).Methods("GET")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.UpdateEmployer).Methods("PUT")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE")
 }
 
 func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 
 
-	Employers, err := GetEmployers(a.DB)
+	employers, err := GetAllEmployers(a.DB)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, Employers)
+	respondWithJSON(w, http.StatusOK, employers)
 }
 
 func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
-	var e Employers (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<
+	var e employers
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -63,7 +63,7 @@ func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := u.CreateEmployers(a.DB); err != nil {
+	if err := e.Create(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -79,8 +79,8 @@ func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	e := employer{ID: id} (CHECK ZA TVOJTA STRUCT)
-	if err := e.GetEmployer(a.DB); err != nil {
+	e := employer{ID: id}
+	if err := e.Get(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Employer not found")
@@ -100,7 +100,7 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var e employer(CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	var e employer
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
@@ -109,7 +109,7 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	e.ID = id
 
-	if err := e.UpdateEmployer(a.DB); err != nil {
+	if err := e.Update(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -125,8 +125,8 @@ func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	e := employer{ID: id} (CHECK ZA TVOJTA STRUCT) <<<<<<<<<<<<<<<<<<<<<<<<<<<
-	if err := e.DeleteEmployer(a.DB); err != nil {
+	e := employer{ID: id}
+	if err := e.Delete(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
