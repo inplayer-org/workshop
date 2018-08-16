@@ -43,17 +43,16 @@ func SelectAllAnimals(db *sql.DB) []structures.Animal {
 }
 
 //Select Animal by name
-func SelectAnimal(db *sql.DB, animalName string) structures.Animal {
+func SelectAnimal(db *sql.DB, animalName string) (structures.Animal, error) {
 	var name, species string
 	var id, height int
 	animal := structures.Animal{}
 	err := db.QueryRow("SELECT * FROM Animal WHERE name=(?)", animalName).Scan(&id, &name, &species, &height)
-	errorHandler(err)
 	animal.AnimalID = id
 	animal.Name = name
 	animal.Species = species
 	animal.Height = height
-	return animal
+	return animal, err
 }
 
 //SelectAllFood return slice of all food
