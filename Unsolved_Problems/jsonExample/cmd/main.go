@@ -8,5 +8,5 @@ func main() {
 	a := application.App{}
 	a.Initialize("root", "12345", "inplayerdb")
 
-	a.Run(":8080")
+	a.Run(":3030")
 }

@@ -24,7 +24,7 @@ func (e *Equipment) Get(db *sql.DB) error {
 
 func (e *Equipment) Create(db *sql.DB) error {
 
-	query := fmt.Sprintf("INSERT INTO equipment(employer_id,computer,monitor,mouse,keyboard,headset) VALUES(%d,%d,%d,%d,%d,%d)",e.EmployerID,e.Copmuters,e.Monitors,e.Mouses,e.Keyboards,e.Headsets)
+	query := fmt.Sprintf("INSERT INTO equipment(employer_id,computer,monitor,mouse,keyboard,headset) VALUES(%d,%d,%d,%d,%d,%d)",&e.EmployerID,&e.Copmuters,&e.Monitors,&e.Mouses,&e.Keyboards,&e.Headsets)
 	_,err:= db.Exec(query)
 	return err
 
