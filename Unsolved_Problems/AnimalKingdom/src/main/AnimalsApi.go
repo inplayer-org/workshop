@@ -1,73 +1,86 @@
 package main
 
 import (
+	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
-	"github.com/gorilla/mux"
-	"encoding/json"
+
 	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/structures"
-	"strconv"
+
+	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/db"
+
+	"github.com/gorilla/mux"
 )
 
+func GetAnimals(DB *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 
-var animals []structures.Animal
-
-
-func GetAnimals(w http.ResponseWriter, req *http.Request){
-	w.Header().Set("Content-Type","application/json")
-	json.NewEncoder(w).Encode(animals)
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		animals := db.SelectAllAnimals(DB)
+		json.NewEncoder(w).Encode(animals)
+	}
 }
 
-func GetAnimal(w http.ResponseWriter, req *http.Request){
+func GetAnimal(DB *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 
-	parameters := mux.Vars(req)
-
-	for _,animal := range animals{
-		w.Header().Set("Content-Type","application/json")
-		if strconv.Itoa(animal.AnimalID) == parameters["id"]{
-			json.NewEncoder(w).Encode(animal)
-			return
-		}
+	return func(w http.ResponseWriter, r *http.Request) {
+		parameter := mux.Vars(r)
+		w.Header().Set("Content-Type", "application/json")
+		animal := structures.Animal{}
+		animal = db.SelectAnimal(DB, parameter["name"])
+		log.Println(parameter["name"])
+		json.NewEncoder(w).Encode(animal)
 	}
-
-	//Returns not found if id isn't present in the database
-	w.WriteHeader(http.StatusNotFound)
 }
 
-/*func AddAnimal(w http.ResponseWriter, req *http.Request){
-	var animal structures.Animal
-	param := mux.Vars(req)
+func AddAnimal(DB *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 
-	for _,anim := range animals{
-		if strconv.Itoa(anim.AnimalID)==param["id"]{
-			w.WriteHeader(http.StatusAlreadyReported)
-			return
-		}
+	return func(w http.ResponseWriter, r *http.Request) {
+		parameter := mux.Vars(r)
+		w.Header().Set("Content-Type", "application/json")
+		animal := structures.Animal{}
+		animal.Name = parameter["name"]
+		_ = json.NewDecoder(r.Body).Decode(&animal)
+		db.InsertAnimal(DB, animal)
+		json.NewEncoder(w).Encode(animal)
 	}
-	json.NewDecoder(req.Body).Decode(&animal)
-	animals = append(animals, animal)
-	json.NewEncoder(w).Encode(animal)
-}*/
+}
 
+func DeleteAnimal(DB *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 
-func main(){
+	return func(w http.ResponseWriter, r *http.Request) {
+		parameter := mux.Vars(r)
+		w.Header().Set("Content-Type", "application/json")
+		animalName := parameter["name"]
+		db.DeleteAnimal(DB, animalName)
 
-	//Mock objects
-	anim1 := structures.Animal{AnimalID:1,Name:"Tigar",Species:"carnivore"}
-	anim2 := structures.Animal{AnimalID:2,Name:"Rabbit",Species:"herbivore"}
-	animals = append(animals, anim1)
-	animals = append(animals, anim2)
+	}
+}
 
-	//Initializing a Router
+func UpdateAnimal(DB *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		parameter := mux.Vars(r)
+		w.Header().Set("Content-Type", "application/json")
+		var animal structures.Animal
+		animal.Name = parameter["name"]
+		_ = json.NewDecoder(r.Body).Decode(&animal)
+		db.UpdateAnimal(DB, animal)
+		json.NewEncoder(w).Encode(animal)
+	}
+}
+
+func main() {
+	cfg, port := processFlags()
+	DB := db.ConnectDB(cfg)
 	router := mux.NewRouter()
 
 	//Route Handlers/Endpoints
-	router.HandleFunc("/animals",GetAnimals).Methods("GET")
-	router.HandleFunc("/animals/{id}",GetAnimal).Methods("GET")
-	router.HandleFunc("/animals/{id}",AddAnimal).Methods("POST")
-	router.HandleFunc("/animals",GetAnimals).Methods("GET")
-	router.HandleFunc("/animals",GetAnimals).Methods("GET")
-
-
-	log.Fatal(http.ListenAndServe(":8000",router))
+	router.HandleFunc("/animals", GetAnimals(DB)).Methods("GET")
+	router.HandleFunc("/animals/{name}", GetAnimal(DB)).Methods("GET")
+	router.HandleFunc("/animals/{name}", AddAnimal(DB)).Methods("POST")
+	router.HandleFunc("/animals/{name}", DeleteAnimal(DB)).Methods("DELETE")
+	router.HandleFunc("/animals/{name}", UpdateAnimal(DB)).Methods("PUT")
+	log.Fatal(http.ListenAndServe(port, router))
 }
