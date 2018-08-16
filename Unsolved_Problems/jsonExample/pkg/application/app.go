@@ -10,6 +10,7 @@ import (
 
 	"encoding/json"
 	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/test"
+	"strconv"
 )
 
 type App struct {
@@ -35,12 +36,11 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-	/*a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipments).Methods("GET")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipments).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipment).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.UpdateEquipment).Methods("PUT")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.CreateEquipment).Methods("POST")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.DeleteEquipment).Methods("DELETE")
-	*/
 	a.Router.HandleFunc("/positions", a.GetPositions).Methods("GET")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.GetPosition).Methods("GET")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.UpdatePosition).Methods("PUT")
@@ -144,7 +144,7 @@ func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
 }
 
 
-/*
+
 func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -153,7 +153,7 @@ func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	    e := test.Equipment{EmployerID: id}
+	    e := testing.Equipment{EmployerID: id}
 	if err := e.Get(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -175,7 +175,7 @@ func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	 var e test.Equipment
+	 var e testing.Equipment
 	e.EmployerID = id
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
@@ -201,7 +201,7 @@ func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	 e := test.Equipment{EmployerID: id}
+	 e := testing.Equipment{EmployerID: id}
 	if err := e.Delete(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -213,7 +213,7 @@ func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
 
 
-	equipments, err := test.GetAllEquipments(a.DB)
+	equipments, err := testing.GetAllEquipments(a.DB)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -223,7 +223,7 @@ func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) CreateEquipment(w http.ResponseWriter, r *http.Request) {
-	var e test.Equipment
+	var e testing.Equipment
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
