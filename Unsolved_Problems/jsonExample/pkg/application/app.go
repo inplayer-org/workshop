@@ -62,6 +62,8 @@ func (a *App) GetContracts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
+
 	respondWithJSON(w, http.StatusOK, cs)
 }
 func (a *App) GetContract(w http.ResponseWriter, r *http.Request) {
