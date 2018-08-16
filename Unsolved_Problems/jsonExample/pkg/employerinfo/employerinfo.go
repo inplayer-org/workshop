@@ -1,4 +1,4 @@
-package empinfo
+package employerinfo
 
 import (
 	"database/sql"
@@ -81,13 +81,13 @@ func rowsToEquipments(rows *sql.Rows) ([]Equipment, error) {
 
 type Contract struct {
 
-	ContractNumber int
-	EmployerID int
-	HiredDate string
-	DueDate string
-	Salary string
-	PositionName string
-	Position *Position
+	ContractNumber int `json:"contract_number"`
+	EmployerID int `json:"employer_id"`
+	HiredDate string `json:"hired_date"`
+	DueDate string `json:"due_date"`
+	Salary string `json:"salary"`
+	PositionName string `json:"position_name"`
+	Position *Position `json:"position"`
 
 }
 
@@ -158,8 +158,8 @@ func rowsToContracts(rows *sql.Rows) ([]Contract, error) {
 
 type Position struct {
 
-	Name string
-	Description string
+	Name string `json:"name"`
+	Description string `json:"description"`
 
 }
 
@@ -235,7 +235,73 @@ type EmployerInfo struct {
 	City string
 	Country string
 	Contracts *[]Contract
-	Equipment *[]Equipment
+	Equipment *Equipment
 
 }
 
+func (e *EmployerInfo) get(db *sql.DB) error {
+
+	query:=fmt.Sprintf("SELECT fullname,email,gender,birth_date,city,country FROM employer_info WHERE employer_id=%d",e.ID)
+	err:=db.QueryRow(query,nil).Scan(&e.FullName,&e.Email,&e.Gender,&e.BirthDate,&e.City,&e.Country)
+
+	if err!= nil {
+		return err
+	}
+
+	query=fmt.Sprintf("    SELECT contract.contract_number,contract.employer_id,contract.date_of_contract,contract.expiring_date, contract.salary,contract.emp_position,position_info.emp_position,position_info.description FROM contract INNER JOIN position_info ON contract.emp_position=position_info.emp_position WHERE contract.contract_number=%d",e.ID)
+	rows,err:=db.Query(query)
+
+	if err!= nil {
+		return err
+	}
+
+	contracts,err:=contractsForEmployer(rows)
+	e.Contracts=&contracts
+
+	if err!= nil {
+		return err
+	}
+
+    query=fmt.Sprintf("SELECT computer,monitor,mouse,keyboard,headset FROM equipment where employer_id=%d",e.ID)
+    &e.Equipment.EmployerID=&e.ID
+	return db.QueryRow(query).Scan(&e.Equipment.Copmuters,&e.Equipment.Monitors,&e.Equipment.Mouses,&e.Equipment.Keyboards,&e.Equipment.Headsets)
+
+}
+
+func contractsForEmployer(rows *sql.Rows)([]Contract,error){
+	var contracts []Contract
+	for rows.Next() {
+		var c Contract
+		err:=rows.Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName,&c.Position.Name,&c.Position.Description)
+
+		if err!= nil {
+			return nil,err
+		}
+
+		contracts=append(contracts,c)
+	}
+	return contracts,nil
+}
+
+func (e *EmployerInfo) create(db *sql.DB)error {
+
+	query:=fmt.Sprintf("INSERT INTO employer_info(fullname, email,gender,birth_date,city,country) VALUES('%s','%s','%s','%s','%s','%s')",&e.FullName,&e.Email,&e.Gender,&e.BirthDate,&e.City,&e.Country)
+	_,err:=db.Exec(query)
+	return err
+
+}
+
+func (e *EmployerInfo) update(db *sql.DB)error {
+
+	query:=fmt.Sprintf("UPDATE employer_info SET firstname='%s',email='%s',gender='%s',birth_date='%s',city='%s',country='%s' WHERE employer_id=%d",&e.FullName,&e.Email,&e.Gender,&e.BirthDate,&e.City,&e.Country,&e.ID)
+	_,err:=db.Exec(query)
+	return err
+
+}
+
+func (e *EmployerInfo) delete(db *sql.DB)error {
+
+
+
+	return nil
+}
