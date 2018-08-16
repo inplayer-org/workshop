@@ -36,7 +36,7 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipments).Methods("GET")
+	a.Router.HandleFunc("/employer/equipments", a.GetEquipments).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipment).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.UpdateEquipment).Methods("PUT")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.CreateEquipment).Methods("POST")
