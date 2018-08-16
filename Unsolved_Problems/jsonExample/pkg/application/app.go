@@ -36,6 +36,11 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/employers", a.GetEmployers).Methods("GET")
+	a.Router.HandleFunc("/employer", a.CreateEmployers).Methods("POST")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.GetEmployer).Methods("GET")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.UpdateEmployer).Methods("PUT")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipments).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipment).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.UpdateEquipment).Methods("PUT")
@@ -52,6 +57,98 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.CreateContract).Methods("POST")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.DeleteContract).Methods("DELETE")
 }
+func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
+
+
+	employers, err := GetAllEmployers(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, employers)
+}
+
+func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
+	var e employers
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&e); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+
+	if err := e.Create(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, e)
+}
+
+func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid employer ID")
+		return
+	}
+
+	e := employer{ID: id}
+	if err := e.Get(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "Employer not found")
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, e)
+}
+func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Employer ID")
+		return
+	}
+
+	var e employer
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&e); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
+		return
+	}
+	defer r.Body.Close()
+	e.ID = id
+
+	if err := e.Update(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, e)
+}
+
+func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid Employer ID")
+		return
+	}
+
+	e := employer{ID: id}
+	if err := e.Delete(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+}
+
 func (a *App) GetContracts(w http.ResponseWriter, r *http.Request) {
 
 
