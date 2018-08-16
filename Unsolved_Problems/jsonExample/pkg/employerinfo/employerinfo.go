@@ -434,7 +434,7 @@ func rowsToEmployers(db *sql.DB,rows *sql.Rows) ([]EmployerInfo, error) {
 		}
 
 
-//		e.Equipment=&eq
+    	e.Equipment=&eq
 
 		employers=append(employers,e)
 
