@@ -7,15 +7,30 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"log"
 )
 
 //PROTOTYPE VERSION
 var foods []structures.Food
 
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"error": message})
+}
+
+func respondWithJSON(w http.ResponseWriter, code int, dataStruct interface{}) {
+	log.Println(dataStruct)
+	response, err := json.Marshal(dataStruct)
+	if err!=nil{
+		w.WriteHeader(http.StatusUnprocessableEntity)
+	}else{
+		w.WriteHeader(code)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(response)
+}
 
 func GetFoods(w http.ResponseWriter, req *http.Request){
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(foods)
+	respondWithJSON(w,http.StatusOK,foods)
 }
 
 func GetFood(w http.ResponseWriter, req *http.Request){
@@ -29,7 +44,7 @@ func GetFood(w http.ResponseWriter, req *http.Request){
 			return
 		}
 	}
-	w.WriteHeader(http.StatusNotFound)
+	respondWithError(w,http.StatusBadRequest,"Index not present in database")
 }
 
 func AddFood(w http.ResponseWriter,req *http.Request){
@@ -40,15 +55,12 @@ func AddFood(w http.ResponseWriter,req *http.Request){
 	//Check if the food id is already present in the database
 	for _,checkFood := range foods{
 		if food.FoodID == checkFood.FoodID{
-			w.WriteHeader(http.StatusAlreadyReported)
-			json.NewEncoder(w).Encode(checkFood)
+			respondWithJSON(w,http.StatusAlreadyReported,checkFood)
 			return
 		}
 	}
-
-	w.WriteHeader(http.StatusAccepted)
+	respondWithJSON(w,http.StatusAccepted,food)
 	foods = append(foods,food)
-	json.NewEncoder(w).Encode(food)
 
 }
 
@@ -58,12 +70,11 @@ func DeleteFood(w http.ResponseWriter,req *http.Request){
 	for i,food := range foods {
 		if strconv.Itoa(food.FoodID) == param["id"]{
 			foods = append(foods[:i],foods[i+1:]...)
-			w.WriteHeader(http.StatusAccepted)
-			json.NewEncoder(w).Encode(food)
+			respondWithJSON(w,http.StatusAccepted,food)
 			return
 		}
 	}
-	w.WriteHeader(http.StatusNoContent)
+	respondWithError(w,http.StatusBadRequest,"Index not present in database")
 
 
 }
@@ -74,23 +85,18 @@ func UpdateFood(w http.ResponseWriter,req *http.Request){
 	var updFood structures.Food
 	json.NewDecoder(req.Body).Decode(&updFood)
 	if strconv.Itoa(updFood.FoodID) != param["id"]{
-		w.WriteHeader(http.StatusConflict)
-		var differences []structures.Food
 		parID,_ := strconv.Atoi(param["id"])
-		differences = append(differences,structures.Food{FoodID:parID,})
-		differences = append(differences,updFood)
-		json.NewEncoder(w).Encode(differences)
+		respondWithJSON(w,http.StatusMultipleChoices,map[string]structures.Food{"struct1":{FoodID:parID},"struct2":updFood})
 		return
 	}
 	for i,food := range foods{
 		if strconv.Itoa(food.FoodID) == param["id"]{
 			foods[i] = updFood
-			w.WriteHeader(http.StatusAccepted)
-			json.NewEncoder(w).Encode(updFood)
+			respondWithJSON(w,http.StatusAccepted,updFood)
 			return
 		}
 	}
-	w.WriteHeader(http.StatusNoContent)
+	respondWithError(w,http.StatusBadRequest,"Index not present in database")
 }
 
 
@@ -118,3 +124,5 @@ func main() {
 	http.ListenAndServe(":8889", router)
 
 }
+
+
