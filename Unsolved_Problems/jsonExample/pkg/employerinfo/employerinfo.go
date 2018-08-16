@@ -63,7 +63,7 @@ func GetAllEquipments(db *sql.DB) ([]Equipment,error){
 }
 
 func rowsToEquipments(rows *sql.Rows) ([]Equipment, error) {
-	equipments := []Equipment{}
+	var equipments []Equipment
 
 	for rows.Next() {
 		var e Equipment
@@ -123,37 +123,44 @@ func (c *Contract) Delete(db *sql.DB) error{
 }
 
 func GetAllContracts(db *sql.DB) ([]Contract,error){
-
-	query:=fmt.Sprintf("	SELECT contract.contract_number,contract.employer_id,contract.date_of_contract,contract.expiring_date,contract.salary,contract.emp_position,position_info.emp_position,position_info.description FROM contract INNER JOIN position_info ON contract.emp_position=position_info.emp_position")
+	//fmt.Println("test")
+	query:=fmt.Sprintf("    SELECT contract_number,employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract")
 	rows,err:=db.Query(query)
 
+	//fmt.Println(rows)
 	if err!=nil{
+		//fmt.Println(err)
 		return nil,err
 	}
 
 	defer rows.Close()
 
-	return rowsToContracts(rows)
+	return rowsToContracts(db,rows)
+
 }
 
-func rowsToContracts(rows *sql.Rows) ([]Contract, error) {
+func rowsToContracts(db *sql.DB,rows *sql.Rows) ([]Contract, error) {
 
-	contracts := []Contract{}
+	var contracts []Contract
 
 	for rows.Next() {
 		var c Contract
-		err:=rows.Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName,&c.Position.Name,&c.Position.Description)
+		err:=rows.Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName)
 
 		if err!=nil {
 			return nil,err
 		}
+		var p Position
+		query:=fmt.Sprintf("SELECT emp_position,description FROM position_info WHERE emp_position='%s'",c.PositionName)
+		err=db.QueryRow(query).Scan(&p.Name,&p.Description)
+
+		c.Position=&p
 
 		contracts=append(contracts,c)
 	}
 
 	return contracts,nil
 }
-
 
 
 type Position struct {
@@ -248,14 +255,15 @@ func (e *EmployerInfo) Get(db *sql.DB) error {
 		return err
 	}
 
-	query=fmt.Sprintf("    SELECT contract.contract_number,contract.employer_id,contract.date_of_contract,contract.expiring_date, contract.salary,contract.emp_position,position_info.emp_position,position_info.description FROM contract INNER JOIN position_info ON contract.emp_position=position_info.emp_position WHERE contract.contract_number=%d",e.ID)
+	query=fmt.Sprintf("    SELECT contract_number,employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract")
 	rows,err:=db.Query(query)
+
 
 	if err!= nil {
 		return err
 	}
 
-	contracts,err:=contractsForEmployer(rows)
+	contracts,err:=contractsForEmployer(db,	rows)
 	e.Contracts=&contracts
 
 	if err!= nil {
@@ -263,23 +271,39 @@ func (e *EmployerInfo) Get(db *sql.DB) error {
 	}
 
     query=fmt.Sprintf("SELECT computer,monitor,mouse,keyboard,headset FROM equipment where employer_id=%d",e.ID)
-    &e.Equipment.EmployerID=&e.ID
-	return db.QueryRow(query).Scan(&e.Equipment.Copmuters,&e.Equipment.Monitors,&e.Equipment.Mouses,&e.Equipment.Keyboards,&e.Equipment.Headsets)
+  //  &e.Equipment.EmployerID=&e.ID
+    var eq Equipment
+    eq.EmployerID=e.ID
+	err= db.QueryRow(query).Scan(&eq.Copmuters,&eq.Monitors,&eq.Mouses,&eq.Keyboards,&eq.Headsets)
 
+	e.Equipment=&eq
+
+	if err!= nil {
+		return err
+	}
+
+	return nil
 }
 
-func contractsForEmployer(rows *sql.Rows)([]Contract,error){
+func contractsForEmployer(db *sql.DB,rows *sql.Rows)([]Contract,error){
 	var contracts []Contract
+
 	for rows.Next() {
 		var c Contract
-		err:=rows.Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName,&c.Position.Name,&c.Position.Description)
+		err:=rows.Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName)
 
-		if err!= nil {
+		if err!=nil {
 			return nil,err
 		}
+		var p Position
+		query:=fmt.Sprintf("SELECT emp_position,description FROM position_info WHERE emp_position='%s'",c.PositionName)
+		err=db.QueryRow(query).Scan(&p.Name,&p.Description)
+
+		c.Position=&p
 
 		contracts=append(contracts,c)
 	}
+
 	return contracts,nil
 }
 
@@ -338,22 +362,47 @@ func GetAllEmployers(db *sql.DB)([]EmployerInfo,error){
 
 	defer rows.Close()
 
-	return rowsToEmployers(rows)
+	return rowsToEmployers(db,rows)
 
 }
 
-func rowsToEmployers(rows *sql.Rows) ([]EmployerInfo, error) {
+func rowsToEmployers(db *sql.DB,rows *sql.Rows) ([]EmployerInfo, error) {
 
-	var e EmployerInfo
+	var employers []EmployerInfo
 	for rows.Next() {
+		var e EmployerInfo
 		err:=rows.Scan(&e.ID,&e.FullName,&e.Email,&e.Gender,&e.BirthDate,&e.City,&e.Country)
 
 		if err != nil {
 			return nil,err
 		}
 
-		query:=fmt.Sprintf("SELECT contract.contract_number,contract.employer_id,contract.date_of_contract,contract.expiring_date,contract.salary,contract.emp_position,position_info.emp_position,position_info.description FROM contract INNER JOIN position_info ON contract.emp_position=position_info.emp_position WHERE contract.employer_id=%d",e.ID)
+		query:=fmt.Sprintf("SELECT contract_number,employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract WHERE employer_id=%d",e.ID)
+  		crows,err:=db.Query(query)
 
+  		defer crows.Close()
+
+  		if err!= nil {
+  			return nil, err
+		}
+
+		contracts,err:=rowsToContracts(db,crows)
+
+		e.Contracts=&contracts
+
+		var eq Equipment
+		query=fmt.Sprintf("SELECT employer_id,computer,monitor,mouse,keyboard,headset FROM equipment WHERE employer_id=%d",e.ID)
+		err=db.QueryRow(query).Scan(&eq.EmployerID,&eq.Copmuters,&eq.Monitors,&eq.Mouses,&eq.Keyboards,&eq.Headsets)
+
+		if err!= nil {
+			return nil, err
+		}
+
+
+		e.Equipment=&eq
+
+		employers=append(employers,e)
 	}
 
+	return employers,nil
 }
