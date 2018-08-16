@@ -9,8 +9,8 @@ import (
 	"net/http"
 
 	"encoding/json"
-	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/test"
 	"strconv"
+	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/employerinfo"
 )
 
 type App struct {
@@ -41,26 +41,29 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.GetEmployer).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.UpdateEmployer).Methods("PUT")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}", a.DeleteEmployer).Methods("DELETE")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipments).Methods("GET")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipment).Methods("GET")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.UpdateEquipment).Methods("PUT")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.CreateEquipment).Methods("POST")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.DeleteEquipment).Methods("DELETE")
+
+	a.Router.HandleFunc("/equipments", a.GetEquipments).Methods("GET")
+	a.Router.HandleFunc("/equipment/{id:[0-9]+}", a.GetEquipment).Methods("GET")
+	a.Router.HandleFunc("/equipment/{id:[0-9]+}", a.UpdateEquipment).Methods("PUT")
+	a.Router.HandleFunc("/equipment", a.CreateEquipment).Methods("POST")
+	a.Router.HandleFunc("/equipment/{id:[0-9]+}", a.DeleteEquipment).Methods("DELETE")
+
 	a.Router.HandleFunc("/positions", a.GetPositions).Methods("GET")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.GetPosition).Methods("GET")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.UpdatePosition).Methods("PUT")
 	a.Router.HandleFunc("/position", a.CreatePosition).Methods("POST")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.DeletePosition).Methods("DELETE")
+
 	a.Router.HandleFunc("/contracts", a.GetContracts).Methods("GET")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.GetContract).Methods("GET")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.UpdateContract).Methods("PUT")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.CreateContract).Methods("POST")
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.DeleteContract).Methods("DELETE")
+	a.Router.HandleFunc("/contract/{id:[0-9]+}", a.GetContract).Methods("GET")
+	a.Router.HandleFunc("/contract/{id:[0-9]+}", a.UpdateContract).Methods("PUT")
+	a.Router.HandleFunc("/contract", a.CreateContract).Methods("POST")
+	a.Router.HandleFunc("/contract/{id:[0-9]+}", a.DeleteContract).Methods("DELETE")
 }
 func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 
 
-	employers, err := GetAllEmployers(a.DB)
+	employers, err := employerinfo.GetAllEmployers(a.DB)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -70,7 +73,7 @@ func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
-	var e employers
+	var e employerinfo.EmployerInfo
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -94,7 +97,7 @@ func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	e := employer{ID: id}
+	e := employerinfo.EmployerInfo{ID: id}
 	if err := e.Get(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -115,7 +118,7 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var e employer
+	var e employerinfo.EmployerInfo
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
@@ -140,7 +143,7 @@ func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	e := employer{ID: id}
+	e := employerinfo.EmployerInfo{ID: id}
 	if err := e.Delete(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -152,7 +155,7 @@ func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
 func (a *App) GetContracts(w http.ResponseWriter, r *http.Request) {
 
 
-	cs, err := testing.GetAllContracts(a.DB)
+	cs, err := employerinfo.GetAllContracts(a.DB)
 	fmt.Println(cs)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -171,7 +174,7 @@ func (a *App) GetContract(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := testing.Contract{EmployerID: id}
+	c := employerinfo.Contract{ContractNumber: id}
 	if err := c.Get(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -193,7 +196,7 @@ func (a *App) UpdateContract(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var c testing.Contract
+	var c employerinfo.Contract
 	c.EmployerID = id
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
@@ -211,7 +214,7 @@ func (a *App) UpdateContract(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, c)
 }
 func (a *App) CreateContract(w http.ResponseWriter, r *http.Request) {
-	var c testing.Contract
+	var c employerinfo.Contract
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -234,7 +237,7 @@ func (a *App) DeleteContract(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := testing.Contract{EmployerID: id}
+	c := employerinfo.Contract{ContractNumber: id}
 	if err := c.Delete(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -247,7 +250,7 @@ func (a *App) DeleteContract(w http.ResponseWriter, r *http.Request) {
 func (a *App) GetPositions(w http.ResponseWriter, r *http.Request) {
 
 
-	positions, err := testing.GetAllPositions(a.DB)
+	positions, err := employerinfo.GetAllPositions(a.DB)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -265,7 +268,7 @@ func (a *App) GetPosition(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p := testing.Position{Name: name}
+	p := employerinfo.Position{Name: name}
 	//fmt.Println(p.Name)
 	if err := p.Get(a.DB); err != nil {
 		switch err {
@@ -288,7 +291,7 @@ func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 		return
 }
 //
-	var p testing.Position
+	var p employerinfo.Position
 	p.Name = name
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
@@ -307,7 +310,7 @@ func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
-	var p testing.Position
+	var p employerinfo.Position
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -331,7 +334,7 @@ func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p := testing.Position{Name: name}
+	p := employerinfo.Position{Name: name}
 	if err := p.Delete(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -350,7 +353,7 @@ func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	    e := testing.Equipment{EmployerID: id}
+	    e := employerinfo.Equipment{EmployerID: id}
 	if err := e.Get(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -372,7 +375,7 @@ func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	 var e testing.Equipment
+	 var e employerinfo.Equipment
 	e.EmployerID = id
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
@@ -398,7 +401,7 @@ func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	 e := testing.Equipment{EmployerID: id}
+	 e := employerinfo.Equipment{EmployerID: id}
 	if err := e.Delete(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -410,7 +413,7 @@ func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
 
 
-	equipments, err := testing.GetAllEquipments(a.DB)
+	equipments, err := employerinfo.GetAllEquipments(a.DB)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -420,7 +423,7 @@ func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) CreateEquipment(w http.ResponseWriter, r *http.Request) {
-	var e testing.Equipment
+	var e employerinfo.Equipment
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")

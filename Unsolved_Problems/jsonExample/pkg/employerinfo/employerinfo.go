@@ -25,7 +25,7 @@ func (e *Equipment) Get(db *sql.DB) error {
 
 func (e *Equipment) Create(db *sql.DB) error {
 
-	query := fmt.Sprintf("INSERT INTO equipment(employer_id,computer,monitor,mouse,keyboard,headset) VALUES(%d,%d,%d,%d,%d,%d)",&e.EmployerID,&e.Copmuters,&e.Monitors,&e.Mouses,&e.Keyboards,&e.Headsets)
+	query := fmt.Sprintf("INSERT INTO equipment(employer_id,computer,monitor,mouse,keyboard,headset) VALUES(%d,%d,%d,%d,%d,%d)",e.EmployerID,e.Copmuters,e.Monitors,e.Mouses,e.Keyboards,e.Headsets)
 	_,err:= db.Exec(query)
 	return err
 
@@ -93,14 +93,29 @@ type Contract struct {
 
 func (c *Contract) Get(db *sql.DB) error {
 
-	query := fmt.Sprintf("SELECT contract.contract_number,contract.employer_id,contract.date_of_contract,contract.expiring_date,contract.salary,contract.emp_position,position_info.emp_position,position_info.description FROM contract INNER JOIN position_info ON contract.emp_position=position_info.emp_position AND contract.employer_id=%d",c.EmployerID)
-	return db.QueryRow(query).Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName,&c.Position.Name,&c.Position.Description)
+	query:=fmt.Sprintf("    SELECT employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract WHERE contract_number=%d",c.ContractNumber)
+	err := db.QueryRow(query).Scan(&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName)
 
+	if err!=nil {
+		return err
+	}
+
+	var p Position
+	query=fmt.Sprintf("SELECT emp_position,description FROM position_info WHERE emp_position='%s'",c.PositionName)
+	err= db.QueryRow(query).Scan(&p.Name,&p.Description)
+
+	if err!=nil {
+		return err
+	}
+
+	c.Position=&p
+
+	return nil
 }
 
 func (c *Contract) Create(db *sql.DB) error {
 
-	query := fmt.Sprintf("INSERT INTO contract(employer_id,date_of_contract,expiring_date,salary,emp_position) VALUES(%d,'%s','%s','%s','%s')",&c.EmployerID,c.HiredDate,c.DueDate,c.Salary,c.PositionName)
+	query := fmt.Sprintf("INSERT INTO contract(employer_id,date_of_contract,expiring_date,salary,emp_position) VALUES(%d,'%s','%s','%s','%s')",c.EmployerID,c.HiredDate,c.DueDate,c.Salary,c.PositionName)
 	_,err:= db.Exec(query)
 	return err
 
@@ -216,11 +231,11 @@ func GetAllPositions(db *sql.DB)([]Position,error){
 }
 
 func rowsToPositions(rows *sql.Rows)([]Position,error){
-	positions := []Position{}
+	var positions  []Position
 
 	for rows.Next() {
 		var p Position
-		err:=rows.Scan(&p.Name,p.Description)
+		err:=rows.Scan(&p.Name,&p.Description)
 
 		if err!=nil {
 			return nil,err
