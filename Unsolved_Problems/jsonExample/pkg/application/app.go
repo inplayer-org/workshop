@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"encoding/json"
-	"strconv"
 	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/test"
 )
 
@@ -36,15 +35,116 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipments).Methods("GET")
+	/*a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipments).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.GetEquipment).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.UpdateEquipment).Methods("PUT")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.CreateEquipment).Methods("POST")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/equipment", a.DeleteEquipment).Methods("DELETE")
+	*/
+	a.Router.HandleFunc("/positions", a.GetPositions).Methods("GET")
+	a.Router.HandleFunc("/position/{name:[a-z]+}", a.GetPosition).Methods("GET")
+	a.Router.HandleFunc("/position/{name}", a.UpdatePosition).Methods("PUT")
+	a.Router.HandleFunc("/position/{name}", a.CreatePosition).Methods("POST")
+	a.Router.HandleFunc("/position/{name:[a-z]+}", a.DeletePosition).Methods("DELETE")
+}
 
+func (a *App) GetPositions(w http.ResponseWriter, r *http.Request) {
+
+
+	positions, err := testing.GetAllPositions(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, positions)
+}
+func (a *App) GetPosition(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	name, err := vars["name"]
+
+	if err != true {
+		respondWithError(w, http.StatusBadRequest, "Invalid Position ")
+		return
+	}
+
+	p := testing.Position{Name: name}
+	//fmt.Println(p.Name)
+	if err := p.Get(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "position not found")
+
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, p)
+}
+func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	name, err := (vars["name"])
+	if err != true {
+		respondWithError(w, http.StatusBadRequest, "Invalid Position ID")
+		return
+	}
+
+	var p testing.Position
+	p.Name = name
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&p); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
+		return
+	}
+	defer r.Body.Close()
+	// p.EmployerID = id
+
+	if err := p.Update(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, p)
+}
+
+func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
+	var p testing.Position
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&p); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	defer r.Body.Close()
+
+	if err := p.Create(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, p)
+}
+
+func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	name, err := (vars["name"])
+	if err != true {
+		respondWithError(w, http.StatusBadRequest, "Invalid Position ID")
+		return
+	}
+
+	p := testing.Position{Name: name}
+	if err := p.Delete(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
 
+/*
 func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -109,6 +209,7 @@ func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
+
 func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
 
 
@@ -137,6 +238,9 @@ func (a *App) CreateEquipment(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJSON(w, http.StatusCreated, e)
 }
+
+*/
+
 
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
