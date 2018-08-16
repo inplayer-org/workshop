@@ -372,6 +372,7 @@ func GetAllEmployers(db *sql.DB)([]EmployerInfo,error){
 	rows,err:=db.Query(query)
 
 	if err!=nil {
+		fmt.Println(err)
 		return nil,err
 	}
 
@@ -389,6 +390,7 @@ func rowsToEmployers(db *sql.DB,rows *sql.Rows) ([]EmployerInfo, error) {
 		err:=rows.Scan(&e.ID,&e.FullName,&e.Email,&e.Gender,&e.BirthDate,&e.City,&e.Country)
 
 		if err != nil {
+			//fmt.Println(err)
 			return nil,err
 		}
 
@@ -398,25 +400,44 @@ func rowsToEmployers(db *sql.DB,rows *sql.Rows) ([]EmployerInfo, error) {
   		defer crows.Close()
 
   		if err!= nil {
-  			return nil, err
+			//fmt.Println(err)
+			return nil, err
 		}
 
 		contracts,err:=rowsToContracts(db,crows)
 
-		e.Contracts=&contracts
-
-		var eq Equipment
-		query=fmt.Sprintf("SELECT employer_id,computer,monitor,mouse,keyboard,headset FROM equipment WHERE employer_id=%d",e.ID)
-		err=db.QueryRow(query).Scan(&eq.EmployerID,&eq.Copmuters,&eq.Monitors,&eq.Mouses,&eq.Keyboards,&eq.Headsets)
-
 		if err!= nil {
+			//fmt.Println(err)
 			return nil, err
 		}
 
+		e.Contracts=&contracts
 
+		var eq Equipment
+		eq.EmployerID=e.ID
+		query=fmt.Sprintf("SELECT computer,monitor,mouse,keyboard,headset FROM equipment WHERE employer_id=%d",eq.EmployerID)
+		err=db.QueryRow(query).Scan(&eq.Copmuters,&eq.Monitors,&eq.Mouses,&eq.Keyboards,&eq.Headsets)
+ 		/*fmt.Println(eq)
 		e.Equipment=&eq
+		fmt.Println(e)
+		fmt.Println(employers)*/
+		if err!= nil {
+			if err == sql.ErrNoRows {
+				eq.Copmuters=0
+				eq.Monitors=0
+				eq.Mouses=0
+				eq.Keyboards=0
+				eq.Headsets=0
+			} else {
+				return nil,err
+			}
+		}
+
+
+//		e.Equipment=&eq
 
 		employers=append(employers,e)
+
 	}
 
 	return employers,nil
