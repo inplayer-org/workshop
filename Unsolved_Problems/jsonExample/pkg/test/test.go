@@ -21,6 +21,81 @@ type Position struct {
 
 }
 
+type Contract struct {
+
+	ContractNumber int `json:"contract_number"`
+	EmployerID int `json:"employer_id"`
+	HiredDate string `json:"hired_date"`
+	DueDate string `json:"due_date"`
+	Salary string `json:"salary"`
+	PositionName string `json:"position_name"`
+	Position *Position `json:"position"`
+
+}
+
+func (c *Contract) Get(db *sql.DB) error {
+
+	query := fmt.Sprintf("SELECT contract.contract_number,contract.employer_id,contract.date_of_contract,contract.expiring_date,contract.salary,contract.emp_position,position_info.emp_position,position_info.description FROM contract INNER JOIN position_info ON contract.emp_position=position_info.emp_position AND contract.employer_id=%d",c.EmployerID)
+	return db.QueryRow(query).Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName,&c.Position.Name,&c.Position.Description)
+
+}
+
+func (c *Contract) Create(db *sql.DB) error {
+
+	query := fmt.Sprintf("INSERT INTO contract(employer_id,date_of_contract,expiring_date,salary,emp_position) VALUES(%d,'%s','%s','%s','%s')",&c.EmployerID,c.HiredDate,c.DueDate,c.Salary,c.PositionName)
+	_,err:= db.Exec(query)
+	return err
+
+}
+
+func (c *Contract) Update(db *sql.DB) error {
+
+	query := fmt.Sprintf("UPDATE contract SET employer_id=%d,date_of_contract='%s',expiring_date='%s',salary='%s',emp_position='%s'",&c.EmployerID,c.HiredDate,c.DueDate,c.Salary,c.PositionName)
+	_,err:= db.Exec(query)
+	return err
+
+}
+
+func (c *Contract) Delete(db *sql.DB) error{
+
+	query:=fmt.Sprintf("DELETE FROM contract WHERE contract_number=%d",c.ContractNumber)
+	_,err:=db.Exec(query)
+	return err
+
+}
+
+func GetAllContracts(db *sql.DB) ([]Contract,error){
+fmt.Println("test")
+	query:=fmt.Sprintf("    SELECT contract.contract_number,contract.employer_id,contract.date_of_contract,contract.expiring_date,contract.salary,contract.emp_position,position_info.emp_position,position_info.description FROM contract INNER JOIN position_info ON contract.emp_position=position_info.emp_position")
+	rows,err:=db.Query(query)
+fmt.Println(rows)
+	if err!=nil{
+		fmt.Println(err)
+		return nil,err
+	}
+
+	defer rows.Close()
+
+	return rowsToContracts(rows)
+}
+
+func rowsToContracts(rows *sql.Rows) ([]Contract, error) {
+
+	var contracts []Contract
+
+	for rows.Next() {
+		var c Contract
+		err:=rows.Scan(&c.ContractNumber,&c.EmployerID,&c.HiredDate,&c.DueDate,&c.Salary,&c.PositionName,&c.Position.Name,&c.Position.Description)
+
+		if err!=nil {
+			return nil,err
+		}
+
+		contracts=append(contracts,c)
+	}
+
+	return contracts,nil
+}
 func (p *Position) Get(db *sql.DB) error {
 
 	query := fmt.Sprintf("SELECT emp_position, description FROM position_info WHERE emp_position='%s'",p.Name)

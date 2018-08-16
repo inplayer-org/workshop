@@ -46,7 +46,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.UpdatePosition).Methods("PUT")
 	a.Router.HandleFunc("/position", a.CreatePosition).Methods("POST")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.DeletePosition).Methods("DELETE")
-	a.Router.HandleFunc("/employer/contracts", a.GetContracts).Methods("GET")
+	a.Router.HandleFunc("/employer/{id:[0-9]+}/contracts", a.GetContracts).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.GetContract).Methods("GET")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.UpdateContract).Methods("PUT")
 	a.Router.HandleFunc("/employer/{id:[0-9]+}/contract", a.CreateContract).Methods("POST")
@@ -55,13 +55,14 @@ func (a *App) initializeRoutes() {
 func (a *App) GetContracts(w http.ResponseWriter, r *http.Request) {
 
 
-	contratcs, err := testing.GetAllEquipments(a.DB)
+	cs, err := testing.GetAllContracts(a.DB)
+	fmt.Println(cs)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, contratcs)
+	respondWithJSON(w, http.StatusOK, cs)
 }
 func (a *App) GetContract(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
