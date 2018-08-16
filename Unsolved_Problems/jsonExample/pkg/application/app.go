@@ -43,8 +43,8 @@ func (a *App) initializeRoutes() {
 	*/
 	a.Router.HandleFunc("/positions", a.GetPositions).Methods("GET")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.GetPosition).Methods("GET")
-	a.Router.HandleFunc("/position/{name}", a.UpdatePosition).Methods("PUT")
-	a.Router.HandleFunc("/position/{name}", a.CreatePosition).Methods("POST")
+	a.Router.HandleFunc("/position/{name:[a-z]+}", a.UpdatePosition).Methods("PUT")
+	a.Router.HandleFunc("/position", a.CreatePosition).Methods("POST")
 	a.Router.HandleFunc("/position/{name:[a-z]+}", a.DeletePosition).Methods("DELETE")
 }
 
@@ -87,10 +87,10 @@ func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name, err := (vars["name"])
 	if err != true {
-		respondWithError(w, http.StatusBadRequest, "Invalid Position ID")
+	respondWithError(w, http.StatusBadRequest, "Invalid Position ID")
 		return
-	}
-
+}
+//
 	var p testing.Position
 	p.Name = name
 	decoder := json.NewDecoder(r.Body)

@@ -6,7 +6,7 @@ import (
 
 func main() {
 	a := application.App{}
-	a.Initialize("root", "darko123", "inplayerdb")
+	a.Initialize("root", "12345", "inplayerdb")
 
 	a.Run(":3030")
 }

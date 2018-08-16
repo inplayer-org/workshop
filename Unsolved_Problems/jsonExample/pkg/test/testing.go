@@ -21,7 +21,7 @@ return db.QueryRow(query).Scan(&p.Name,&p.Description)
 
 func (p *Position) Create(db *sql.DB) error{
 
-query:=fmt.Sprintf("INSERT INTO position_info(emp_position,description) VALUES('%s','%s')",&p.Name,&p.Description)
+query:=fmt.Sprintf("INSERT INTO position_info(emp_position,description) VALUES('%s','%s')",p.Name,p.Description)
 _,err:=db.Exec(query)
 return err
 
