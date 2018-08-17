@@ -209,9 +209,14 @@ func (p *Position) Create(db *sql.DB) error{
 }
 
 func (p *Position) Update(db *sql.DB) error{
+	err:= errorhandle.CheckString(&p.Name)
 
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	}
 	query:=fmt.Sprintf("UPDATE position_info SET description='%s' WHERE emp_position='%s'",p.Description,p.Name)
-	_,err:=db.Exec(query)
+	_,err =db.Exec(query)
 	return err
 
 }
@@ -342,12 +347,32 @@ func contractsForEmployer(db *sql.DB,rows *sql.Rows)([]Contract,error){
 	return contracts,nil
 }
 
+
 func (e *EmployerInfo) Create(db *sql.DB)error {
+	err:= errorhandle.CheckString(&e.FullName)
+
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	}
+	err = errorhandle.CheckString(&e.Country)
+
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	}
+	err = errorhandle.CheckString(&e.City)
+
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	}
+
 	contracts:=*e.Contracts
 
 	var count int
 	query := fmt.Sprintf("SELECT COUNT(emp_position) FROM position_info WHERE emp_position='%s'",contracts[0].PositionName)
-	err:= db.QueryRow(query).Scan(&count)
+	err= db.QueryRow(query).Scan(&count)
 
 	if err != nil {
 		return err
@@ -385,9 +410,27 @@ func (e *EmployerInfo) Create(db *sql.DB)error {
 	}
 
 func (e *EmployerInfo) Update(db *sql.DB)error {
+	err:= errorhandle.CheckString(&e.FullName)
+
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	}
+	err = errorhandle.CheckString(&e.Country)
+
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	}
+	err = errorhandle.CheckString(&e.City)
+
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	}
 
 	query:=fmt.Sprintf("UPDATE employer_info SET fullname='%s',email='%s',gender='%s',birth_date='%s',city='%s',country='%s' WHERE employer_id=%d",e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country,e.ID)
-	_,err:=db.Exec(query)
+	_,err =db.Exec(query)
 
 	return err
 

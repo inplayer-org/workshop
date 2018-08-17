@@ -87,13 +87,14 @@ func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if err := e.Create(a.DB); err != nil {
+
 		switch err {
+		case errorhandle.Err:
+			respondWithError(w, http.StatusConflict, err.Error())
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Position not found")
-
 		default:
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-
+			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
@@ -142,12 +143,20 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 
 
 	if err := e.Update(a.DB); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
 
-	respondWithJSON(w, http.StatusOK, e)
-}
+			switch err {
+			case errorhandle.Err:
+				respondWithError(w, http.StatusConflict, err.Error())
+			case sql.ErrNoRows:
+				respondWithError(w, http.StatusNotFound, "Position not found")
+			default:
+				respondWithError(w, http.StatusInternalServerError, err.Error())
+			}
+			return
+		}
+
+		respondWithJSON(w, http.StatusCreated, e)
+	}
 
 func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -322,13 +331,19 @@ func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	// p.EmployerID = id
 
 	if err := p.Update(a.DB); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+
+		switch err {
+		case errorhandle.Err:
+			respondWithError(w, http.StatusConflict, err.Error())
+
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, p)
+	respondWithJSON(w, http.StatusCreated, p)
 }
-
 func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
 	var p employerinfo.Position
 	decoder := json.NewDecoder(r.Body)
