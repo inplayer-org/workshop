@@ -223,8 +223,15 @@ func (p *Position) Update(db *sql.DB) error{
 
 func (p *Position) Delete(db *sql.DB) error{
 
-	query:=fmt.Sprintf("DELETE FROM position_info WHERE emp_position='%s'",p.Name)
+	query:=fmt.Sprintf("DELETE FROM contract WHERE emp_position='%s'",p.Name)
 	_,err:=db.Exec(query)
+
+	if err != nil {
+		return err
+	}
+
+	query=fmt.Sprintf("DELETE FROM position_info WHERE emp_position='%s'",p.Name)
+	_,err=db.Exec(query)
 	return err
 
 }

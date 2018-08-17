@@ -314,12 +314,12 @@ func (a *App) GetPosition(w http.ResponseWriter, r *http.Request) {
 }
 func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	name, err := (vars["name"])
+	name, err := vars["name"]
 	if err != true {
 	respondWithError(w, http.StatusBadRequest, "Invalid Position ID")
 		return
 }
-//
+
 	var p employerinfo.Position
 	p.Name = name
 	decoder := json.NewDecoder(r.Body)
@@ -370,7 +370,7 @@ func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	name, err := (vars["name"])
+	name, err := vars["name"]
 	if err != true {
 		respondWithError(w, http.StatusBadRequest, "Invalid Position ID")
 		return
