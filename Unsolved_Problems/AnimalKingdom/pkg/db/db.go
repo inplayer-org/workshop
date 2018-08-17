@@ -16,8 +16,8 @@ func errorHandler(err error) {
 //ConnectDB creates a database object
 func ConnectDB(connectString string) *sql.DB {
 	dbConn, err := sql.Open("mysql", connectString)
-
 	errorHandler(err)
+
 	return dbConn
 
 }
@@ -43,15 +43,28 @@ func SelectAllAnimals(db *sql.DB) []structures.Animal {
 }
 
 //Select Animal by name
-func SelectAnimal(db *sql.DB, animalName string) (structures.Animal, error) {
+func SelectAnimalByName(db *sql.DB, animalName string) (structures.Animal, error) {
 	var name, species string
 	var id, height int
 	animal := structures.Animal{}
 	err := db.QueryRow("SELECT * FROM Animal WHERE name=(?)", animalName).Scan(&id, &name, &species, &height)
 	animal.AnimalID = id
-	animal.Name = name
 	animal.Species = species
 	animal.Height = height
+	animal.Name = name
+	return animal, err
+}
+
+//Select Animal by ID
+func SelectAnimalByID(db *sql.DB, animalID int) (structures.Animal, error) {
+	var name, species string
+	var id, height int
+	animal := structures.Animal{}
+	err := db.QueryRow("SELECT * FROM Animal WHERE animalID=(?)", animalID).Scan(&id, &name, &species, &height)
+	animal.AnimalID = id
+	animal.Species = species
+	animal.Height = height
+	animal.Name = name
 	return animal, err
 }
 
@@ -73,36 +86,42 @@ func SelectAllFood(db *sql.DB) []structures.Food {
 }
 
 //Select Food by ID return slice of food
-func SelectFood(db *sql.DB, foodID int) structures.Food {
+func SelectFood(db *sql.DB, foodID int) (structures.Food, error) {
 	var name, typeFood string
 	food := structures.Food{}
 	err := db.QueryRow("SELECT foodName,type FROM Food WHERE foodID=(?)", foodID).Scan(&name, &typeFood)
-	errorHandler(err)
+	//errorHandler(err)
+
 	food.Name = name
 	food.Type = typeFood
-	return food
+	return food, err
 }
 
-//InsertAnimal with structure Animal
-func InsertAnimal(db *sql.DB, animal structures.Animal) {
+//Insert Animal with structure Animal
+func InsertAnimal(db *sql.DB, animal structures.Animal) error {
 	a := animal
+
 	_, err := db.Exec("INSERT INTO Animal(name,species,height) VALUES (?,?,?)", a.Name, a.Species, a.Height)
-	errorHandler(err)
+	if err != nil {
+		panic(err.Error)
+	}
+	return err
 }
 
-//DeleteAnimal
-func DeleteAnimal(db *sql.DB, animalName string) {
+//Delete Animal by name
+func DeleteAnimalByName(db *sql.DB, animalName string) error {
 	delAnimal, err := db.Prepare("DELETE FROM Animal WHERE name=(?)")
-	errorHandler(err)
 	delAnimal.Exec(animalName)
+	return err
 }
 
 //UpdateAnimal
-func UpdateAnimal(db *sql.DB, animal structures.Animal) {
+func UpdateAnimal(db *sql.DB, animal structures.Animal) (structures.Animal, error) {
 	a := animal
 	update, err := db.Prepare("UPDATE Animal set species=(?),height=(?) WHERE name=(?)")
-	errorHandler(err)
+
 	update.Exec(a.Species, a.Height, a.Name)
+	return a, err
 }
 
 //InsertFood with structure Food
@@ -110,6 +129,7 @@ func InsertFood(db *sql.DB, food structures.Food) {
 	f := food
 	_, err := db.Exec("INSERT INTO Food(foodName,type)  VALUES (?,?)", f.Name, f.Type)
 	errorHandler(err)
+	//return err
 }
 
 //Select all Food that an Animal Eat
@@ -144,8 +164,7 @@ func SelectAnimalsEatCertainFood(db *sql.DB, foodName string) []string {
 
 //Select all food that have certain type
 func SelectAllFoodByType(db *sql.DB, typeFood string) []string {
-	rows, err := db.Query("SELECT foodName, count(foodName) FROM Food WHERE type=(?) GROUP BY foodName", typeFood)
-	errorHandler(err)
+	rows, _ := db.Query("SELECT foodName, count(foodName) FROM Food WHERE type=(?) GROUP BY foodName", typeFood)
 	var food []string
 	for rows.Next() {
 		var name string
@@ -164,4 +183,46 @@ func InsertEat(db *sql.DB, animal structures.Animal, food structures.Food) {
 	a := animal
 	_, err := db.Exec("INSERT INTO Eat(animalID,foodID)  VALUES (?,?)", a.AnimalID, f.FoodID)
 	errorHandler(err)
+	//return err
 }
+
+//Delete animal by id
+func DeleteAnimalByID(db *sql.DB, animalID int) {
+	delAnimal, _ := db.Prepare("DELETE FROM Animal WHERE animalID=(?)")
+	delAnimal.Exec(animalID)
+	//return err
+}
+
+//Delete food by ID
+func DeleteFoodByID(db *sql.DB, foodID int) {
+	delAnimal, err := db.Prepare("DELETE FROM Food WHERE foodID=(?)")
+	errorHandler(err)
+	delAnimal.Exec(foodID)
+	//return err
+}
+
+//Delete food by name
+func DeleteFoodByName(db *sql.DB, foodName string) {
+	delAnimal, err := db.Prepare("DELETE FROM Food WHERE foodName=(?)")
+	errorHandler(err)
+
+	delAnimal.Exec(foodName)
+	//return err
+}
+
+func Exists(db *sql.DB, arg string) string {
+	var exists string
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM Animal WHERE name=(?))", arg).Scan(&exists)
+	errorHandler(err)
+	return exists
+}
+
+// func rowExists(query string, args ...interface{}) bool {
+// 	var exists bool
+// 	query = fmt.Sprintf("SELECT exists (%s)", query)
+// 	err := db.QueryRow(query, args...).Scan(&exists)
+// 	if err != nil && err != sql.ErrNoRows {
+// 		glog.Fatalf("error checking if row exists '%s' %v", args, err)
+// 	}
+// 	return exists
+// }
