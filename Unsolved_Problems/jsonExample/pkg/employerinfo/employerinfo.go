@@ -378,7 +378,7 @@ func (e *EmployerInfo) Create(db *sql.DB)error {
 
 func (e *EmployerInfo) Update(db *sql.DB)error {
 
-	query:=fmt.Sprintf("UPDATE employer_info SET firstname='%s',email='%s',gender='%s',birth_date='%s',city='%s',country='%s' WHERE employer_id=%d",e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country,&e.ID)
+	query:=fmt.Sprintf("UPDATE employer_info SET fullname='%s',email='%s',gender='%s',birth_date='%s',city='%s',country='%s' WHERE employer_id=%d",e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country,e.ID)
 	_,err:=db.Exec(query)
 
 	return err

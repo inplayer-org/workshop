@@ -45,7 +45,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/equipments", a.GetEquipments).Methods("GET")
 	a.Router.HandleFunc("/equipment/{id:[0-9]+}", a.GetEquipment).Methods("GET")
 	a.Router.HandleFunc("/equipment/{id:[0-9]+}", a.UpdateEquipment).Methods("PUT")
-	a.Router.HandleFunc("/equipment", a.CreateEquipment).Methods("POST")
+	//a.Router.HandleFunc("/equipment", a.CreateEquipment).Methods("POST")
 	a.Router.HandleFunc("/equipment/{id:[0-9]+}", a.DeleteEquipment).Methods("DELETE")
 
 	a.Router.HandleFunc("/positions", a.GetPositions).Methods("GET")
@@ -131,13 +131,14 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var e employerinfo.EmployerInfo
+	e.ID = id
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
 		return
 	}
 	defer r.Body.Close()
-	e.ID = id
+
 
 	if err := e.Update(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -434,7 +435,7 @@ func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, equipments)
 }
 
-func (a *App) CreateEquipment(w http.ResponseWriter, r *http.Request) {
+/*func (a *App) CreateEquipment(w http.ResponseWriter, r *http.Request) {
 	var e employerinfo.Equipment
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
@@ -449,7 +450,7 @@ func (a *App) CreateEquipment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusCreated, e)
-}
+}*/
 
 
 
