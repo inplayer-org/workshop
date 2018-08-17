@@ -74,8 +74,12 @@ func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 	var e employerinfo.EmployerInfo
+
+	//id dobiva vrednos tuka
+
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
+		fmt.Println(err)
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}

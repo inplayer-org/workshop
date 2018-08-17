@@ -249,15 +249,15 @@ func rowsToPositions(rows *sql.Rows)([]Position,error){
 
 type EmployerInfo struct {
 
-	ID int
-	FullName string
-	Email string
-	Gender string
-	BirthDate string
-	City string
-	Country string
-	Contracts *[]Contract
-	Equipment *Equipment
+	ID int `json:"id"`
+	FullName string `json:"full_name"`
+	Email string `json:"email"`
+	Gender string `json:"gender"`
+	BirthDate string `json:"birth_date"`
+	City string `json:"city"`
+	Country string `json:"country"`
+	Contracts *[]Contract `json:"contracts"`
+	Equipment *Equipment `json:"equipment"`
 
 }
 
@@ -336,19 +336,35 @@ func contractsForEmployer(db *sql.DB,rows *sql.Rows)([]Contract,error){
 
 func (e *EmployerInfo) Create(db *sql.DB)error {
 
-	query:=fmt.Sprintf("INSERT INTO employer_info(fullname, email,gender,birth_date,city,country) VALUES('%s','%s','%s','%s','%s','%s')",e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country)
+	query:=fmt.Sprintf("INSERT INTO employer_info(employer_id,fullname, email,gender,birth_date,city,country) VALUES(%d,'%s','%s','%s','%s','%s','%s')",e.ID,e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country)
 	_,err:=db.Exec(query)
 
+	if err != nil {
+		return err
+	}
 
+    contracts:=*e.Contracts
+	query = fmt.Sprintf("INSERT INTO contract(employer_id,date_of_contract,expiring_date,salary,emp_position) VALUES(%d,'%s','%s','%s','%s')",e.ID,contracts[0].HiredDate,contracts[0].DueDate,contracts[0].Salary,contracts[0].PositionName)
+	_,err= db.Exec(query)
+	//fmt.Println(err)
 
+	if err != nil {
+		return err
+	}
+
+	eq:=*e.Equipment
+	//fmt.Println(eq)
+	query = fmt.Sprintf("INSERT INTO equipment(employer_id,computer,monitor,mouse,keyboard,headset) VALUES(%d,%d,%d,%d,%d,%d)",e.ID,eq.Copmuters,eq.Monitors,eq.Mouses,eq.Keyboards,eq.Headsets)
+	//fmt.Println(err)
+	_,err= db.Exec(query)
 	return err
-
 	}
 
 func (e *EmployerInfo) Update(db *sql.DB)error {
 
 	query:=fmt.Sprintf("UPDATE employer_info SET firstname='%s',email='%s',gender='%s',birth_date='%s',city='%s',country='%s' WHERE employer_id=%d",e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country,&e.ID)
 	_,err:=db.Exec(query)
+
 	return err
 
 }
