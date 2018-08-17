@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/structures"
+	"log"
 )
 
 func errorHandler(err error) {
@@ -97,18 +98,19 @@ func SelectFoodbyID(db *sql.DB, foodID int) interface{} {
 	return food
 }
 
+
 func SelectFoodbyName(db *sql.DB, foodName string) interface{} {
 	var typeFood, name string
 	var ID int
-	food := structures.Food{}
 	err := db.QueryRow("SELECT * FROM Food WHERE foodName=(?)", foodName).Scan(&ID, &typeFood,&name)
 	if errorExistant(err){
 		return nil
 	}
+	food := structures.Food{FoodID:ID,Name:name,Type:typeFood}
 	food.FoodID = ID
 	food.Name = name
 	food.Type = typeFood
-	return food
+	return structures.Food{FoodID:ID,Name:name,Type:typeFood}
 }
 
 //InsertAnimal with structure Animal
@@ -124,6 +126,22 @@ func DeleteAnimal(db *sql.DB, animalName string) {
 	errorHandler(err)
 	delAnimal.Exec(animalName)
 }
+
+func DeleteFoodbyName(db *sql.DB, foodName string) error{
+	delFood, err := db.Prepare("DELETE FROM Food WHERE foodName=(?)")
+	errorHandler(err)
+	_,err = delFood.Exec(db,foodName)
+	return err
+}
+
+func DeleteFoodbyID(db *sql.DB, foodID int) error{
+	delFood, err := db.Prepare("DELETE FROM Food WHERE foodID=(?)")
+	errorHandler(err)
+	_,err = delFood.Exec(foodID)
+	log.Println(err)
+	return err
+}
+
 
 //UpdateAnimal
 func UpdateAnimal(db *sql.DB, animal structures.Animal) {

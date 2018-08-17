@@ -135,14 +135,18 @@ func DeleteFood(DB *sql.DB)func(w http.ResponseWriter, req *http.Request){
 
 func DeleteFoodByID(DB *sql.DB,entry string,w http.ResponseWriter) {
 
-		for i, checkFood := range foods {
-			if strconv.Itoa(checkFood.FoodID) == entry {
-				foods = append(foods[:i], foods[i+1:]...)
-				respondWithJSON(w, http.StatusAccepted, checkFood)
-				return
-			}
+		id,_ := strconv.Atoi(entry)
+		food := db.SelectFoodbyID(DB,id)
+		if food==nil{
+			respondWithError(w, http.StatusNotFound, "Index ("+entry+") not present in database")
+			return
 		}
-		respondWithError(w, http.StatusBadRequest, "Index ("+entry+") not present in database")
+		err := db.DeleteFoodbyID(DB,id)
+		if err!=nil{
+			respondWithError(w,http.StatusInternalServerError,"Something went wrong during deletion in the database")
+			return
+		}
+		respondWithJSON(w,http.StatusOK,food)
 
 }
 
