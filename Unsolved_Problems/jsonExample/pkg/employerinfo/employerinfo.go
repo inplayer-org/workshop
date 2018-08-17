@@ -264,13 +264,13 @@ type EmployerInfo struct {
 func (e *EmployerInfo) Get(db *sql.DB) error {
 
 	query:=fmt.Sprintf("SELECT fullname,email,gender,birth_date,city,country FROM employer_info WHERE employer_id=%d",e.ID)
-	err:=db.QueryRow(query,nil).Scan(&e.FullName,&e.Email,&e.Gender,&e.BirthDate,&e.City,&e.Country)
+	err:=db.QueryRow(query).Scan(&e.FullName,&e.Email,&e.Gender,&e.BirthDate,&e.City,&e.Country)
 
 	if err!= nil {
 		return err
 	}
 
-	query=fmt.Sprintf("    SELECT contract_number,employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract")
+	query=fmt.Sprintf("    SELECT contract_number,employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract WHERE employer_id=%d",e.ID)
 	rows,err:=db.Query(query)
 
 
