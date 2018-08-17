@@ -267,6 +267,7 @@ func (e *EmployerInfo) Get(db *sql.DB) error {
 	err:=db.QueryRow(query).Scan(&e.FullName,&e.Email,&e.Gender,&e.BirthDate,&e.City,&e.Country)
 
 	if err!= nil {
+		fmt.Println(err)
 		return err
 	}
 
@@ -275,6 +276,8 @@ func (e *EmployerInfo) Get(db *sql.DB) error {
 
 
 	if err!= nil {
+		fmt.Println(err)
+
 		return err
 	}
 
@@ -282,6 +285,8 @@ func (e *EmployerInfo) Get(db *sql.DB) error {
 	e.Contracts=&contracts
 
 	if err!= nil {
+		fmt.Println(err)
+
 		return err
 	}
 
@@ -294,9 +299,16 @@ func (e *EmployerInfo) Get(db *sql.DB) error {
 	e.Equipment=&eq
 
 	if err!= nil {
-		return err
+		if err == sql.ErrNoRows {
+			eq.Copmuters = 0
+			eq.Monitors = 0
+			eq.Mouses = 0
+			eq.Keyboards = 0
+			eq.Headsets = 0
+		} else {
+			return  err
+		}
 	}
-
 	return nil
 }
 
@@ -326,9 +338,12 @@ func (e *EmployerInfo) Create(db *sql.DB)error {
 
 	query:=fmt.Sprintf("INSERT INTO employer_info(fullname, email,gender,birth_date,city,country) VALUES('%s','%s','%s','%s','%s','%s')",e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country)
 	_,err:=db.Exec(query)
+
+
+
 	return err
 
-}
+	}
 
 func (e *EmployerInfo) Update(db *sql.DB)error {
 
