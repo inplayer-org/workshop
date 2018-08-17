@@ -65,8 +65,15 @@ func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 
 
 	employers, err := employerinfo.GetAllEmployers(a.DB)
+	e:=a.DB.Ping()
+
+	if e!=nil{
+		respondWithError(w, http.StatusNotFound, "you have wron username,password or database name")
+		return
+	}
+
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+			respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
