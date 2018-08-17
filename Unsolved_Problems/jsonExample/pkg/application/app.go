@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/employerinfo"
+	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/errorhandle"
 )
 
 type App struct {
@@ -230,15 +231,21 @@ func (a *App) CreateContract(w http.ResponseWriter, r *http.Request) {
 	var c employerinfo.Contract
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
+
+
+
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 	defer r.Body.Close()
 
+
 	if err := c.Create(a.DB); err != nil {
+
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 
 	respondWithJSON(w, http.StatusCreated, c)
 }
@@ -332,7 +339,14 @@ func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if err := p.Create(a.DB); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+
+		switch err {
+		case errorhandle.Err:
+			respondWithError(w, http.StatusConflict, err.Error())
+
+		default:
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 

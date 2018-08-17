@@ -197,6 +197,7 @@ func (p *Position) Create(db *sql.DB) error{
 	err:= errorhandle.CheckString(&p.Name)
 
 	if err != nil {
+		//fmt.Println(err)
 		return err
 	}
 
