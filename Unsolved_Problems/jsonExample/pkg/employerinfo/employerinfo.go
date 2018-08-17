@@ -335,15 +335,31 @@ func contractsForEmployer(db *sql.DB,rows *sql.Rows)([]Contract,error){
 }
 
 func (e *EmployerInfo) Create(db *sql.DB)error {
+	contracts:=*e.Contracts
 
-	query:=fmt.Sprintf("INSERT INTO employer_info(employer_id,fullname, email,gender,birth_date,city,country) VALUES(%d,'%s','%s','%s','%s','%s','%s')",e.ID,e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country)
-	_,err:=db.Exec(query)
+	var count int
+	query := fmt.Sprintf("SELECT COUNT(emp_position) FROM position_info WHERE emp_position='%s'",contracts[0].PositionName)
+	err:= db.QueryRow(query).Scan(&count)
 
 	if err != nil {
 		return err
 	}
 
-    contracts:=*e.Contracts
+	if count == 0 {
+		return sql.ErrNoRows
+	}
+
+	query=fmt.Sprintf("INSERT INTO employer_info(employer_id,fullname, email,gender,birth_date,city,country) VALUES(%d,'%s','%s','%s','%s','%s','%s')",e.ID,e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country)
+	_,err=db.Exec(query)
+
+	if err != nil {
+		return err
+	}
+
+
+
+
+
 	query = fmt.Sprintf("INSERT INTO contract(employer_id,date_of_contract,expiring_date,salary,emp_position) VALUES(%d,'%s','%s','%s','%s')",e.ID,contracts[0].HiredDate,contracts[0].DueDate,contracts[0].Salary,contracts[0].PositionName)
 	_,err= db.Exec(query)
 	//fmt.Println(err)

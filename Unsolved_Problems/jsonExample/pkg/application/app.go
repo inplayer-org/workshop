@@ -86,7 +86,14 @@ func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if err := e.Create(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			respondWithError(w, http.StatusNotFound, "Position not found")
+
+		default:
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+
+		}
 		return
 	}
 
@@ -103,6 +110,7 @@ func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
 
 	e := employerinfo.EmployerInfo{ID: id}
 	if err := e.Get(a.DB); err != nil {
+
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Employer not found")
