@@ -3,6 +3,7 @@ package employerinfo
 import (
 	"database/sql"
 	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/errorhandle"
 )
 
 type Equipment struct {
@@ -193,10 +194,16 @@ func (p *Position) Get(db *sql.DB) error {
 }
 
 func (p *Position) Create(db *sql.DB) error{
+	err:= errorhandle.CheckString(&p.Name)
+
+	if err != nil {
+		return err
+	}
 
 	query:=fmt.Sprintf("INSERT INTO position_info(emp_position,description) VALUES('%s','%s')",p.Name,p.Description)
-	_,err:=db.Exec(query)
+	_,err=db.Exec(query)
 	return err
+
 
 }
 
