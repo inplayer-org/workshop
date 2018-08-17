@@ -13,6 +13,14 @@ func errorHandler(err error) {
 	}
 }
 
+func errorExistant(err error)bool{
+	if err != nil {
+		fmt.Println("ERROR :", err)
+		return true
+	}
+	return false
+}
+
 //ConnectDB creates a database object
 func ConnectDB(connectString string) *sql.DB {
 	dbConn, err := sql.Open("mysql", connectString)
@@ -74,12 +82,30 @@ func SelectAllFood(db *sql.DB) []structures.Food {
 	return listOfFood
 }
 
-//Select Food by ID return slice of food
-func SelectFood(db *sql.DB, foodID int) structures.Food {
-	var name, typeFood string
+//Select Food by ID return structures.Food
+func SelectFoodbyID(db *sql.DB, foodID int) interface{} {
+	var typeFood, name string
+	var ID int
 	food := structures.Food{}
-	err := db.QueryRow("SELECT foodName,type FROM Food WHERE foodID=(?)", foodID).Scan(&name, &typeFood)
-	errorHandler(err)
+	err := db.QueryRow("SELECT * FROM Food WHERE foodID=(?)", foodID).Scan(&ID, &typeFood,&name)
+	if errorExistant(err){
+		return nil
+	}
+	food.FoodID = foodID
+	food.Name = name
+	food.Type = typeFood
+	return food
+}
+
+func SelectFoodbyName(db *sql.DB, foodName string) interface{} {
+	var typeFood, name string
+	var ID int
+	food := structures.Food{}
+	err := db.QueryRow("SELECT * FROM Food WHERE foodName=(?)", foodName).Scan(&ID, &typeFood,&name)
+	if errorExistant(err){
+		return nil
+	}
+	food.FoodID = ID
 	food.Name = name
 	food.Type = typeFood
 	return food
@@ -110,7 +136,7 @@ func UpdateAnimal(db *sql.DB, animal structures.Animal) {
 //InsertFood with structure Food
 func InsertFood(db *sql.DB, food structures.Food) {
 	f := food
-	_, err := db.Exec("INSERT INTO Food(foodName,type)  VALUES (?,?)", f.Name, f.Type)
+	_, err := db.Exec("INSERT INTO Food(foodID,foodName,type)  VALUES (?,?,?)",f.FoodID, f.Name, f.Type)
 	errorHandler(err)
 }
 

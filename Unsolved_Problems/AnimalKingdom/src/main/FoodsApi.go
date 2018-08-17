@@ -55,27 +55,22 @@ func GetFood(DB *sql.DB)func(w http.ResponseWriter, req *http.Request){
 }
 
 func GetFoodByName(DB *sql.DB,name string,w http.ResponseWriter){
-		//foods := db.SelectAllFood(DB)
-		for _,food := range foods{
-			if food.Name == name{
-				log.Println("Correct for",food.Name,"and",name)
-				respondWithJSON(w,http.StatusOK,food)
-				return
-			}
-		}
-		respondWithError(w,http.StatusNotFound,"Food name ("+name+") not present in database")
+	food := db.SelectFoodbyName(DB,name)
+	if  food == nil{
+		respondWithError(w,http.StatusNotFound,"Food index ("+name+") not present in database")
+	}else{
+		respondWithJSON(w,http.StatusOK,food)
+	}
 }
 
 func GetFoodByID(DB *sql.DB,ID string,w http.ResponseWriter){
-
-		//foods := db.SelectAllFood(DB)
-		for _,food := range foods{
-			if strconv.Itoa(food.FoodID) == ID{
-				respondWithJSON(w,http.StatusOK,food)
-				return
-			}
-		}
+		id,_ := strconv.Atoi(ID)
+		food := db.SelectFoodbyID(DB,id)
+		if  food == nil{
 		respondWithError(w,http.StatusNotFound,"Food index ("+ID+") not present in database")
+		}else{
+			respondWithJSON(w,http.StatusOK,food)
+		}
 }
 
 
@@ -112,17 +107,16 @@ func AddFood(DB *sql.DB)func(w http.ResponseWriter, req *http.Request){
 func AddFilteredFood(DB *sql.DB,newFood structures.Food ,w http.ResponseWriter){
 	//Check if the food id is already present in the database
 
-	for _,checkFood := range foods {
-		if newFood.FoodID == checkFood.FoodID {
+
+		if db.SelectFoodbyID(DB,newFood.FoodID)!=nil {
 			respondWithJSON(w, http.StatusAlreadyReported, "Food with ID ("+strconv.Itoa(newFood.FoodID)+") already exists in database, If you want to update entry use the PUT method")
 			return
-		}else if newFood.Name == checkFood.Name{
+		}else if db.SelectFoodbyName(DB,newFood.Name)!=nil{
 			respondWithJSON(w, http.StatusAlreadyReported, "Food with name ("+newFood.Name+") already exists in database, If you want to update entry use the PUT method")
 			return
 		}
-	}
+	db.InsertFood(DB,newFood)
 	respondWithJSON(w, http.StatusCreated, newFood)
-	foods = append(foods, newFood)
 }
 
 func DeleteFood(DB *sql.DB)func(w http.ResponseWriter, req *http.Request){
@@ -233,7 +227,6 @@ func UpdateFoodByName(DB *sql.DB,updateFood structures.Food,w http.ResponseWrite
 		}
 	}
 	respondWithError(w, http.StatusBadRequest, "Food with name ("+updateFood.Name+") doesn't exist in database. If you want to add new entry use the POST method")
-
 }
 
 func main() {
