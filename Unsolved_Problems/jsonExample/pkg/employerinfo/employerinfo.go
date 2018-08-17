@@ -375,6 +375,7 @@ func (e *EmployerInfo) Delete(db *sql.DB)error {
 	_,err:=db.Exec(query)
 
 	if err!= nil {
+		//fmt.Println(err)
 		return err
 	}
 
@@ -403,7 +404,7 @@ func GetAllEmployers(db *sql.DB)([]EmployerInfo,error){
 	rows,err:=db.Query(query)
 
 	if err!=nil {
-		fmt.Println(err)
+		//fmt.Println(err)
 		return nil,err
 	}
 
