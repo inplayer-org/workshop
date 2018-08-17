@@ -8,6 +8,10 @@ import (
 	"fmt"
 	"strconv"
 	"log"
+	"database/sql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/controllinput"
+	_ "github.com/go-sql-driver/mysql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/db"
 )
 
 //PROTOTYPE VERSION
@@ -29,97 +33,230 @@ func respondWithJSON(w http.ResponseWriter, code int, dataStruct interface{}) {
 	w.Write(response)
 }
 
-func GetFoods(w http.ResponseWriter, req *http.Request){
-	respondWithJSON(w,http.StatusOK,foods)
+func GetFoods(DB *sql.DB)func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, req *http.Request) {
+		respondWithJSON(w, http.StatusOK, db.SelectAllFood(DB))
+	}
 }
 
-func GetFood(w http.ResponseWriter, req *http.Request){
-
-	params := mux.Vars(req)
-
-	for _,food := range foods{
-		if strconv.Itoa(food.FoodID) == params["id"]{
-			w.Header().Set("Content-Type","application/json")
-			json.NewEncoder(w).Encode(food)
-			return
+func GetFood(DB *sql.DB)func(w http.ResponseWriter, req *http.Request){
+	return func(w http.ResponseWriter, req *http.Request) {
+		parameter := mux.Vars(req)
+		entry := parameter["entry"]
+		if controllinput.IntOnly(entry){
+			GetFoodByID(DB,entry,w)
+		}else if controllinput.CheckString(&entry){
+			GetFoodByName(DB,entry,w)
+		}else{
+			respondWithError(w,http.StatusBadRequest,"Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
 		}
 	}
-	respondWithError(w,http.StatusBadRequest,"Index not present in database")
+
 }
 
-func AddFood(w http.ResponseWriter,req *http.Request){
+func GetFoodByName(DB *sql.DB,name string,w http.ResponseWriter){
+		//foods := db.SelectAllFood(DB)
+		for _,food := range foods{
+			if food.Name == name{
+				log.Println("Correct for",food.Name,"and",name)
+				respondWithJSON(w,http.StatusOK,food)
+				return
+			}
+		}
+		respondWithError(w,http.StatusNotFound,"Food name ("+name+") not present in database")
+}
 
-	var food structures.Food
-	json.NewDecoder(req.Body).Decode(&food)
+func GetFoodByID(DB *sql.DB,ID string,w http.ResponseWriter){
 
+		//foods := db.SelectAllFood(DB)
+		for _,food := range foods{
+			if strconv.Itoa(food.FoodID) == ID{
+				respondWithJSON(w,http.StatusOK,food)
+				return
+			}
+		}
+		respondWithError(w,http.StatusNotFound,"Food index ("+ID+") not present in database")
+}
+
+
+func AddFood(DB *sql.DB)func(w http.ResponseWriter, req *http.Request){
+	return func(w http.ResponseWriter, req *http.Request) {
+		var food structures.Food
+		parameters := mux.Vars(req)
+		entry := parameters["entry"]
+		json.NewDecoder(req.Body).Decode(&food)
+
+		if food.FoodID==0 || !controllinput.CheckString(&food.Name) || !controllinput.CheckString(&food.Type){
+			respondWithError(w,http.StatusBadRequest,"Invalid structure data, Food name and type has to be between 2 and 30 characters and can't contain numbers. Food id shouldn't be lower than 1")
+
+		}else if controllinput.IntOnly(entry){
+			if entry!= strconv.Itoa(food.FoodID){
+				respondWithError(w,http.StatusMultipleChoices,"Entry index("+entry+") and JSON index("+strconv.Itoa(food.FoodID)+") has to be equal")
+			}else{
+				AddFilteredFood(DB,food,w)
+			}
+
+		}else if controllinput.CheckString(&entry){
+			if entry!=food.Name {
+				respondWithError(w,http.StatusMultipleChoices,"Entry name("+entry+") and JSON name("+food.Name+") has to be equal")
+			}else{
+				AddFilteredFood(DB, food, w)
+				}
+
+		}else{
+			respondWithError(w,http.StatusBadRequest,"Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
+		}
+	}
+}
+
+func AddFilteredFood(DB *sql.DB,newFood structures.Food ,w http.ResponseWriter){
 	//Check if the food id is already present in the database
-	for _,checkFood := range foods{
-		if food.FoodID == checkFood.FoodID{
-			respondWithJSON(w,http.StatusAlreadyReported,checkFood)
+
+	for _,checkFood := range foods {
+		if newFood.FoodID == checkFood.FoodID {
+			respondWithJSON(w, http.StatusAlreadyReported, "Food with ID ("+strconv.Itoa(newFood.FoodID)+") already exists in database, If you want to update entry use the PUT method")
+			return
+		}else if newFood.Name == checkFood.Name{
+			respondWithJSON(w, http.StatusAlreadyReported, "Food with name ("+newFood.Name+") already exists in database, If you want to update entry use the PUT method")
 			return
 		}
 	}
-	respondWithJSON(w,http.StatusAccepted,food)
-	foods = append(foods,food)
+	respondWithJSON(w, http.StatusCreated, newFood)
+	foods = append(foods, newFood)
+}
+
+func DeleteFood(DB *sql.DB)func(w http.ResponseWriter, req *http.Request){
+	return func(w http.ResponseWriter, req *http.Request) {
+		parameter := mux.Vars(req)
+		entry := parameter["entry"]
+		if controllinput.IntOnly(entry){
+			DeleteFoodByID(DB,entry,w)
+		}else if controllinput.CheckString(&entry){
+			DeleteFoodByName(DB,entry,w)
+		}else{
+			respondWithError(w,http.StatusBadRequest,"Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
+		}
+	}
+}
+
+func DeleteFoodByID(DB *sql.DB,entry string,w http.ResponseWriter) {
+
+		for i, checkFood := range foods {
+			if strconv.Itoa(checkFood.FoodID) == entry {
+				foods = append(foods[:i], foods[i+1:]...)
+				respondWithJSON(w, http.StatusAccepted, checkFood)
+				return
+			}
+		}
+		respondWithError(w, http.StatusBadRequest, "Index ("+entry+") not present in database")
 
 }
 
-func DeleteFood(w http.ResponseWriter,req *http.Request){
-
-	param := mux.Vars(req)
-	for i,food := range foods {
-		if strconv.Itoa(food.FoodID) == param["id"]{
-			foods = append(foods[:i],foods[i+1:]...)
-			respondWithJSON(w,http.StatusAccepted,food)
+func DeleteFoodByName(DB *sql.DB,entry string,w http.ResponseWriter) {
+	for i, checkFood := range foods {
+		if checkFood.Name == entry {
+			foods = append(foods[:i], foods[i+1:]...)
+			respondWithJSON(w, http.StatusAccepted, checkFood)
 			return
 		}
 	}
-	respondWithError(w,http.StatusBadRequest,"Index not present in database")
+	respondWithError(w, http.StatusBadRequest, "Name ("+entry+") not present in database")
+}
 
+
+func UpdateFood(DB *sql.DB)func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, req *http.Request) {
+		var food structures.Food
+		parameters := mux.Vars(req)
+		entry := parameters["entry"]
+		json.NewDecoder(req.Body).Decode(&food)
+
+		if food.FoodID<=0 || !controllinput.CheckString(&food.Name) || !controllinput.CheckString(&food.Type){
+			respondWithError(w,http.StatusBadRequest,"Invalid structure data, Food name and type has to be between 2 and 30 characters and can't contain numbers. Food id shouldn't be lower than 1")
+
+		}else if controllinput.IntOnly(entry){
+			if entry!= strconv.Itoa(food.FoodID){
+				respondWithError(w,http.StatusMultipleChoices,"Entry index("+entry+") and JSON index("+strconv.Itoa(food.FoodID)+") has to be equal")
+			}else{
+				UpdateFoodByID(DB,food,w)
+			}
+
+		}else if controllinput.CheckString(&entry){
+			if entry!=food.Name {
+				respondWithError(w,http.StatusMultipleChoices,"Entry name("+entry+") and JSON name("+food.Name+") has to be equal")
+			}else{
+				UpdateFoodByName(DB, food, w)
+			}
+
+		}else{
+			respondWithError(w,http.StatusBadRequest,"Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
+		}
+	}
 
 }
 
-func UpdateFood(w http.ResponseWriter,req *http.Request){
 
-	param := mux.Vars(req)
-	var updFood structures.Food
-	json.NewDecoder(req.Body).Decode(&updFood)
-	if strconv.Itoa(updFood.FoodID) != param["id"]{
-		parID,_ := strconv.Atoi(param["id"])
-		respondWithJSON(w,http.StatusMultipleChoices,map[string]structures.Food{"struct1":{FoodID:parID},"struct2":updFood})
-		return
-	}
-	for i,food := range foods{
-		if strconv.Itoa(food.FoodID) == param["id"]{
-			foods[i] = updFood
-			respondWithJSON(w,http.StatusAccepted,updFood)
+func UpdateFoodByID(DB *sql.DB,updateFood structures.Food,w http.ResponseWriter){
+
+
+		for i, food := range foods {
+			if food.FoodID == updateFood.FoodID {
+				for _,checkNameExistance := range foods{
+					if checkNameExistance.Name == updateFood.Name{
+						respondWithError(w,http.StatusAlreadyReported,"Food with name ("+updateFood.Name+") already exist in the database, and there can't be multiple foods with equal name")
+						return
+				}
+				}
+				foods[i] = updateFood
+				respondWithJSON(w, http.StatusAccepted, updateFood)
+				return
+			}
+		}
+	respondWithError(w, http.StatusBadRequest, "Food with ID ("+strconv.Itoa(updateFood.FoodID)+") doesn't exist in database. If you want to add new entry use the POST method")
+
+}
+
+func UpdateFoodByName(DB *sql.DB,updateFood structures.Food,w http.ResponseWriter){
+
+
+	for i, food := range foods {
+		if food.Name == updateFood.Name {
+			for _,checkNameExistance := range foods{
+				if checkNameExistance.FoodID == updateFood.FoodID{
+					respondWithError(w,http.StatusAlreadyReported,"Food with ID ("+strconv.Itoa(updateFood.FoodID)+") already exist in the database, and there can't be multiple foods with equal ID")
+					return
+				}
+			}
+			foods[i] = updateFood
+			respondWithJSON(w, http.StatusAccepted, updateFood)
 			return
 		}
 	}
-	respondWithError(w,http.StatusBadRequest,"Index not present in database")
+	respondWithError(w, http.StatusBadRequest, "Food with name ("+updateFood.Name+") doesn't exist in database. If you want to add new entry use the POST method")
+
 }
-
-
 
 func main() {
 
 	router := mux.NewRouter()
 
+	DB := db.ConnectDB("root:1111@tcp(127.0.0.1:3306)/animalKingdom")
 
 	//Mock object
-	foods = append(foods,structures.Food{FoodID:1,Type:"Herb",Name:"Grass"})
-	foods = append(foods,structures.Food{FoodID:2,Type:"Meat",Name:"Rabbit"})
-	foods = append(foods,structures.Food{FoodID:3,Type:"Herb",Name:"Leaves"})
-	foods = append(foods,structures.Food{FoodID:4,Type:"Meat",Name:"Deer"})
+	foods = append(foods,structures.Food{FoodID:1,Type:"herb",Name:"grass"})
+	foods = append(foods,structures.Food{FoodID:2,Type:"meat",Name:"rabbit"})
+	foods = append(foods,structures.Food{FoodID:3,Type:"herb",Name:"leaves"})
+	foods = append(foods,structures.Food{FoodID:4,Type:"meat",Name:"deer"})
 
 	fmt.Println(foods)
 
 	//Handlers
-	router.HandleFunc("/foods",GetFoods).Methods("GET")
-	router.HandleFunc("/foods/{id}",GetFood).Methods("GET")
-	router.HandleFunc("/foods/{id}",AddFood).Methods("POST")
-	router.HandleFunc("/foods/{id}",DeleteFood).Methods("DELETE")
-	router.HandleFunc("/foods/{id}",UpdateFood).Methods("PUT")
+	router.HandleFunc("/foods",GetFoods(DB)).Methods("GET")
+	router.HandleFunc("/foods/{entry}",GetFood(DB)).Methods("GET")
+	router.HandleFunc("/foods/{entry}",AddFood(DB)).Methods("POST")
+	router.HandleFunc("/foods/{entry}",DeleteFood(DB)).Methods("DELETE")
+	router.HandleFunc("/foods/{entry}",UpdateFood(DB)).Methods("PUT")
+
 
 	http.ListenAndServe(":8889", router)
 

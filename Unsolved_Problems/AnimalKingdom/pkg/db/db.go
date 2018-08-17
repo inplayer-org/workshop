@@ -57,14 +57,16 @@ func SelectAnimal(db *sql.DB, animalName string) (structures.Animal, error) {
 
 //SelectAllFood return slice of all food
 func SelectAllFood(db *sql.DB) []structures.Food {
-	rows, err := db.Query("SELECT foodName,type FROM Food")
+	rows, err := db.Query("SELECT * FROM Food")
 	errorHandler(err)
 	listOfFood := []structures.Food{}
 	for rows.Next() {
 		var typeFood, name string
+		var ID int
 		food := structures.Food{}
-		err := rows.Scan(&name, &typeFood)
+		err := rows.Scan(&ID, &typeFood,&name)
 		errorHandler(err)
+		food.FoodID = ID
 		food.Name = name
 		food.Type = typeFood
 		listOfFood = append(listOfFood, food)
