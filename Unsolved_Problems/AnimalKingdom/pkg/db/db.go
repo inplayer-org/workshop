@@ -3,7 +3,9 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 
+	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/controllinput"
 	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/structures"
 )
 
@@ -40,6 +42,26 @@ func SelectAllAnimals(db *sql.DB) []structures.Animal {
 		animals = append(animals, animal)
 	}
 	return animals
+}
+
+//Select Animal by name
+func SelectAnimal(db *sql.DB, arg string, sto string) (structures.Animal, error) {
+	var name, species string
+	var id, height int
+	animal := structures.Animal{}
+	var what interface{}
+	if controllinput.IntOnly(arg) {
+		i, _ := strconv.Atoi(arg)
+		what = i
+	} else if controllinput.CheckString(&arg) {
+		what = arg
+	}
+	err := db.QueryRow("SELECT * FROM Animal WHERE "+sto+"=(?)", what).Scan(&id, &name, &species, &height)
+	animal.AnimalID = id
+	animal.Species = species
+	animal.Height = height
+	animal.Name = name
+	return animal, err
 }
 
 //Select Animal by name
@@ -115,7 +137,7 @@ func DeleteAnimalByName(db *sql.DB, animalName string) error {
 	return err
 }
 
-//UpdateAnimal
+//Update Animal by name
 func UpdateAnimal(db *sql.DB, animal structures.Animal) (structures.Animal, error) {
 	a := animal
 	update, err := db.Prepare("UPDATE Animal set species=(?),height=(?) WHERE name=(?)")
@@ -187,10 +209,10 @@ func InsertEat(db *sql.DB, animal structures.Animal, food structures.Food) {
 }
 
 //Delete animal by id
-func DeleteAnimalByID(db *sql.DB, animalID int) {
-	delAnimal, _ := db.Prepare("DELETE FROM Animal WHERE animalID=(?)")
+func DeleteAnimalByID(db *sql.DB, animalID int) error {
+	delAnimal, err := db.Prepare("DELETE FROM Animal WHERE animalID=(?)")
 	delAnimal.Exec(animalID)
-	//return err
+	return err
 }
 
 //Delete food by ID
@@ -210,9 +232,15 @@ func DeleteFoodByName(db *sql.DB, foodName string) {
 	//return err
 }
 
-func Exists(db *sql.DB, arg string) string {
+func Exists(db *sql.DB, name string) string {
 	var exists string
-	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM Animal WHERE name=(?))", arg).Scan(&exists)
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM Animal WHERE name=(?))", name).Scan(&exists)
+	errorHandler(err)
+	return exists
+}
+func ExistsID(db *sql.DB, id int) string {
+	var exists string
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM Animal WHERE animalID=(?))", id).Scan(&exists)
 	errorHandler(err)
 	return exists
 }
