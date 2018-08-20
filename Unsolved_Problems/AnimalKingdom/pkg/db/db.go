@@ -41,13 +41,9 @@ func SelectAllAnimals(db *sql.DB) []structures.Animal {
 	for rows.Next() {
 		var name, species string
 		var id, height int
-		animal := structures.Animal{}
 		err := rows.Scan(&id, &name, &species, &height)
 		errorHandler(err)
-		animal.Name = name
-		animal.Species = species
-		animal.Height = height
-		animal.AnimalID = id
+		animal := structures.Animal{AnimalID: id, Species: species, Height: height, Name: name}
 		animals = append(animals, animal)
 	}
 	return animals
@@ -61,25 +57,6 @@ func SelectAnimal(db *sql.DB, entry string) (structures.Animal, error) {
 	err := db.QueryRow("SELECT * FROM Animal WHERE "+what+"=(?)", value).Scan(&id, &name, &species, &height)
 	animal := structures.Animal{AnimalID: id, Species: species, Height: height, Name: name}
 	return animal, err
-}
-
-//Insert Animal with structure Animal
-func InsertAnimal(db *sql.DB, animal structures.Animal) error {
-	a := animal
-	_, err := db.Exec("INSERT INTO Animal(name,species,height) VALUES (?,?,?)", a.Name, a.Species, a.Height)
-	if err != nil {
-		panic(err.Error)
-	}
-	return err
-}
-
-//Update Animal by name
-func UpdateAnimal(db *sql.DB, animal structures.Animal) (structures.Animal, error) {
-	a := animal
-	update, err := db.Prepare("UPDATE Animal set species=(?),height=(?) WHERE name=(?)")
-
-	update.Exec(a.Species, a.Height, a.Name)
-	return a, err
 }
 
 //Delete animal by name or id
@@ -117,6 +94,25 @@ func SelectFood(db *sql.DB, foodID int) (structures.Food, error) {
 	food.Name = name
 	food.Type = typeFood
 	return food, err
+}
+
+//Insert Animal with structure Animal
+func InsertAnimal(db *sql.DB, animal structures.Animal) error {
+	a := animal
+	_, err := db.Exec("INSERT INTO Animal(name,species,height) VALUES (?,?,?)", a.Name, a.Species, a.Height)
+	if err != nil {
+		panic(err.Error)
+	}
+	return err
+}
+
+//Update Animal by name
+func UpdateAnimal(db *sql.DB, animal structures.Animal) (structures.Animal, error) {
+	a := animal
+	update, err := db.Prepare("UPDATE Animal set species=(?),height=(?) WHERE name=(?)")
+
+	update.Exec(a.Species, a.Height, a.Name)
+	return a, err
 }
 
 //InsertFood with structure Food

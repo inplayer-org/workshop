@@ -176,7 +176,6 @@ func respondWithJSON(w http.ResponseWriter, code int, dataStruct interface{}) {
 	} else {
 		w.WriteHeader(code)
 	}
-
 	w.Write(response)
 }
 func main() {
