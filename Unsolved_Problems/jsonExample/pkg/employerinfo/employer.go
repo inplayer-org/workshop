@@ -178,6 +178,13 @@ func (e *EmployerInfo) Update(db *sql.DB)error {
 		//fmt.Println(err)
 		return err
 	}
+	/*err = errorhandle.CheckEmail(e.Email)
+
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	}
+*/
 
 	query:=fmt.Sprintf("UPDATE employer_info SET fullname='%s',email='%s',gender='%s',birth_date='%s',city='%s',country='%s' WHERE employer_id=%d",e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country,e.ID)
 	_,err =db.Exec(query)

@@ -3,6 +3,8 @@ package errorhandle
 import (
 	"unicode"
 	"strings"
+	"regexp"
+	"errors"
 )
 type IsString struct {
 	arf int
@@ -37,3 +39,16 @@ func (e *IsString) Error() string {
 
 	}
 
+
+var (
+	ErrBadFormat        = errors.New("invalid format of Email Address")
+
+	emailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+)
+
+func CheckEmail(email string) error {
+	if !emailRegexp.MatchString(email) {
+		return ErrBadFormat
+	}
+	return nil
+}
