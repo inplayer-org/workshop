@@ -10,7 +10,7 @@ import (
 )
 
 func (a *App) GetPositions(w http.ResponseWriter, r *http.Request) {
-
+	errorhandle.CheckDB(a.DB,w)
 
 	positions, err := employerinfo.GetAllPositions(a.DB)
 	if err != nil {
@@ -22,6 +22,9 @@ func (a *App) GetPositions(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) GetPosition(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	name, err := vars["name"]
 
@@ -46,6 +49,9 @@ func (a *App) GetPosition(w http.ResponseWriter, r *http.Request) {
 	errorhandle.RespondWithJSON(w, http.StatusOK, p)
 }
 func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	name, err := vars["name"]
 	if err != true {
@@ -78,6 +84,9 @@ func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	errorhandle.RespondWithJSON(w, http.StatusCreated, p)
 }
 func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	var p employerinfo.Position
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
@@ -102,6 +111,9 @@ func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	name, err := vars["name"]
 	if err != true {

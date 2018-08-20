@@ -22,6 +22,7 @@ func (a *App) Initialize(user, password, dbname string) {
 		log.Fatal(err)
 	}
 
+
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 }

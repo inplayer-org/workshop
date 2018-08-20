@@ -13,14 +13,9 @@ import (
 
 func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 
+	errorhandle.CheckDB(a.DB,w)
 
 	employers, err := employerinfo.GetAllEmployers(a.DB)
-	e:=a.DB.Ping()
-
-	if e!=nil{
-		errorhandle.RespondWithError(w, http.StatusNotFound, "you have wrong username,password or database name")
-		return
-	}
 
 	if err != nil {
 		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -31,6 +26,9 @@ func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	var e employerinfo.EmployerInfo
 
 
@@ -42,6 +40,8 @@ func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
+
+
 	if err := e.Create(a.DB); err != nil {
 
 		switch err {
@@ -49,6 +49,8 @@ func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 			errorhandle.RespondWithError(w, http.StatusConflict, err.Error())
 		case sql.ErrNoRows:
 			errorhandle.RespondWithError(w, http.StatusNotFound, "Position not found")
+		case errorhandle.ErrBadFormat:
+			errorhandle.RespondWithError(w, http.StatusBadRequest, err.Error())
 		default:
 			errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -59,6 +61,9 @@ func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -81,6 +86,9 @@ func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
 	errorhandle.RespondWithJSON(w, http.StatusOK, e)
 }
 func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -115,6 +123,9 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {

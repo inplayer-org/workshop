@@ -12,7 +12,7 @@ import (
 )
 
 func (a *App) GetContracts(w http.ResponseWriter, r *http.Request) {
-
+	errorhandle.CheckDB(a.DB,w)
 
 	cs, err := employerinfo.GetAllContracts(a.DB)
 	fmt.Println(cs)
@@ -26,6 +26,9 @@ func (a *App) GetContracts(w http.ResponseWriter, r *http.Request) {
 	errorhandle.RespondWithJSON(w, http.StatusOK, cs)
 }
 func (a *App) GetContract(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -48,6 +51,9 @@ func (a *App) GetContract(w http.ResponseWriter, r *http.Request) {
 	errorhandle.RespondWithJSON(w, http.StatusOK, c)
 }
 func (a *App) UpdateContract(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -73,6 +79,9 @@ func (a *App) UpdateContract(w http.ResponseWriter, r *http.Request) {
 	errorhandle.RespondWithJSON(w, http.StatusOK, c)
 }
 func (a *App) CreateContract(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	var c employerinfo.Contract
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
@@ -95,6 +104,9 @@ func (a *App) CreateContract(w http.ResponseWriter, r *http.Request) {
 	errorhandle.RespondWithJSON(w, http.StatusCreated, c)
 }
 func (a *App) DeleteContract(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {

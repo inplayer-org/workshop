@@ -11,6 +11,9 @@ import (
 )
 
 func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -33,6 +36,9 @@ func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 	errorhandle.RespondWithJSON(w, http.StatusOK, e)
 }
 func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -59,6 +65,9 @@ func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
+
+	errorhandle.CheckDB(a.DB,w)
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -77,6 +86,7 @@ func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
 
+	errorhandle.CheckDB(a.DB,w)
 
 	equipments, err := employerinfo.GetAllEquipments(a.DB)
 	if err != nil {
