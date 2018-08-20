@@ -25,6 +25,15 @@ func SelectAllFood(db *sql.DB) []structures.Food {
 	return listOfFood
 }
 
+func SelectFoodbyID(db *sql.DB, foodID int) interface{} {
+	var typeFood, name string
+	var ID int
+	err := db.QueryRow("SELECT * FROM Food WHERE foodID=(?)", foodID).Scan(&ID, &typeFood,&name)
+	if errorExistant(err){
+		return nil
+	}
+	return structures.Food{FoodID:ID,Name:name,Type:typeFood}
+}
 
 func SelectFoodbyName(db *sql.DB, foodName string) interface{} {
 	var typeFood, name string
@@ -33,10 +42,6 @@ func SelectFoodbyName(db *sql.DB, foodName string) interface{} {
 	if errorExistant(err){
 		return nil
 	}
-	food := structures.Food{FoodID:ID,Name:name,Type:typeFood}
-	food.FoodID = ID
-	food.Name = name
-	food.Type = typeFood
 	return structures.Food{FoodID:ID,Name:name,Type:typeFood}
 }
 
