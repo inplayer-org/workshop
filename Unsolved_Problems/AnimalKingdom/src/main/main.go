@@ -14,19 +14,3 @@ func processFlags() (string, string) {
 	flag.Parse()
 	return connectString, port
 }
-
-// func main() {
-// 	cfg := processFlags()
-// 	d := db.ConnectDB(cfg)
-// 	fmt.Println(d)
-// 	a := db.SelectAnimal(d, 2)
-// 	fmt.Println(a)
-// 	//b := db.SelectAllFood(d)
-// 	animal := structures.Animal{Name: "an1", Species: "jjjjj", Height: 12}
-// 	db.InsertAnimal(d, animal)
-// 	//fmt.Println(animal)
-// 	s := db.SelectFoodAnimalEat(d, "hdjsds")
-// 	fmt.Println(s)
-// 	ss := db.SelectAnimalsEatCertainFood(d, "mesojadno")
-// 	fmt.Println(ss)
-// }

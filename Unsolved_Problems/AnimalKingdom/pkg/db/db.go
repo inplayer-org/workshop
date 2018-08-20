@@ -15,6 +15,15 @@ func errorHandler(err error) {
 	}
 }
 
+//Func that return if the entry is name or id
+func NameOrID(entry string) (interface{}, string) {
+	if controllinput.IntOnly(entry) {
+		i, _ := strconv.Atoi(entry)
+		return i, "animalID"
+	}
+	return entry, "name"
+}
+
 //ConnectDB creates a database object
 func ConnectDB(connectString string) *sql.DB {
 	dbConn, err := sql.Open("mysql", connectString)
@@ -44,50 +53,41 @@ func SelectAllAnimals(db *sql.DB) []structures.Animal {
 	return animals
 }
 
-//Select Animal by name
-func SelectAnimal(db *sql.DB, arg string, sto string) (structures.Animal, error) {
+//Select Animal by name or id
+func SelectAnimal(db *sql.DB, entry string) (structures.Animal, error) {
 	var name, species string
 	var id, height int
-	animal := structures.Animal{}
-	var what interface{}
-	if controllinput.IntOnly(arg) {
-		i, _ := strconv.Atoi(arg)
-		what = i
-	} else if controllinput.CheckString(&arg) {
-		what = arg
+	value, what := NameOrID(entry)
+	err := db.QueryRow("SELECT * FROM Animal WHERE "+what+"=(?)", value).Scan(&id, &name, &species, &height)
+	animal := structures.Animal{AnimalID: id, Species: species, Height: height, Name: name}
+	return animal, err
+}
+
+//Insert Animal with structure Animal
+func InsertAnimal(db *sql.DB, animal structures.Animal) error {
+	a := animal
+	_, err := db.Exec("INSERT INTO Animal(name,species,height) VALUES (?,?,?)", a.Name, a.Species, a.Height)
+	if err != nil {
+		panic(err.Error)
 	}
-	err := db.QueryRow("SELECT * FROM Animal WHERE "+sto+"=(?)", what).Scan(&id, &name, &species, &height)
-	animal.AnimalID = id
-	animal.Species = species
-	animal.Height = height
-	animal.Name = name
-	return animal, err
+	return err
 }
 
-//Select Animal by name
-func SelectAnimalByName(db *sql.DB, animalName string) (structures.Animal, error) {
-	var name, species string
-	var id, height int
-	animal := structures.Animal{}
-	err := db.QueryRow("SELECT * FROM Animal WHERE name=(?)", animalName).Scan(&id, &name, &species, &height)
-	animal.AnimalID = id
-	animal.Species = species
-	animal.Height = height
-	animal.Name = name
-	return animal, err
+//Update Animal by name
+func UpdateAnimal(db *sql.DB, animal structures.Animal) (structures.Animal, error) {
+	a := animal
+	update, err := db.Prepare("UPDATE Animal set species=(?),height=(?) WHERE name=(?)")
+
+	update.Exec(a.Species, a.Height, a.Name)
+	return a, err
 }
 
-//Select Animal by ID
-func SelectAnimalByID(db *sql.DB, animalID int) (structures.Animal, error) {
-	var name, species string
-	var id, height int
-	animal := structures.Animal{}
-	err := db.QueryRow("SELECT * FROM Animal WHERE animalID=(?)", animalID).Scan(&id, &name, &species, &height)
-	animal.AnimalID = id
-	animal.Species = species
-	animal.Height = height
-	animal.Name = name
-	return animal, err
+//Delete animal by name or id
+func DeleteAnimal(db *sql.DB, entry string) error {
+	value, what := NameOrID(entry)
+	delAnimal, err := db.Prepare("DELETE FROM Animal WHERE " + what + "=(?)")
+	delAnimal.Exec(value)
+	return err
 }
 
 //SelectAllFood return slice of all food
@@ -117,33 +117,6 @@ func SelectFood(db *sql.DB, foodID int) (structures.Food, error) {
 	food.Name = name
 	food.Type = typeFood
 	return food, err
-}
-
-//Insert Animal with structure Animal
-func InsertAnimal(db *sql.DB, animal structures.Animal) error {
-	a := animal
-
-	_, err := db.Exec("INSERT INTO Animal(name,species,height) VALUES (?,?,?)", a.Name, a.Species, a.Height)
-	if err != nil {
-		panic(err.Error)
-	}
-	return err
-}
-
-//Delete Animal by name
-func DeleteAnimalByName(db *sql.DB, animalName string) error {
-	delAnimal, err := db.Prepare("DELETE FROM Animal WHERE name=(?)")
-	delAnimal.Exec(animalName)
-	return err
-}
-
-//Update Animal by name
-func UpdateAnimal(db *sql.DB, animal structures.Animal) (structures.Animal, error) {
-	a := animal
-	update, err := db.Prepare("UPDATE Animal set species=(?),height=(?) WHERE name=(?)")
-
-	update.Exec(a.Species, a.Height, a.Name)
-	return a, err
 }
 
 //InsertFood with structure Food
@@ -208,13 +181,6 @@ func InsertEat(db *sql.DB, animal structures.Animal, food structures.Food) {
 	//return err
 }
 
-//Delete animal by id
-func DeleteAnimalByID(db *sql.DB, animalID int) error {
-	delAnimal, err := db.Prepare("DELETE FROM Animal WHERE animalID=(?)")
-	delAnimal.Exec(animalID)
-	return err
-}
-
 //Delete food by ID
 func DeleteFoodByID(db *sql.DB, foodID int) {
 	delAnimal, err := db.Prepare("DELETE FROM Food WHERE foodID=(?)")
@@ -244,13 +210,3 @@ func ExistsID(db *sql.DB, id int) string {
 	errorHandler(err)
 	return exists
 }
-
-// func rowExists(query string, args ...interface{}) bool {
-// 	var exists bool
-// 	query = fmt.Sprintf("SELECT exists (%s)", query)
-// 	err := db.QueryRow(query, args...).Scan(&exists)
-// 	if err != nil && err != sql.ErrNoRows {
-// 		glog.Fatalf("error checking if row exists '%s' %v", args, err)
-// 	}
-// 	return exists
-// }
