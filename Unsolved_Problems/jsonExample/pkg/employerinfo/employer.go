@@ -126,6 +126,12 @@ func (e *EmployerInfo) Create(db *sql.DB)error {
 
 	contracts:=*e.Contracts
 
+	err= errorhandle.CheckSalary(contracts[0].Salary)
+
+	if err!=nil {
+		return err
+	}
+
 	var count int
 	query := fmt.Sprintf("SELECT COUNT(emp_position) FROM position_info WHERE emp_position='%s'",contracts[0].PositionName)
 	err= db.QueryRow(query).Scan(&count)
