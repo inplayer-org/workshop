@@ -3,6 +3,7 @@ package employerinfo
 import (
 	"fmt"
 	"database/sql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/errorhandle"
 )
 
 type Contract struct {
@@ -41,16 +42,28 @@ func (c *Contract) Get(db *sql.DB) error {
 
 func (c *Contract) Create(db *sql.DB) error {
 
+	err:= errorhandle.CheckSalary(c.Salary)
+
+	if err!=nil {
+		return err
+	}
+
 	query := fmt.Sprintf("INSERT INTO contract(employer_id,date_of_contract,expiring_date,salary,emp_position) VALUES(%d,'%s','%s','%s','%s')",c.EmployerID,c.HiredDate,c.DueDate,c.Salary,c.PositionName)
-	_,err:= db.Exec(query)
+	_,err= db.Exec(query)
 	return err
 
 }
 
 func (c *Contract) Update(db *sql.DB) error {
 
+	err:= errorhandle.CheckSalary(c.Salary)
+
+	if err!=nil {
+		return err
+	}
+
 	query := fmt.Sprintf("UPDATE contract SET employer_id=%d,date_of_contract='%s',expiring_date='%s',salary='%s',emp_position='%s'",&c.EmployerID,c.HiredDate,c.DueDate,c.Salary,c.PositionName)
-	_,err:= db.Exec(query)
+	_,err = db.Exec(query)
 	return err
 
 }

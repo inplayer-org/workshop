@@ -37,6 +37,7 @@ func (e *IsString) Error() string {
 	}
 		return true
 
+
 	}
 
 
@@ -46,9 +47,29 @@ var (
 	emailRegexp = regexp.MustCompile( "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$" )
 )
 
+
+
 func CheckEmail(email string) error {
 	if !emailRegexp.MatchString(email) {
 		return ErrBadFormat
 	}
 	return nil
 }
+var ErrBadSalary = errors.New("invalid input for salary")
+
+func CheckSalary(salary string) error{
+
+
+	if !strings.HasSuffix(salary, "den.") {
+		return ErrBadSalary
+	}
+
+	s := []rune(salary)
+	for i:=0; i< len(s)-4;  i++{
+		if !unicode.IsNumber(s[i]) {
+			return ErrBadSalary
+		}
+	}
+	return nil
+
+	}
