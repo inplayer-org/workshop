@@ -112,6 +112,7 @@ func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
 
+
 	errorhandle.CheckDB(a.DB,w)
 
 	vars := mux.Vars(r)
