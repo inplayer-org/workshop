@@ -29,7 +29,7 @@ func (e *IsString) Error() string {
 
 	func LettersOnly(str string) bool{
 		for _, l := range str {
-		if !unicode.IsLetter(l) {
+		if unicode.IsNumber(l) {
 		return false
 	}
 	}
