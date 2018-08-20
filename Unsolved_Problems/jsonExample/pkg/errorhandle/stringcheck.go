@@ -57,7 +57,7 @@ func CheckEmail(email string) error {
 }
 var ErrBadSalary = errors.New("invalid input for salary")
 
-func CheckCurrency(salary string) error{
+func CheckSalary(salary string) error{
 
 
 	if !strings.HasSuffix(salary, "den.") {
