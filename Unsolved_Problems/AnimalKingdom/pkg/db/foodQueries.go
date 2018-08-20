@@ -6,6 +6,8 @@ import (
 	"log"
 )
 
+
+
 //SelectAllFood return slice of all food
 func SelectAllFood(db *sql.DB) []structures.Food {
 	rows, err := db.Query("SELECT * FROM Food")
@@ -48,7 +50,7 @@ func SelectFoodbyName(db *sql.DB, foodName string) interface{} {
 func DeleteFoodbyName(db *sql.DB, foodName string) error{
 	delFood, err := db.Prepare("DELETE FROM Food WHERE foodName=(?)")
 	errorHandler(err)
-	_,err = delFood.Exec(db,foodName)
+	_,err = delFood.Exec(foodName)
 	return err
 }
 
@@ -64,6 +66,15 @@ func InsertFood(db *sql.DB, food structures.Food) {
 	f := food
 	_, err := db.Exec("INSERT INTO Food(foodID,foodName,type)  VALUES (?,?,?)",f.FoodID, f.Name, f.Type)
 	errorHandler(err)
+}
+
+func UpdateFood(db *sql.DB, food structures.Food) (structures.Food, error) {
+	update, err := db.Prepare("UPDATE Food set foodName=(?),type=(?) WHERE foodID=(?)")
+	update.Exec(food.Name,food.Type,food.FoodID)
+	if err!=nil{
+		return structures.Food{},err
+	}
+	return food,nil
 }
 
 func SelectAllFoodByType(db *sql.DB, typeFood string) []string {
