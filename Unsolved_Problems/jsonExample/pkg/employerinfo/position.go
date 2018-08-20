@@ -21,10 +21,10 @@ func (p *Position) Get(db *sql.DB) error {
 }
 
 func (p *Position) Create(db *sql.DB) error{
+
 	err:= errorhandle.CheckString(&p.Name)
 
 	if err != nil {
-		//fmt.Println(err)
 		return err
 	}
 
@@ -32,14 +32,13 @@ func (p *Position) Create(db *sql.DB) error{
 	_,err=db.Exec(query)
 	return err
 
-
 }
 
 func (p *Position) Update(db *sql.DB) error{
+
 	err:= errorhandle.CheckString(&p.Name)
 
 	if err != nil {
-		//fmt.Println(err)
 		return err
 	}
 	query:=fmt.Sprintf("UPDATE position_info SET description='%s' WHERE emp_position='%s'",p.Description,p.Name)

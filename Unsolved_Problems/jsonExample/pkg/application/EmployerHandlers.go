@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/employerinfo"
 	"encoding/json"
-	"fmt"
 )
 
 func (a *App) GetEmployers(w http.ResponseWriter, r *http.Request) {
@@ -31,16 +30,12 @@ func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 
 	var e employerinfo.EmployerInfo
 
-
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
-		fmt.Println(err)
 		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 	defer r.Body.Close()
-
-
 
 	if err := e.Create(a.DB); err != nil {
 
@@ -85,6 +80,7 @@ func (a *App) GetEmployer(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.RespondWithJSON(w, http.StatusOK, e)
 }
+
 func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.CheckDB(a.DB,w)
@@ -92,19 +88,17 @@ func (a *App) UpdateEmployer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Employer ID")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "ID should be intteger")
 		return
 	}
 
-	var e employerinfo.EmployerInfo
-	e.ID = id
+	e:=employerinfo.EmployerInfo{ID:id}
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid json body")
 		return
 	}
 	defer r.Body.Close()
-
 
 	if err := e.Update(a.DB); err != nil {
 
@@ -129,7 +123,7 @@ func (a *App) DeleteEmployer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Employer ID")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "ID should be integer")
 		return
 	}
 

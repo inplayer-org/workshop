@@ -14,7 +14,12 @@ func (a *App) GetPositions(w http.ResponseWriter, r *http.Request) {
 
 	positions, err := employerinfo.GetAllPositions(a.DB)
 	if err != nil {
-		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch err {
+		case sql.ErrNoRows:
+			errorhandle.RespondWithError(w, http.StatusNotFound, "no positions found")
+		default:
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
@@ -27,14 +32,12 @@ func (a *App) GetPosition(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	name, err := vars["name"]
-
 	if err != true {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Position ")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "enter name for the position you want to get info")
 		return
 	}
 
 	p := employerinfo.Position{Name: name}
-	//fmt.Println(p.Name)
 	if err := p.Get(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -48,6 +51,7 @@ func (a *App) GetPosition(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.RespondWithJSON(w, http.StatusOK, p)
 }
+
 func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.CheckDB(a.DB,w)
@@ -55,22 +59,19 @@ func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name, err := vars["name"]
 	if err != true {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Position ID")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "enter name for the position you want to get info")
 		return
 	}
 
-	var p employerinfo.Position
-	p.Name = name
+	p:=employerinfo.Position{Name:name}
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid json body")
 		return
 	}
 	defer r.Body.Close()
-	// p.EmployerID = id
 
 	if err := p.Update(a.DB); err != nil {
-
 		switch err {
 		case errorhandle.Err:
 			errorhandle.RespondWithError(w, http.StatusConflict, err.Error())
@@ -83,6 +84,7 @@ func (a *App) UpdatePosition(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.RespondWithJSON(w, http.StatusCreated, p)
 }
+
 func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.CheckDB(a.DB,w)
@@ -90,13 +92,12 @@ func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
 	var p employerinfo.Position
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid json body")
 		return
 	}
 	defer r.Body.Close()
 
 	if err := p.Create(a.DB); err != nil {
-
 		switch err {
 		case errorhandle.Err:
 			errorhandle.RespondWithError(w, http.StatusConflict, err.Error())
@@ -112,7 +113,6 @@ func (a *App) CreatePosition(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
 
-
 	errorhandle.CheckDB(a.DB,w)
 
 	vars := mux.Vars(r)
@@ -124,7 +124,12 @@ func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
 
 	p := employerinfo.Position{Name: name}
 	if err := p.Delete(a.DB); err != nil {
+		switch err {
+			case sql.ErrNoRows:
+		errorhandle.RespondWithError(w, http.StatusNotFound, "position does not exist or it is already deleted")
+			default:
 		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 

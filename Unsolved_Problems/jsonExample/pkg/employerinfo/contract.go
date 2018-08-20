@@ -27,9 +27,7 @@ func (c *Contract) Get(db *sql.DB) error {
 		return err
 	}
 
-	var p Position
-	query=fmt.Sprintf("SELECT emp_position,description FROM position_info WHERE emp_position='%s'",c.PositionName)
-	err= db.QueryRow(query).Scan(&p.Name,&p.Description)
+	p,err:=getPositionWithName(db,c.PositionName)
 
 	if err!=nil {
 		return err
@@ -38,6 +36,18 @@ func (c *Contract) Get(db *sql.DB) error {
 	c.Position=&p
 
 	return nil
+}
+
+func getPositionWithName(db *sql.DB,name string) (Position,error){
+	var p Position
+	query:=fmt.Sprintf("SELECT emp_position,description FROM position_info WHERE emp_position='%s'",name)
+	err:= db.QueryRow(query).Scan(&p.Name,&p.Description)
+
+	if err!=nil {
+		return p,err
+	}
+
+	return p,nil
 }
 
 func (c *Contract) Create(db *sql.DB) error {
@@ -77,20 +87,17 @@ func (c *Contract) Delete(db *sql.DB) error{
 }
 
 func GetAllContracts(db *sql.DB) ([]Contract,error){
-	//fmt.Println("test")
-	query:=fmt.Sprintf("    SELECT contract_number,employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract")
+
+	query:=fmt.Sprintf("SELECT contract_number,employer_id,date_of_contract,expiring_date,salary,emp_position FROM contract")
 	rows,err:=db.Query(query)
 
-	//fmt.Println(rows)
 	if err!=nil{
-		//fmt.Println(err)
 		return nil,err
 	}
 
 	defer rows.Close()
 
 	return rowsToContracts(db,rows)
-
 }
 
 func rowsToContracts(db *sql.DB,rows *sql.Rows) ([]Contract, error) {
@@ -104,9 +111,12 @@ func rowsToContracts(db *sql.DB,rows *sql.Rows) ([]Contract, error) {
 		if err!=nil {
 			return nil,err
 		}
-		var p Position
-		query:=fmt.Sprintf("SELECT emp_position,description FROM position_info WHERE emp_position='%s'",c.PositionName)
-		err=db.QueryRow(query).Scan(&p.Name,&p.Description)
+
+		p,err:=getPositionWithName(db,c.PositionName)
+
+		if err!=nil {
+			return nil,err
+		}
 
 		c.Position=&p
 

@@ -17,7 +17,7 @@ func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Equipment ID")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "ID shpuld be int")
 		return
 	}
 
@@ -35,6 +35,7 @@ func (a *App) GetEquipment(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.RespondWithJSON(w, http.StatusOK, e)
 }
+
 func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.CheckDB(a.DB,w)
@@ -42,7 +43,7 @@ func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Equipment ID")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "ID should be int")
 		return
 	}
 
@@ -50,14 +51,20 @@ func (a *App) UpdateEquipment(w http.ResponseWriter, r *http.Request) {
 	e.EmployerID = id
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid json body")
 		return
 	}
 	defer r.Body.Close()
 	// e.EmployerID = id
 
 	if err := e.Update(a.DB); err != nil {
-		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch err {
+		case sql.ErrNoRows:
+			errorhandle.RespondWithError(w, http.StatusNotFound, "equipment doesnt exist create it")
+		default:
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+
 		return
 	}
 
@@ -77,7 +84,13 @@ func (a *App) DeleteEquipment(w http.ResponseWriter, r *http.Request) {
 
 	e := employerinfo.Equipment{EmployerID: id}
 	if err := e.Delete(a.DB); err != nil {
-		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch err {
+		case sql.ErrNoRows:
+			errorhandle.RespondWithError(w, http.StatusNotFound, "equipment not found or already deleted")
+
+		default:
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
@@ -90,7 +103,13 @@ func (a *App) GetEquipments(w http.ResponseWriter, r *http.Request) {
 
 	equipments, err := employerinfo.GetAllEquipments(a.DB)
 	if err != nil {
-		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch err {
+		case sql.ErrNoRows:
+			errorhandle.RespondWithError(w, http.StatusNotFound, "no equipment found")
+
+		default:
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 

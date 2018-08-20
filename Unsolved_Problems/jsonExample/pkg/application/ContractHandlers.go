@@ -17,14 +17,18 @@ func (a *App) GetContracts(w http.ResponseWriter, r *http.Request) {
 	cs, err := employerinfo.GetAllContracts(a.DB)
 	fmt.Println(cs)
 	if err != nil {
-		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch err {
+		case sql.ErrNoRows:
+			errorhandle.RespondWithError(w, http.StatusNotFound, "no contracts found")
+		default:
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
-
-
 	errorhandle.RespondWithJSON(w, http.StatusOK, cs)
 }
+
 func (a *App) GetContract(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.CheckDB(a.DB,w)
@@ -50,6 +54,7 @@ func (a *App) GetContract(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.RespondWithJSON(w, http.StatusOK, c)
 }
+
 func (a *App) UpdateContract(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.CheckDB(a.DB,w)
@@ -65,19 +70,25 @@ func (a *App) UpdateContract(w http.ResponseWriter, r *http.Request) {
 	c.EmployerID = id
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid json body")
 		return
 	}
 	defer r.Body.Close()
-	// c.EmployerID = id
 
 	if err := c.Update(a.DB); err != nil {
-		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch err {
+		case sql.ErrNoRows:
+			errorhandle.RespondWithError(w, http.StatusNotFound, "contract with that contract number does not exist")
+		default:
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 
 	errorhandle.RespondWithJSON(w, http.StatusOK, c)
 }
+
+//checkout
 func (a *App) CreateContract(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.CheckDB(a.DB,w)
@@ -85,24 +96,20 @@ func (a *App) CreateContract(w http.ResponseWriter, r *http.Request) {
 	var c employerinfo.Contract
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&c); err != nil {
-
-
-
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid json body")
 		return
 	}
 	defer r.Body.Close()
 
-
 	if err := c.Create(a.DB); err != nil {
-
+		//create ne ni gi handla erorite
 		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-
 	errorhandle.RespondWithJSON(w, http.StatusCreated, c)
 }
+
 func (a *App) DeleteContract(w http.ResponseWriter, r *http.Request) {
 
 	errorhandle.CheckDB(a.DB,w)
@@ -110,13 +117,18 @@ func (a *App) DeleteContract(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Contract ID")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "ID should be integer")
 		return
 	}
 
 	c := employerinfo.Contract{ContractNumber: id}
 	if err := c.Delete(a.DB); err != nil {
-		errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		switch err {
+		case sql.ErrNoRows:
+			errorhandle.RespondWithError(w, http.StatusNotFound, "contract does not exist or already deleted")
+		default:
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 

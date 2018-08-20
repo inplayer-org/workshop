@@ -24,6 +24,3 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/contract", a.CreateContract).Methods("POST")
 	a.Router.HandleFunc("/contract/{id:[0-9]+}", a.DeleteContract).Methods("DELETE")
 }
-
-
-
