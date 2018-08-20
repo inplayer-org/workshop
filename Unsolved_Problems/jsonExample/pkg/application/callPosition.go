@@ -117,7 +117,7 @@ func (a *App) DeletePosition(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name, err := vars["name"]
 	if err != true {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Position ID")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid Position name")
 		return
 	}
 
