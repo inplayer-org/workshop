@@ -3,10 +3,11 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 
-	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/controllinput"
 	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/structures"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/AnimalKingdom/pkg/db"
@@ -14,10 +15,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var IsMix = regexp.MustCompile(`[a-zA-Z+]+[0-9+]{1,10}$`).MatchString
+var IsString = regexp.MustCompile(`^[a-zA-Z+]+$`).MatchString
+
+//Get all animals
 func GetAnimals(DB *sql.DB) func(w http.ResponseWriter, req *http.Request) {
 
 	return func(w http.ResponseWriter, req *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
 		animals := db.SelectAllAnimals(DB)
 		respondWithJSON(w, http.StatusOK, animals)
 	}
@@ -29,13 +33,13 @@ func GetAnimal(DB *sql.DB) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		parameter := mux.Vars(req)
 		entry := parameter["entry"]
-		if !(controllinput.IntOnly(entry) || controllinput.CheckString(&entry)) {
-			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
+		if IsMix(entry) {
+			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars ")
 			return
 		}
 		animal, err := db.SelectAnimal(DB, entry)
 		if err == sql.ErrNoRows {
-			respondWithError(w, http.StatusNotFound, "Animal name ("+entry+") not present in database")
+			respondWithError(w, http.StatusNotFound, "Animal ("+entry+") not present in database")
 			return
 		}
 		respondWithJSON(w, http.StatusOK, animal)
@@ -50,8 +54,8 @@ func DeleteAnimal(DB *sql.DB) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		parameter := mux.Vars(req)
 		entry := parameter["entry"]
-		if !(controllinput.IntOnly(entry) || controllinput.CheckString(&entry)) {
-			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
+		if IsMix(entry) {
+			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars")
 			return
 		}
 		_, err := db.SelectAnimal(DB, entry)
@@ -61,10 +65,10 @@ func DeleteAnimal(DB *sql.DB) func(w http.ResponseWriter, req *http.Request) {
 		}
 		err1 := db.DeleteAnimal(DB, entry)
 		if err1 != nil {
-			respondWithError(w, http.StatusInternalServerError, err.Error())
+			respondWithError(w, http.StatusInternalServerError, err1.Error())
 			return
 		}
-		respondWithError(w, http.StatusOK, "Successfuly deleted")
+		respondWithJSON(w, http.StatusOK, "Successfuly deleted")
 	}
 
 }
@@ -75,35 +79,28 @@ func AddAnimal(DB *sql.DB) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		parameter := mux.Vars(req)
 		entry := parameter["entry"]
-		if controllinput.IntOnly(entry) {
+		if IsMix(entry) {
+			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars")
+			return
+		} else if !IsString(entry) {
 			respondWithError(w, http.StatusBadRequest, "You can add animal just by name")
-		} else if controllinput.CheckString(&entry) {
-			AddAnimalByName(DB, entry, w, req)
-		} else {
-			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
+			return
 		}
+		animal := structures.Animal{}
+		json.NewDecoder(req.Body).Decode(&animal)
+		if animal.Name != entry {
+			respondWithError(w, http.StatusMultipleChoices, "Entry ("+entry+") and JSON ("+animal.Name+") has to be equal")
+			return
+		}
+		err := db.InsertAnimal(DB, animal)
+		fmt.Println(err)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		respondWithJSON(w, http.StatusOK, animal)
 	}
 
-}
-
-func AddAnimalByName(DB *sql.DB, animalName string, w http.ResponseWriter, req *http.Request) {
-	animal := structures.Animal{}
-	json.NewDecoder(req.Body).Decode(&animal)
-	if animal.Name != animalName {
-		respondWithError(w, http.StatusMultipleChoices, "Entry name("+animalName+") and JSON name("+animal.Name+") has to be equal")
-		return
-	}
-	exist := db.Exists(DB, animalName)
-	if exist == "1" {
-		respondWithError(w, http.StatusAlreadyReported, "Animal ("+animalName+") already exists in database, If you want to update entry use the PUT method")
-		return
-	}
-	err := db.InsertAnimal(DB, animal)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	respondWithJSON(w, http.StatusOK, animal)
 }
 
 //Update animal by name
@@ -112,32 +109,27 @@ func UpdateAnimal(DB *sql.DB) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		parameter := mux.Vars(req)
 		entry := parameter["entry"]
-		if controllinput.IntOnly(entry) {
-			respondWithError(w, http.StatusBadRequest, "You can update animal just by name")
-		} else if controllinput.CheckString(&entry) {
-			UpdateAnimalByName(DB, entry, w, req)
-		} else {
-			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
+		if IsMix(entry) {
+			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars")
+			return
+		} else if !IsString(entry) {
+			respondWithError(w, http.StatusBadRequest, "You can add animal just by name")
+			return
 		}
+		var animal structures.Animal
+		_ = json.NewDecoder(req.Body).Decode(&animal)
+		if animal.Name != entry {
+			respondWithError(w, http.StatusMultipleChoices, "Entry name("+entry+") and JSON name("+animal.Name+") has to be equal")
+			return
+		}
+		_, err := db.SelectAnimal(DB, entry)
+		if err == sql.ErrNoRows {
+			respondWithError(w, http.StatusBadRequest, "Animal ("+entry+") not present in database")
+			return
+		}
+		animals, _ := db.UpdateAnimal(DB, animal)
+		json.NewEncoder(w).Encode(animals)
 	}
-
-}
-
-func UpdateAnimalByName(DB *sql.DB, animalName string, w http.ResponseWriter, req *http.Request) {
-
-	var animal structures.Animal
-	_ = json.NewDecoder(req.Body).Decode(&animal)
-	if animal.Name != animalName {
-		respondWithError(w, http.StatusMultipleChoices, "Entry name("+animalName+") and JSON name("+animal.Name+") has to be equal")
-		return
-	}
-	exist := db.Exists(DB, animal.Name)
-	if exist == "0" {
-		respondWithError(w, http.StatusBadRequest, "Animal ("+animalName+") not present in database")
-		return
-	}
-	animals, _ := db.UpdateAnimal(DB, animal)
-	json.NewEncoder(w).Encode(animals)
 
 }
 
@@ -147,7 +139,7 @@ func GetAnimalFoods(DB *sql.DB) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
 		parameter := mux.Vars(req)
 		entryAnimal := parameter["animal"]
-		if !(controllinput.IntOnly(entryAnimal) || controllinput.CheckString(&entryAnimal)) {
+		if IsMix(entryAnimal) {
 			respondWithError(w, http.StatusBadRequest, "Request is a mix of ints and chars or is shorter than 2 characters or longer than 30 characters. Please provide correct request")
 			return
 		}
@@ -189,7 +181,6 @@ func main() {
 	router.HandleFunc("/animals/{entry}", AddAnimal(DB)).Methods("POST")
 	router.HandleFunc("/animals/{entry}", DeleteAnimal(DB)).Methods("DELETE")
 	router.HandleFunc("/animals/{entry}", UpdateAnimal(DB)).Methods("PUT")
-	//router.HandleFunc("/food/{animal}", GetAnimalFoods(DB)).Methods("GET")
 	router.HandleFunc("/eat/{animal}", GetAnimalFoods(DB)).Methods("GET")
 	log.Fatal(http.ListenAndServe(port, router))
 }
