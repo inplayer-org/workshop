@@ -20,6 +20,10 @@ func AddFilteredFood(DB *sql.DB,newFood structures.Food ,w http.ResponseWriter){
 		resp.RespondWithJSON(w, http.StatusAlreadyReported, resp.AlreadyExist("Name",newFood.Name))
 		return
 	}
-	db.InsertFood(DB,newFood)
+	err := db.InsertFood(DB,newFood)
+	if err!=nil{
+		resp.RespondWithError(w,http.StatusInternalServerError,resp.ErrorDuringExec("insertion"))
+		return
+	}
 	resp.RespondWithJSON(w, http.StatusCreated, newFood)
 }
