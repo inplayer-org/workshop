@@ -117,6 +117,12 @@ func (e *EmployerInfo) Create(db *sql.DB)error {
 		//fmt.Println(err)
 		return err
 	}
+	/*err = errorhandle.CheckEmail(e.Email)
+
+	if err != nil {
+		//fmt.Println(err)
+		return err
+	} */
 
 	contracts:=*e.Contracts
 
