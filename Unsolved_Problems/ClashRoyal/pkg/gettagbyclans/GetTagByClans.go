@@ -1,22 +1,23 @@
-package gettagbyclans
+package main
 
 import (
 	"net/http"
-	"encoding/json"
 	"fmt"
+	"encoding/json"
 )
 
-type Tag struct {
-	Tag []struct {
-		tag string `json:"tag"`
-	}
+type Items struct {
+	Items []Tag `json:items`
 }
 
-func GetTagByClans() {
+type Tag struct {
+	Tag string `json:"tag"`
+}
+func GetTagByClans(clanTag string) {
 	var tag Tag
 	client := &http.Client{}
 
-	req,err :=http.NewRequest("GET",`https://api.clashroyale.com/v1/clans/\#9VPC0JCP/members`,nil)
+	req,err :=http.NewRequest("GET","https://api.clashroyale.com/v1/clans/"+ clanTag +"/members",nil)
 
 	if err!=nil{
 		panic(err)
@@ -30,13 +31,13 @@ func GetTagByClans() {
 	if err!=nil{
 		panic(err)
 	}
-	json.NewDecoder(resp.Body).Decode(&tag)
 
+	json.NewDecoder(resp.Body).Decode(&tag)
 	fmt.Print(tag)
 }
 
 
 
 func main() {
-	GetTagByClans()
+	GetTagByClans("%259VPC0JCP")
 }
