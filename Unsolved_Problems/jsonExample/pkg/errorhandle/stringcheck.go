@@ -1,35 +1,36 @@
 package errorhandle
 
 import (
-	"unicode"
 	"strings"
+	"unicode"
 	"regexp"
 	"errors"
 )
-type IsString struct {
-	arf int
+
+type BadString struct {
 	msg string
 }
 
-var Err = &IsString{10,"It shouldn't contain ints"}
+var Err = &BadString{"It shouldn't contain ints"}
 
-func (e *IsString) Error() string {
+func (e *BadString) Error() string {
 	return e.msg
 }
 
+func (e *BadString)setMsg(msg string){
+	e.msg=msg+e.Error()
+}
 
-	func CheckString(Msg *string)  error{
+func CheckString(Msg *string)  error{
 		*Msg = strings.ToLower(*Msg)
-		//e:=&IsString{"It shouldn't contain ints"}
 		if  LettersOnly(*Msg) != true {
-			//fmt.Println(Err)
+			Err.setMsg(*Msg)
 			return Err
 		}
 		return nil
 	}
 
-
-	func LettersOnly(str string) bool{
+func LettersOnly(str string) bool{
 		for _, l := range str {
 		if unicode.IsNumber(l) {
 		return false
@@ -40,14 +41,11 @@ func (e *IsString) Error() string {
 
 	}
 
-
 var (
 	ErrBadFormat        = errors.New("invalid format of Email Address")
 
 	emailRegexp = regexp.MustCompile( "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$" )
 )
-
-
 
 func CheckEmail(email string) error {
 	if !emailRegexp.MatchString(email) {
@@ -55,10 +53,10 @@ func CheckEmail(email string) error {
 	}
 	return nil
 }
+
 var ErrBadSalary = errors.New("invalid input for salary")
 
 func CheckSalary(salary string) error{
-
 
 	if !strings.HasSuffix(salary, "den.") {
 		return ErrBadSalary

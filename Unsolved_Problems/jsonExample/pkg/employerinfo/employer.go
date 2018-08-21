@@ -6,10 +6,6 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/errorhandle"
 )
 
-
-
-
-
 type EmployerInfo struct {
 
 	ID int `json:"id"`
@@ -54,7 +50,6 @@ func (e *EmployerInfo) Get(db *sql.DB) error {
 	}
 
     query=fmt.Sprintf("SELECT computer,monitor,mouse,keyboard,headset FROM equipment where employer_id=%d",e.ID)
-  //  &e.Equipment.EmployerID=&e.ID
     var eq Equipment
     eq.EmployerID=e.ID
 	err= db.QueryRow(query).Scan(&eq.Copmuters,&eq.Monitors,&eq.Mouses,&eq.Keyboards,&eq.Headsets)
@@ -97,36 +92,28 @@ func contractsForEmployer(db *sql.DB,rows *sql.Rows)([]Contract,error){
 	return contracts,nil
 }
 
+func inputChecks(e EmployerInfo,contracts []Contract) error {
+
+	err:=stringChecks(e)
+
+	if err != nil {
+		return err
+	}
+
+	err= errorhandle.CheckSalary(contracts[0].Salary)
+
+	if err!=nil {
+		return err
+	}
+
+	return nil
+}
 
 func (e *EmployerInfo) Create(db *sql.DB)error {
-	err:= errorhandle.CheckString(&e.FullName)
-
-	if err != nil {
-		//fmt.Println(err)
-		return err
-	}
-	err = errorhandle.CheckString(&e.Country)
-
-	if err != nil {
-		//fmt.Println(err)
-		return err
-	}
-	err = errorhandle.CheckString(&e.City)
-
-	if err != nil {
-		//fmt.Println(err)
-		return err
-	}
-	err = errorhandle.CheckEmail(e.Email)
-
-	if err != nil {
-		//fmt.Println(err)
-		return err
-	}
 
 	contracts:=*e.Contracts
 
-	err= errorhandle.CheckSalary(contracts[0].Salary)
+	err:=inputChecks(*e,contracts)
 
 	if err!=nil {
 		return err
@@ -151,56 +138,54 @@ func (e *EmployerInfo) Create(db *sql.DB)error {
 		return err
 	}
 
-
-
-
-
 	query = fmt.Sprintf("INSERT INTO contract(employer_id,date_of_contract,expiring_date,salary,emp_position) VALUES(%d,'%s','%s','%s','%s')",e.ID,contracts[0].HiredDate,contracts[0].DueDate,contracts[0].Salary,contracts[0].PositionName)
 	_,err= db.Exec(query)
-	//fmt.Println(err)
 
 	if err != nil {
 		return err
 	}
 
 	eq:=*e.Equipment
-	//fmt.Println(eq)
 	query = fmt.Sprintf("INSERT INTO equipment(employer_id,computer,monitor,mouse,keyboard,headset) VALUES(%d,%d,%d,%d,%d,%d)",e.ID,eq.Copmuters,eq.Monitors,eq.Mouses,eq.Keyboards,eq.Headsets)
-	//fmt.Println(err)
 	_,err= db.Exec(query)
 	return err
+
+	}
+
+	func stringChecks(e EmployerInfo)error{
+		err:= errorhandle.CheckString(&e.FullName)
+
+		if err != nil {
+			return err
+		}
+
+		err = errorhandle.CheckString(&e.Country)
+
+		if err != nil {
+			return err
+		}
+		err = errorhandle.CheckString(&e.City)
+
+		if err != nil {
+			return err
+		}
+		err = errorhandle.CheckEmail(e.Email)
+
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 
 func (e *EmployerInfo) Update(db *sql.DB)error {
-	err:= errorhandle.CheckString(&e.FullName)
+	err:=stringChecks(*e)
 
 	if err != nil {
-		//fmt.Println(err)
 		return err
 	}
-	err = errorhandle.CheckString(&e.Country)
-
-	if err != nil {
-		//fmt.Println(err)
-		return err
-	}
-	err = errorhandle.CheckString(&e.City)
-
-	if err != nil {
-		//fmt.Println(err)
-		return err
-	}
-	err = errorhandle.CheckEmail(e.Email)
-
-	if err != nil {
-		//fmt.Println(err)
-		return err
-	}
-
 
 	query:=fmt.Sprintf("UPDATE employer_info SET fullname='%s',email='%s',gender='%s',birth_date='%s',city='%s',country='%s' WHERE employer_id=%d",e.FullName,e.Email,e.Gender,e.BirthDate,e.City,e.Country,e.ID)
 	_,err =db.Exec(query)
-
 	return err
 
 }
@@ -240,7 +225,6 @@ func GetAllEmployers(db *sql.DB)([]EmployerInfo,error){
 	rows,err:=db.Query(query)
 
 	if err!=nil {
-		//fmt.Println(err)
 		return nil,err
 	}
 
@@ -285,10 +269,7 @@ func rowsToEmployers(db *sql.DB,rows *sql.Rows) ([]EmployerInfo, error) {
 		eq.EmployerID=e.ID
 		query=fmt.Sprintf("SELECT computer,monitor,mouse,keyboard,headset FROM equipment WHERE employer_id=%d",eq.EmployerID)
 		err=db.QueryRow(query).Scan(&eq.Copmuters,&eq.Monitors,&eq.Mouses,&eq.Keyboards,&eq.Headsets)
- 		/*fmt.Println(eq)
-		e.Equipment=&eq
-		fmt.Println(e)
-		fmt.Println(employers)*/
+
 		if err!= nil {
 			if err == sql.ErrNoRows {
 				eq.Copmuters=0
@@ -300,7 +281,6 @@ func rowsToEmployers(db *sql.DB,rows *sql.Rows) ([]EmployerInfo, error) {
 				return nil,err
 			}
 		}
-
 
     	e.Equipment=&eq
 

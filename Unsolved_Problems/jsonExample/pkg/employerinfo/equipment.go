@@ -32,10 +32,9 @@ func (e *Equipment) Create(db *sql.DB) error {
 }
 
 func (e *Equipment) Update(db *sql.DB) error {
-	//fmt.Println(e.Copmuters)
+
 	query := fmt.Sprintf("UPDATE equipment SET computer=%d,monitor=%d,mouse=%d,keyboard=%d,headset=%d WHERE employer_id=%d",e.Copmuters,e.Monitors,e.Mouses,e.Keyboards,e.Headsets,e.EmployerID)
 	_,err:= db.Exec(query)
-	//fmt.Println(err)
 	return err
 
 }

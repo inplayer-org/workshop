@@ -32,7 +32,7 @@ func (a *App) CreateEmployers(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&e); err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid json body")
 		return
 	}
 	defer r.Body.Close()
