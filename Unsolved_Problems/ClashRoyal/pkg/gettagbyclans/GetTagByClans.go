@@ -6,13 +6,12 @@ import (
 	"encoding/json"
 )
 
-type Items struct {
-	Items []Tag `json:items`
+type Tag struct {
+	Items []struct {
+		Tag string `json:"tag"`
+	} `json:items`
 }
 
-type Tag struct {
-	Tag string `json:"tag"`
-}
 func GetTagByClans(clanTag string) {
 	var tag Tag
 	client := &http.Client{}
