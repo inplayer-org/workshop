@@ -43,15 +43,20 @@ func GetLocations()(Locations,error){
 
 func LocationMap(locations Locations)map[string]int{
 
-	locationIDs:=make(map[string]int)
+	locationMap:=make(map[string]int)
 
 	for _,location:= range locations.Location{
 		if location.IsCountry {
-			locationIDs[location.Name]=location.ID
+			locationMap[location.Name]=location.ID
 		}
 	}
 
-	return locationIDs
+	return locationMap
 
 }
 
+func FindLocationID(locationMap map[string]int,country string)int{
+
+	return locationMap[country]
+
+}
