@@ -15,7 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var IsMix = regexp.MustCompile(`[a-zA-Z+]+[0-9+]{1,10}$`).MatchString
+var IsMix = regexp.MustCompile(`([a-zA-Z+]+[0-9+]){1,30}$`).MatchString
 var IsString = regexp.MustCompile(`^[a-zA-Z+]+$`).MatchString
 
 //Get all animals
