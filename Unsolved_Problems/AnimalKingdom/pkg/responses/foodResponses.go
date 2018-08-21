@@ -22,6 +22,15 @@ func AlreadyExist(tableRow string ,entry string)string{
 	return "Food with "+tableRow+" ("+entry+") already exists in database, If you want to update entry use the PUT method"
 }
 
+
 func NotAllowedToUpdateBy(tableRow string)string{
 	return "You aren't allowed to update the database by Food " + tableRow
+}
+
+func NotFound(tableRow string,entry string)string{
+	return "Food "+ tableRow +" ("+entry+") not present in database"
+}
+
+func ErrorDuringExec(queryName string)string{
+	return "Something went wrong during "+queryName+" in the database"
 }

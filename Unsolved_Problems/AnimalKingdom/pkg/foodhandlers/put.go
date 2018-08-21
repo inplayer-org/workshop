@@ -17,7 +17,7 @@ func UpdateFilteredFood(DB *sql.DB,updateFood structures.Food,w http.ResponseWri
 	}
 	food,err := db.UpdateFood(DB,updateFood)
 	if err!=nil{
-		resp.RespondWithError(w,http.StatusInternalServerError,"Something went wrong during update in the database")
+		resp.RespondWithError(w,http.StatusInternalServerError,resp.ErrorDuringExec("updating"))
 		return
 	}
 	resp.RespondWithJSON(w,http.StatusOK,updateFood)

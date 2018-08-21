@@ -59,6 +59,7 @@ func DeleteFoodbyName(db *sql.DB, foodName string) error {
 	delFood, err := db.Prepare("DELETE FROM Food WHERE foodName=(?)")
 	errorHandler(err)
 	_, err = delFood.Exec(foodName)
+	log.Println(err)
 	return err
 }
 
@@ -70,10 +71,11 @@ func DeleteFoodbyID(db *sql.DB, foodID int) error {
 	return err
 }
 
-func InsertFood(db *sql.DB, food structures.Food) {
+func InsertFood(db *sql.DB, food structures.Food) error {
 	f := food
 	_, err := db.Exec("INSERT INTO Food(foodID,foodName,type)  VALUES (?,?,?)", f.FoodID, f.Name, f.Type)
-	errorHandler(err)
+	log.Println(err)
+	return err
 }
 
 func UpdateFood(db *sql.DB, food structures.Food) (structures.Food, error) {
