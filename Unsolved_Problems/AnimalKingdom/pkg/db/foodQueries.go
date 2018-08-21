@@ -7,7 +7,6 @@ import (
 )
 
 
-
 //SelectAllFood return slice of all food
 func SelectAllFood(db *sql.DB) []structures.Food {
 	rows, err := db.Query("SELECT * FROM Food")
