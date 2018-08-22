@@ -3,13 +3,13 @@ package gettagbyclans
 import (
 	"net/http"
 	"encoding/json"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
 
 func GetTagByClans(clanTag string) []string{
-	var tag locations.PlayerTags
+	var tag structures.PlayerTags
 	client := &http.Client{}
 
 	req,err :=http.NewRequest("GET","https://api.clashroyale.com/v1/clans/"+ clanTag +"/members",nil)
