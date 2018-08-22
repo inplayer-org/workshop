@@ -3,6 +3,7 @@ package main
 import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
 func main (){
@@ -25,6 +26,8 @@ func main (){
 		panic(err)
 	}
 
-	fmt.Println(playerTags)
+	tags:=parser.TagsToTagsUrlTags(playerTags.GetTags())
+
+	fmt.Println(tags)
 
 	}
