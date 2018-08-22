@@ -1,4 +1,4 @@
-package main
+package gettagbyclans
 
 import (
 	"net/http"
@@ -35,8 +35,3 @@ func GetTagByClans(clanTag string) {
 	fmt.Print(tag)
 }
 
-
-
-func main() {
-	GetTagByClans("%259VPC0JCP")
-}
