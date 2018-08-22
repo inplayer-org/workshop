@@ -36,17 +36,17 @@ func (p byWins) Less(i, j int) bool {
 
 
 //Sort players in order by priority list 1.Wins ,2.Losses ,3.Name
-func ByWins(){
+func ByWins(playerTags []string){
 
 	//Mock Object
-	var playerTag []string
-	playerTag = append(playerTag,"%258GPVRJJPL" )
-	playerTag = append(playerTag,"%2582LVJ9LC")
-	playerTag = append(playerTag,"%25PYJV8290" )
-	playerTag = append(playerTag,"%25Q2RJ2RP2" )
+	//var playerTag []string
+	//playerTag = append(playerTag,"%258GPVRJJPL" )
+	//playerTag = append(playerTag,"%2582LVJ9LC")
+	//playerTag = append(playerTag,"%25PYJV8290" )
+	//playerTag = append(playerTag,"%25Q2RJ2RP2" )
 
 	var currentPlayer PlayerStats
-	var Player []PlayerStats
+	var Players []PlayerStats
 
 
 	baseUrl := "https://api.clashroyale.com/v1/players/"
@@ -57,7 +57,7 @@ func ByWins(){
 	reqHeader.Set("Content-Type","application/json")
 	reqHeader.Set("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6ImM4NmY2ZjFjLWZlMGEtNDFiZi05NWRlLWY0MWYyYTY0ODQyNCIsImlhdCI6MTUzNDg1MTkxNSwic3ViIjoiZGV2ZWxvcGVyLzNiYmFmOGRhLTg0YmMtOWQyMi1iM2QwLTRlNDA3NmRhMWEzOCIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ._3ZnRmHHPLamGQO6QtNdXXVe7V6hAjrpA0z3sTBl7wJ937U8KEUozers1ZiLQUImDGTz_m-XLAFBlE-12DqVAw")
 
-	for _,nextTag := range playerTag{
+	for _,nextTag := range playerTags{
 
 		req,err := url2.Parse(baseUrl+nextTag)
 
@@ -73,21 +73,29 @@ func ByWins(){
 
 		json.NewDecoder(resp.Body).Decode(&currentPlayer)
 
-		Player = append(Player,currentPlayer)
+		Players = append(Players,currentPlayer)
 
 	}
 
 	//Mock Test Entries
-	Player = append(Player,PlayerStats{Name:"B Player",Wins:4279,Losses:3000,Tag:"TestTag"})
-	Player = append(Player,PlayerStats{Name:"A Player",Wins:4279,Losses:3000,Tag:"TestTag1"})
+	//Player = append(Player,PlayerStats{Name:"B Player",Wins:4279,Losses:3000,Tag:"TestTag"})
+	//Player = append(Player,PlayerStats{Name:"A Player",Wins:4279,Losses:3000,Tag:"TestTag1"})
 
 
-	fmt.Println("Pre sort Array = ",Player)
-	fmt.Println("is it sorted ? - ",sort.IsSorted(byWins(Player)),"\n")
+	//fmt.Println("Pre sort Array = ",Player)
+	//fmt.Println("is it sorted ? - ",sort.IsSorted(byWins(Player)),"\n")
+	//
+	sort.Sort(byWins(Players))
+	//
 
-	sort.Sort(byWins(Player))
+	fmt.Printf("%4s  %-30s %-6s %-6s \n","Rank","Name","Wins","Loses")
 
-	fmt.Println("Post sort Array = ",Player)
-	fmt.Println("is it sorted ? - ",sort.IsSorted(byWins(Player)),"\n")
+
+	for i,elem := range Players{
+		fmt.Printf("%4d. %-30s %-6d %-6d \n",i+1,elem.Name,elem.Wins,elem.Losses,)
+	}
+
+	fmt.Println()
+	//fmt.Println("is it sorted ? - ",sort.IsSorted(byWins(Player)),"\n")
 
 	}
