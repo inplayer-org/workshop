@@ -1,20 +1,30 @@
 package main
 
 import (
-	locations2 "repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"fmt"
 )
 
 func main (){
 
-	locations,err:=locations2.GetLocations()
+	loc,err:=locations.GetLocations()
 
 	if err!=nil {
 		panic(err)
 	}
 
-	locationsMap:=locations2.LocationMap(locations)
+	locationsMap:=locations.LocationMap(loc)
 
-	fmt.Println(locationsMap)
+	mkdID:=locationsMap["Albania"]
+
+	fmt.Println(mkdID)
+
+	playerTags,err:=locations.GetPlayerTagsPerLocation(mkdID)
+
+	if err!=nil{
+		panic(err)
+	}
+
+	fmt.Println(playerTags)
 
 	}
