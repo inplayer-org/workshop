@@ -27,6 +27,17 @@ type PlayerTags struct {
 	} `json:"items"`
 }
 
+func (p *PlayerTags) GetTags()[]string{
+	var ret []string
+
+	for _,elem:=range p.Player {
+		ret=append(ret,elem.Tag)
+	}
+
+	return ret
+
+}
+
 func GetPlayerTagsPerLocation(ID int)(PlayerTags,error){
 
 	var playerTags PlayerTags
