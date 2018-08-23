@@ -31,28 +31,27 @@ func UpdateClans(db *sql.DB,clan []structures.Clan)error{
 }
 
 
-func GetAllClans(db sql.DB)(string, error) {
+func GetAllClans(db sql.DB)([]structures.Clan, error) {
 
-	var clans structures.Clan
+	var clans []structures.Clan
+	var clan structures.Clan
 	rows,err:=db.Query("SELECT (clanTag,clanName) FROM clans;")
 
 	if err !=nil {
-		return queries.ClansTable,err
+		return clans,err
 	}
 
-	count:=0
+
 	for rows.Next(){
-		err:=rows.Scan(&clans.structures.Clan[count].Tag,&clans.structures.Clan[count].Name)
+		err:=rows.Scan(&clan.Tag,&clan.Name)
 
 		if err!=nil {
-			return queries.ClansTable, err
+			return clans, err
+		}
+clans=append(clans,clan)
 		}
 
-		count++
-
-	}
-
-	return queries.ClansTable,nil
+	return clans,nil
 }
 
 
