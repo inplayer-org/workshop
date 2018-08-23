@@ -16,13 +16,13 @@ import (
 //enterFlags flags for DbName UserName and Password
 func enterFlags() (string,string,string) {
 
-	DbName := flag.String("database", "demodb", "the name of you database")
+	DbName := flag.String("database", "Clash_Royale", "the name of you database")
 
 	UserName := flag.String("username", "root", "the username to make a conection to the database")
 
 	Password := flag.String("password", "12345", "the password for your username to make a conection to the database")
-	flag.Parse()
 
+	flag.Parse()
 
 	return *DbName,*UserName,*Password
 }

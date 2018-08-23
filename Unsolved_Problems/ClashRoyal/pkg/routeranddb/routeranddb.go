@@ -1,6 +1,5 @@
 package routeranddb
 
-
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -9,11 +8,13 @@ import (
 	"net/http"
 )
 
+//App
 type App struct {
 	Router *mux.Router
 	DB     *sql.DB
 }
 
+//Initialize creates var App
 func (a *App) Initialize(db *sql.DB,router *mux.Router) {
 
 	a.DB=db
@@ -23,6 +24,7 @@ func (a *App) Initialize(db *sql.DB,router *mux.Router) {
 //	a.initializeRoutes()
 }
 
+//Run starts server
 func (a *App) Run(addr string) {
 
 	log.Fatal(http.ListenAndServe(addr, a.Router))

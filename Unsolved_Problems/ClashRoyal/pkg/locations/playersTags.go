@@ -8,8 +8,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
-
-
+//GetPlayerTagsPerLocation for id returns top 200 playerTags
 func GetPlayerTagsPerLocation(ID int)(structures.PlayerTags,error){
 
 	var playerTags structures.PlayerTags
