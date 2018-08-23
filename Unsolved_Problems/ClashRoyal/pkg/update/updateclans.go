@@ -6,6 +6,7 @@ import (
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 )
 
 
@@ -58,8 +59,8 @@ func GetAllClans(db sql.DB)(string, error) {
 
 func DailyUpdateClans(db *sql.DB)(Clan string){
 
-	clans,err:=GetAllClans()
 
+	clans,err:=get.GetClans()
 	if err!=nil{
 		return clans
 	}
