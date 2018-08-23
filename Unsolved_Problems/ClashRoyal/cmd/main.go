@@ -12,6 +12,8 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
 )
 
+
+//enterFlags flags for DbName UserName and Password
 func enterFlags() (string,string,string) {
 
 	DbName := flag.String("database", "demodb", "the name of you database")
