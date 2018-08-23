@@ -25,7 +25,7 @@ func InsertIntoLocationsTable(db *sql.DB,id int,name string,isCountry bool,code 
 //update for an id updates a location
 func UpdateLocationsTable(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
-	_, err := db.Exec("UPDATE locations SET countryName=(?),isCounrty=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
+	_, err := db.Exec("UPDATE locations SET countryName=(?),isCountry=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
 
 	if err != nil {
 		return err

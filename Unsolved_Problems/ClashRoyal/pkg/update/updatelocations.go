@@ -4,7 +4,6 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"database/sql"
 	"strconv"
-	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
@@ -30,7 +29,7 @@ func UpdateLocations(db *sql.DB,locs structures.Locations)error{
 			}
 
 		}
-		log.Println("Finished updating for location ->",elem)
+		//log.Println("Finished updating for location ->",elem)
 	}
 
 	return nil

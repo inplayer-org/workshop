@@ -39,7 +39,7 @@ func Players(DB *sql.DB,playerTags []string,locationID int){
 		}
 
 		json.NewDecoder(resp.Body).Decode(&currentPlayer)
-
+		currentPlayer.Tag = "#"+currentPlayer.Tag[1:]
 		queries.UpdatePlayer(DB,currentPlayer,locationID)
 
 

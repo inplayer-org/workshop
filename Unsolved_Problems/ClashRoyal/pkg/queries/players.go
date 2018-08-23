@@ -8,12 +8,12 @@ import (
 
 func update(DB *sql.DB,player structures.PlayerStats,locationID int){
 	if locationID==0{
-		_,err := DB.Exec(`update players SET playerName="(?)",wins=(?),losses=(?),trophies=(?),clanTag=(?) where playerTag=(?);`,
+		_,err := DB.Exec("update players SET playerName=(?),wins=(?),losses=(?),trophies=(?),clanTag=(?) where playerTag=(?);",
 			player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag, player.Tag)
 		UpdateError(err)
 	}else{
-		_,err := DB.Exec(`update players SET playerName="(?)",wins=(?),losses=(?),trophies=(?),clanTag=(?),locationID=(?) where playerTag=(?);`,
-			player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag, locationID, player.Tag)
+		_,err := DB.Exec("update players SET playerName=(?),wins=(?),losses=(?),trophies=(?),clanTag=(?),locationID=(?) where playerTag=(?);",
+			player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag, locationID,player.Tag)
 		UpdateError(err)
 	}
 }
@@ -25,6 +25,10 @@ func insert(DB *sql.DB,player structures.PlayerStats,locationID int){
 }
 
 func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int){
+
+	//log.Println("Updating for player ",player)
+	UpdateClans(DB,structures.Clan{Tag:player.Clan.Tag,Name:player.Clan.Name})
+
 	if Exists(DB,PlayersTable,PlayerTag,player.Tag){
 		update(DB,player,locationID)
 	}else {

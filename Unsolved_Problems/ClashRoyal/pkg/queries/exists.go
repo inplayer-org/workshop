@@ -1,12 +1,19 @@
 package queries
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 func Exists(DB *sql.DB,table string,column string,value string) bool{
 
 	var result int
 
-	DB.QueryRow(`SELECT * FROM (?) where (?)="(?)"`,table,column,value).Scan(&result)
+	query:=fmt.Sprintf(`SELECT COUNT(%s) FROM %s WHERE %s="%s"`,column,table,column,value)
+
+	DB.QueryRow(query).Scan(&result)
+
+	//fmt.Println(err)
 
 	if result==0{
 		return false

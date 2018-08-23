@@ -8,6 +8,8 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
 
@@ -33,16 +35,17 @@ func enterFlags() (string,string,string) {
 
 
 func dailyUpdate(db *sql.DB){
-	_,err := locations.DailyUpdateLocations(db)
+	allLocations,err := locations.DailyUpdateLocations(db)
 	handleErr(err)
-	//for _,elem := range allLocations.Location{
-	//	playerTags,err := locations.GetPlayerTagsPerLocation(elem.ID)
-	//
-	//	handleErr(err)
-	//	if elem.IsCountry {
-	//		update.Players(db, playerTags.GetTags(), elem.ID)
-	//	}
-	//}
+	for _,elem := range allLocations.Location{
+		playerTags,err := locations.GetPlayerTagsPerLocation(57000007)
+
+		handleErr(err)
+		if elem.IsCountry {
+			log.Println("Updating for country -> ",elem.Name)
+			update.Players(db, parser.ToUrlTags(playerTags.GetTags()), 57000007)
+		}
+	}
 }
 
 
