@@ -2,13 +2,13 @@ package update
 
 import (
 	"database/sql"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
 
-func UpdateClans(db *sql.DB,clan get.Clans)error{
+func UpdateClans(db *sql.DB,clan []structures.Clan)error{
 
-for _,elem:=range clan.Clans {
+for _,elem:=range clan {
 
 	//if not exist
 	_, err := db.Exec("INSERT INTO clans(clanTag,clanName) VALUES ((?),(?))", elem.Tag, elem.Name)

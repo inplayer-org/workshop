@@ -3,20 +3,13 @@ package get
 import (
 	"net/http"
 	"encoding/json"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
-type Clans struct {
-	//Structure with information for the Location
-	Clans []struct {
-		Tag          string    `json:"tag"`
-		Name        string `json:"name"`
 
-	} `json:"items"`
-}
+func GetClans(clanTag string)(structures.Clan,error){
 
-func GetClans()(Clans,error){
-
-var clans Clans
+var clans structures.Clan
 
 client := &http.Client{}
 
