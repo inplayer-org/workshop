@@ -5,7 +5,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -15,19 +14,12 @@ type App struct {
 	DB     *sql.DB
 }
 
-func (a *App) Initialize(user, password, dbname string) {
+func (a *App) Initialize(db *sql.DB,router *mux.Router) {
 
-	connectionString := fmt.Sprintf("%s:%s@/%s", user, password, dbname)
+	a.DB=db
 
-	var err error
-	a.DB,err = sql.Open("mysql", connectionString)
+	a.Router=router
 
-	if err != nil {
-		log.Fatal(err)
-
-	}
-
-	a.Router = mux.NewRouter()
 //	a.initializeRoutes()
 }
 

@@ -6,9 +6,43 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/gettagbyclans"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/sortplayers"
+	"flag"
+	"database/sql"
+	"github.com/gorilla/mux"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
 )
 
+func enterFlags() (string,string,string) {
+
+	DbName := flag.String("database", "demodb", "the name of you database")
+
+	UserName := flag.String("username", "root", "the username to make a conection to the database")
+
+	Password := flag.String("password", "12345", "the password for your username to make a conection to the database")
+	flag.Parse()
+
+
+	return *DbName,*UserName,*Password
+}
+
 func main (){
+
+	dbName,userName,password:=enterFlags()
+
+	connectionString := fmt.Sprintf("%s:%s@/%s", userName, password, dbName)
+
+	db,err := sql.Open("mysql", connectionString)
+
+	if err != nil {
+		panic(err)	}
+
+	router := mux.NewRouter()
+
+	var app routeranddb.App
+
+	app.Initialize(db,router)
+
+	//ushte da se koristi bazata
 
 	loc,err:=locations.GetLocations()
 
