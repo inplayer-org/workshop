@@ -14,7 +14,7 @@ func UpdateLocations(db *sql.DB,locs locations.Locations)error{
 
 		if Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
 
-			err := insertInto(db,elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
+			err := insertIntoDB(db,elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
 
 			if err != nil {
 				return err
@@ -22,7 +22,7 @@ func UpdateLocations(db *sql.DB,locs locations.Locations)error{
 
 		} else {
 
-			err := update(db,elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
+			err := updateDB(db,elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
 
 			if err != nil {
 				return err
@@ -36,7 +36,7 @@ func UpdateLocations(db *sql.DB,locs locations.Locations)error{
 }
 
 //insertInto inserts location into database
-func insertInto(db *sql.DB,id int,name string,isCountry bool,code string)error{
+func insertIntoDB(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
 	_, err := db.Exec("INSERT INTO locations(id,countryName,isCountry,countryCode) VALUES ((?).(?),(?),(?));", id, name, isCountry, code)
 
@@ -50,7 +50,7 @@ func insertInto(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
 
 //update for an id updates a location
-func update(db *sql.DB,id int,name string,isCountry bool,code string)error{
+func updateDB(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
 	_, err := db.Exec("UPDATE locations SET countryName=(?),isCounrty=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
 
