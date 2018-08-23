@@ -3,15 +3,11 @@ package update
 import (
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
-
-
-	//"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 )
 
+func UpdateClans(db *sql.DB, clan []structures.Clan) error {
 
-func UpdateClans(db *sql.DB,clan []structures.Clan)error{
-
-	for _,elem:=range clan {
+	for _, elem := range clan {
 
 		//if not exist
 		_, err := db.Exec("INSERT INTO clans(clanTag,clanName) VALUES (?,?)", elem.Tag, elem.Name)
@@ -21,7 +17,7 @@ func UpdateClans(db *sql.DB,clan []structures.Clan)error{
 		}
 
 	}
-	_,err := db.Exec("UPDATE clans SET clanTag=(?), clanName=(?) WHERE clanTag=(?)")
+	_, err := db.Exec("UPDATE clans SET clanTag=(?), clanName=(?) WHERE clanTag=(?)")
 	if err != nil {
 		return err
 	}
@@ -29,48 +25,25 @@ func UpdateClans(db *sql.DB,clan []structures.Clan)error{
 	return err
 }
 
-/*
-func GetAllClans(db sql.DB)(string, error) {
+func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 
-	var clans structures.Clan
-	rows,err:=db.Query("SELECT (clanTag,clanName) FROM clans;")
+	var clans []structures.Clan
+	var clan structures.Clan
+	rows, err := db.Query("SELECT clanTag,clanName FROM clans;")
 
-	if err !=nil {
-		return queries.ClansTable,err
+	if err != nil {
+		return clans, err
 	}
 
-	count:=0
-	for rows.Next(){
-		err:=rows.Scan(&clans.structures.Clan[count].Tag,&clans.structures.Clan[count].Name)
+	for rows.Next() {
+		err := rows.Scan(&clan.Tag, &clan.Name)
 
-		if err!=nil {
-			return queries.ClansTable, err
+		if err != nil {
+			return clans, err
 		}
-
-		count++
-
+		clans = append(clans, clan)
 	}
 
-	return queries.ClansTable,nil
+	return clans, nil
 }
 
-
-
-func DailyUpdateClans(db *sql.DB)(Clan string){
-
-
-	clans,err:=get.GetClans()
-	if err!=nil{
-		return clans
-	}
-
-	err=UpdateClans(db,clans)
-
-	if err!=nil{
-		return clans
-	}
-
-	return clans
-
-}
-*/

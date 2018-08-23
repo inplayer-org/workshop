@@ -6,10 +6,11 @@ import (
 	"database/sql"
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 )
 
 
@@ -35,16 +36,26 @@ func enterFlags() (string,string,string) {
 
 
 func dailyUpdate(db *sql.DB){
+	log.Println("Updating all locations data")
 	allLocations,err := locations.DailyUpdateLocations(db)
+	log.Println("Finished updating locations data")
 	handleErr(err)
 	for _,elem := range allLocations.Location{
-		playerTags,err := locations.GetPlayerTagsPerLocation(57000007)
+		playerTags,err := locations.GetPlayerTagsPerLocation(elem.ID)
 
 		handleErr(err)
 		if elem.IsCountry {
-			log.Println("Updating for country -> ",elem.Name)
-			update.Players(db, parser.ToUrlTags(playerTags.GetTags()), 57000007)
+			log.Println("Updating players for country -> ",elem.Name)
+			update.Players(db, parser.ToUrlTags(playerTags.GetTags()), elem.ID)
 		}
+	}
+	allClans,err := update.GetAllClans(db)
+	handleErr(err)
+	log.Println("Refreshing data for all clans present in the database")
+	for _,elem := range allClans{
+		clan := get.GetTagByClans(elem.Tag)
+		log.Println("Updating players for clan ->",elem.Name)
+		update.Players(db,parser.ToUrlTags(clan),0)
 	}
 }
 
