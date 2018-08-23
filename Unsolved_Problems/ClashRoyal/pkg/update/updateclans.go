@@ -5,6 +5,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 
 
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 )
 
 
@@ -55,15 +56,15 @@ func GetAllClans(db sql.DB)(string, error) {
 
 
 
-func DailyUpdateClans(db *sql.DB)(string){
+func DailyUpdateClans(db *sql.DB)(Clan string){
 
-	clans,err:=GetAllClans()
 
+	clans,err:=get.GetClans()
 	if err!=nil{
 		return clans
 	}
 
-	err=UpdateClans(db, []structures.Clan)
+	err=UpdateClans(db,clans)
 
 	if err!=nil{
 		return clans
