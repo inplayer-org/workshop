@@ -48,7 +48,7 @@ func GetAllClans(db sql.DB) ([]structures.Clan, error) {
 	return clans, nil
 }
 
-func DailyUpdateClans(db *sql.DB) (Clan string) {
+func DailyUpdateClans(db *sql.DB) (Clan []string) {
 
 	clans, err := get.GetClans()
 	if err != nil {
