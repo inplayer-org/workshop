@@ -6,37 +6,13 @@ import (
 	"encoding/json"
 	url2 "net/url"
 	"sort"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
-
-type PlayerStats struct {
-	Tag    string `json:"tag"`
-	Name   string `json:"name"`
-	Wins   int    `json:"wins"`
-	Losses int    `json:"losses"`
-}
-
-type byWins []PlayerStats
-
-func (p byWins) Len() int {
-	return len(p)
-}
-func (p byWins) Swap(i, j int) {
-	p[i], p[j] = p[j], p[i]
-}
-func (p byWins) Less(i, j int) bool {
-	if p[i].Wins!=p[j].Wins {
-		return p[i].Wins>p[j].Wins
-	}
-	if p[i].Losses!=p[j].Losses {
-		return p[i].Losses<p[j].Losses
-	}
-		return p[i].Name<p[j].Name
-}
 
 
 
 //Sort players in order by priority list 1.Wins ,2.Losses ,3.Name
-func ByWins(playerTags []string){
+func byWins(playerTags []string){
 
 	//Mock Object
 	//var playerTag []string
@@ -45,8 +21,8 @@ func ByWins(playerTags []string){
 	//playerTag = append(playerTag,"%25PYJV8290" )
 	//playerTag = append(playerTag,"%25Q2RJ2RP2" )
 
-	var currentPlayer PlayerStats
-	var Players []PlayerStats
+	var currentPlayer structures.PlayerStats
+	var Players []structures.PlayerStats
 
 
 	baseUrl := "https://api.clashroyale.com/v1/players/"
@@ -78,14 +54,14 @@ func ByWins(playerTags []string){
 	}
 
 	//Mock Test Entries
-	//Player = append(Player,PlayerStats{Name:"B Player",Wins:4279,Losses:3000,Tag:"TestTag"})
-	//Player = append(Player,PlayerStats{Name:"A Player",Wins:4279,Losses:3000,Tag:"TestTag1"})
+	//Player = append(Player,structures.PlayerStats{Name:"B Player",Wins:4279,Losses:3000,Tag:"TestTag"})
+	//Player = append(Player,structures.PlayerStats{Name:"A Player",Wins:4279,Losses:3000,Tag:"TestTag1"})
 
 
 	//fmt.Println("Pre sort Array = ",Player)
-	//fmt.Println("is it sorted ? - ",sort.IsSorted(byWins(Player)),"\n")
+	//fmt.Println("is it sorted ? - ",sort.IsSorted(ByWins(Player)),"\n")
 	//
-	sort.Sort(byWins(Players))
+	sort.Sort(ByWins(Players))
 	//
 
 	fmt.Printf("%4s  %-30s %-6s %-6s \n","Rank","Name","Wins","Loses")
@@ -96,6 +72,6 @@ func ByWins(playerTags []string){
 	}
 
 	fmt.Println()
-	//fmt.Println("is it sorted ? - ",sort.IsSorted(byWins(Player)),"\n")
+	//fmt.Println("is it sorted ? - ",sort.IsSorted(ByWins(Player)),"\n")
 
 	}
