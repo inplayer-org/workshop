@@ -3,6 +3,8 @@ package locations
 import (
 "net/http"
 "encoding/json"
+	"database/sql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 )
 
 //Structure with a slice of Location
@@ -64,5 +66,24 @@ func LocationMap(locations Locations)map[string]int{
 func FindLocationID(locationMap map[string]int,country string)int{
 
 	return locationMap[country]
+
+}
+
+//DailyUpdateLocations updates the locations table in database and returns all locations
+func DailyUpdateLocations(db *sql.DB)(Locations,error){
+
+	locations,err:=GetLocations()
+
+	if err!=nil{
+		return locations,err
+	}
+
+	err=update.UpdateLocations(db,locations)
+
+	if err!=nil{
+		return locations,err
+	}
+
+	return locations,nil
 
 }
