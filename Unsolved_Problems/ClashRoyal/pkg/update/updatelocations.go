@@ -13,7 +13,7 @@ func UpdateLocations(db *sql.DB,locs structures.Locations)error{
 
 	for _,elem:=range locs.Location {
 
-		if queries.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
+		if !queries.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
 
 			err := queries.InsertIntoLocationsTable(db,elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
 

@@ -11,7 +11,7 @@ import (
 //insertInto inserts location into database
 func InsertIntoLocationsTable(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
-	_, err := db.Exec(`INSERT INTO locations(id,countryName,isCountry,countryCode) VALUES (1,"abv",true,"MK")`)
+	_, err := db.Exec("INSERT INTO locations(id,countryName,isCountry,countryCode) VALUES ((?),(?),(?),(?));", id, name, isCountry, code)
 
 	if err != nil {
 		return err
@@ -25,7 +25,7 @@ func InsertIntoLocationsTable(db *sql.DB,id int,name string,isCountry bool,code 
 //update for an id updates a location
 func UpdateLocationsTable(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
-	_, err := db.Exec("UPDATE locations SET countryName=(?),isCountry=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
+	_, err := db.Exec("UPDATE locations SET countryName=(?),isCounrty=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
 
 	if err != nil {
 		return err
