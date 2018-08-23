@@ -2,8 +2,8 @@ package queries
 
 import (
 	"database/sql"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	_ "github.com/go-sql-driver/mysql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
 
@@ -11,7 +11,7 @@ import (
 //insertInto inserts location into database
 func InsertIntoLocationsTable(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
-	_, err := db.Exec("INSERT INTO locations(id,countryName,isCountry,countryCode) VALUES ((?).(?),(?),(?));", id, name, isCountry, code)
+	_, err := db.Exec(`INSERT INTO locations(id,countryName,isCountry,countryCode) VALUES (1,"abv",true,"MK")`)
 
 	if err != nil {
 		return err
@@ -25,7 +25,7 @@ func InsertIntoLocationsTable(db *sql.DB,id int,name string,isCountry bool,code 
 //update for an id updates a location
 func UpdateLocationsTable(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
-	_, err := db.Exec("UPDATE locations SET countryName=(?),isCounrty=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
+	_, err := db.Exec("UPDATE locations SET countryName=(?),isCountry=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
 
 	if err != nil {
 		return err
@@ -51,9 +51,9 @@ func GetLocationID(db *sql.DB,name string)(int,error){
 }
 
 //GetAllLocations returns all locations from locations table in database
-func GetAllLocations(db *sql.DB)(locations.Locations,error){
+func GetAllLocations(db *sql.DB)(structures.Locations,error){
 
-	var locs locations.Locations
+	var locs structures.Locations
 
 	rows,err:=db.Query("SELECT (id,countryName,isCountry,countryCode) FROM locations;")
 

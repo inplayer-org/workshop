@@ -8,9 +8,10 @@ import (
 	"net/http"
 	"net/url"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
+	"log"
 )
 
-func Player(DB *sql.DB,playerTags []string,locationID int){
+func Players(DB *sql.DB,playerTags []string,locationID int){
 
 	var currentPlayer structures.PlayerStats
 
@@ -41,6 +42,7 @@ func Player(DB *sql.DB,playerTags []string,locationID int){
 
 		queries.UpdatePlayer(DB,currentPlayer,locationID)
 
-	}
 
+	}
+	log.Println("Finished Updating for location",locationID )
 }

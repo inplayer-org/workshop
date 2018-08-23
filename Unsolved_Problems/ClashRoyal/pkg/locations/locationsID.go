@@ -5,23 +5,15 @@ import (
 "encoding/json"
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
-//Structure with a slice of Location
-type Locations struct {
-	//Structure with information for the Location
-	Location []struct {
-		ID          int    `json:"id"`
-		Name        string `json:"name"`
-		IsCountry   bool   `json:"isCountry"`
-		CountryCode string `json:"countryCode"`
-	} `json:"items"`
-}
+
 
 //GetLocations gets the locations and returns error when cant make request or client cant do the request
-func GetLocations()(Locations,error){
+func GetLocations()(structures.Locations,error){
 
-	var locations Locations
+	var locations structures.Locations
 
 	client := &http.Client{}
 
@@ -48,7 +40,7 @@ func GetLocations()(Locations,error){
 
 
 //LocationMap convert all countries from locations into map with key country name and value country id
-func LocationMap(locations Locations)map[string]int{
+func LocationMap(locations structures.Locations)map[string]int{
 
 	locationMap:=make(map[string]int)
 
@@ -70,7 +62,8 @@ func FindLocationID(locationMap map[string]int,country string)int{
 }
 
 //DailyUpdateLocations updates the locations table in database and returns all locations
-func DailyUpdateLocations(db *sql.DB)(Locations,error){
+
+func DailyUpdateLocations(db *sql.DB)(structures.Locations,error){
 
 	locations,err:=GetLocations()
 

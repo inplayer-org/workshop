@@ -19,7 +19,7 @@ func update(DB *sql.DB,player structures.PlayerStats,locationID int){
 }
 
 func insert(DB *sql.DB,player structures.PlayerStats,locationID int){
-	_,err := DB.Exec(`INSERT INTO players(playerTag,playerName,wins,losses,trophies,clanTag,locationID) values((?),(?),(?),(?),(?),(?),(?)`,
+	_,err := DB.Exec(`INSERT INTO players(playerTag,playerName,wins,losses,trophies,clanTag,locationID) values((?),(?),(?),(?),(?),(?),(?));`,
 		player.Tag, player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag, locationID)
 	InsertError(err)
 }
