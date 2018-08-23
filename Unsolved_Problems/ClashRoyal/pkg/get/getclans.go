@@ -6,7 +6,7 @@ import (
 )
 
 type Clans struct {
-	//Structure with information for the Location
+	//Structure with information for the Clans
 	Clans []struct {
 		Tag          string    `json:"tag"`
 		Name        string `json:"name"`
