@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	_ "github.com/go-sql-driver/mysql"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"strconv"
 )
 
@@ -13,7 +12,7 @@ func UpdateLocations(db *sql.DB,locs locations.Locations)error{
 
 	for _,elem:=range locs.Location {
 
-		if queries.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
+		if Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
 
 			err := insertInto(db,elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
 
@@ -48,6 +47,7 @@ func insertInto(db *sql.DB,id int,name string,isCountry bool,code string)error{
 	return nil
 
 }
+
 
 //update for an id updates a location
 func update(db *sql.DB,id int,name string,isCountry bool,code string)error{
