@@ -4,12 +4,12 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/gettagbyclans"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/sortplayers"
 	"flag"
 	"database/sql"
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 )
 
 
@@ -36,7 +36,7 @@ func main (){
 	db,err := sql.Open("mysql", connectionString)
 
 	if err != nil {
-		panic(err)	}
+		panic(err)    }
 
 	router := mux.NewRouter()
 
@@ -68,10 +68,10 @@ func main (){
 
 	//fmt.Println(tags)
 
-	tagsFromClan := gettagbyclans.GetTagByClans(parser.ToUrlTag("#2LQGYRV"))
+	tagsFromClan := get.GetTagByClans(parser.ToUrlTag("#2LQGYRV"))
 
 	sortplayers.ByWins(tagsFromClan)
 
 	sortplayers.ByWins(tagsFromLoc)
 
-	}
+}
