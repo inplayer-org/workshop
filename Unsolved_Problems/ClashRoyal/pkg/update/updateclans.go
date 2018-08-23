@@ -3,7 +3,6 @@ package update
 import (
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 )
 
 func UpdateClans(db *sql.DB, clan []structures.Clan) error {
@@ -48,6 +47,7 @@ func GetAllClans(db sql.DB) ([]structures.Clan, error) {
 	return clans, nil
 }
 
+/*
 func DailyUpdateClans(db *sql.DB) (Clan []string) {
 
 	clans, err := get.GetClans()
@@ -64,3 +64,5 @@ func DailyUpdateClans(db *sql.DB) (Clan []string) {
 	return clans
 
 }
+
+*/
