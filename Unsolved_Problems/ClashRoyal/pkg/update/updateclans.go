@@ -58,7 +58,7 @@ for _,elem:=range clan {
 
 
 
-func DailyUpdateClans(db *sql.DB)(string){
+func DailyUpdateClans(db *sql.DB)(Clan string){
 
 	clans,err:=GetAllClans()
 
@@ -66,7 +66,7 @@ func DailyUpdateClans(db *sql.DB)(string){
 		return clans
 	}
 
-	err=UpdateClans(db, []structures.Clan)
+	err=UpdateClans(db,clans)
 
 	if err!=nil{
 		return clans
