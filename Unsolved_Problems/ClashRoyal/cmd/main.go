@@ -4,38 +4,38 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/gettagbyclans"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/sortplayers"
 )
 
-func main (){
+func main () {
 
-	loc,err:=locations.GetLocations()
+	loc, err := locations.GetLocations()
 
-	if err!=nil {
+	if err != nil {
 		panic(err)
 	}
 
-	locationsMap:=locations.LocationMap(loc)
+	locationsMap := locations.LocationMap(loc)
 
-	mkdID:=locationsMap["Albania"]
+	mkdID := locationsMap["Albania"]
 
 	fmt.Println(mkdID)
 
-	playerTags,err:=locations.GetPlayerTagsPerLocation(mkdID)
+	playerTags, err := locations.GetPlayerTagsPerLocation(mkdID)
 
-	if err!=nil{
+	if err != nil {
 		panic(err)
 	}
 
-	tagsFromLoc:=parser.ToUrlTags(playerTags.GetTags())
+	tagsFromLoc := parser.ToUrlTags(playerTags.GetTags())
 
 	//fmt.Println(tags)
 
-	tagsFromClan := gettagbyclans.GetTagByClans(parser.ToUrlTag("#2LQGYRV"))
+	tagsFromClan := get.GetTagByClans(parser.ToUrlTag("#2LQGYRV"))
 
 	sortplayers.ByWins(tagsFromClan)
 
 	sortplayers.ByWins(tagsFromLoc)
 
-	}
+}

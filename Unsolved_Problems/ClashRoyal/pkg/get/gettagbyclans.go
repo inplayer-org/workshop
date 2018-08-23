@@ -1,4 +1,4 @@
-package gettagbyclans
+package get
 
 import (
 	"net/http"
@@ -6,6 +6,10 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
+
+
+
+
 
 
 func GetTagByClans(clanTag string) []string{
