@@ -44,6 +44,7 @@ func GetLocations()(Locations,error){
 
 }
 
+
 //LocationMap convert all countries from locations into map with key country name and value country id
 func LocationMap(locations Locations)map[string]int{
 
