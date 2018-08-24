@@ -1,7 +1,5 @@
 package structures
 
-import "database/sql"
-
 type PlayerStats struct {
 	Tag    string `json:"tag"`
 	Name   string `json:"name"`
@@ -9,7 +7,7 @@ type PlayerStats struct {
 	Losses int    `json:"losses"`
 	Trophies int `json:"trophies"`
 	Clan Clan  `json:"clan"`
-
+	LocationID int `json:"location_id"`
 }
 
 type ByWins []PlayerStats
@@ -31,43 +29,3 @@ func (p ByWins) Less(i, j int) bool {
 }
 
 
-
-
-func (p *PlayerStats) GetNamePlayer(db *sql.DB) error {
-
-	err := db.QueryRow("SELECT playerName,playerTag from players where playerName='%s'like ",p.Name).Scan(&p.Name,&p.Tag)
-	if err!=nil {
-		return err
-	}
-
-	return nil
-}
-
-
-
-func GetAllPlayers(db *sql.DB)([]PlayerStats,error){
-
-	rows, _ := db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationID from players")
-
-
-	defer rows.Close()
-
-	return playerRows(rows)
-}
-
-func playerRows(rows *sql.Rows)([]PlayerStats,error){
-	var players  []PlayerStats
-
-	for rows.Next() {
-		var p PlayerStats
-		err:=rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan)
-
-		if err!=nil {
-			return nil,err
-		}
-
-		players=append(players,p)
-	}
-
-	return players,nil
-}

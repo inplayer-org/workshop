@@ -2,14 +2,13 @@ package HandlersFunc
 
 import (
 	"net/http"
+	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"database/sql"
-
-	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errorhandlers"
 )
 
-func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
+func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
@@ -18,12 +17,12 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 		return
 	} */
 
-	e := structures.PlayerInfo{Name: name}
-	if err := e.GetNamePlayer(a.DB); err != nil {
+	e := structures.Locationsinfo{Name: name}
+	if err := e.GetNameLocation(a.DB); err != nil {
 
 		switch err {
 		case sql.ErrNoRows:
-			errorhandlers.RespondWithError(w, http.StatusNotFound, "Player not found")
+			errorhandlers.RespondWithError(w, http.StatusNotFound, "Location not found")
 		default:
 			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server Error")
 		}
@@ -34,14 +33,14 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 }
 
 
-func (a *App) GetPlayers(w http.ResponseWriter, r *http.Request) {
+func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
 
 
-	players, err := structures.GetAllPlayers(a.DB)
+	locations, err := structures.GetAllLocations(a.DB)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			errorhandlers.RespondWithError(w, http.StatusNotFound, "no players found")
+			errorhandlers.RespondWithError(w, http.StatusNotFound, "no locations found")
 
 		default:
 			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server Error")
@@ -49,5 +48,5 @@ func (a *App) GetPlayers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorhandlers.RespondWithJSON(w, http.StatusOK, players)
+	errorhandlers.RespondWithJSON(w, http.StatusOK, locations)
 }

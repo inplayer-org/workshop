@@ -10,6 +10,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/HandlersFunc"
 )
 
 func handleErr(err error) {
@@ -70,9 +71,9 @@ func main() {
 
 	router := mux.NewRouter()
 
-	var app routeranddb.App
+	var app HandlersFunc.App
 
-	app.Initialize(db, router)
+	app.Initialize(db,router)
 
 	dailyUpdate(db)
 
