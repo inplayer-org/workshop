@@ -24,7 +24,7 @@ func (a *App) Initialize(user, password, dbname string) {
 
 
 	a.Router = mux.NewRouter()
-	//a.initializeRoutes()
+	a.initializeRoutes()
 }
 
 func (a *App) Run(addr string) {

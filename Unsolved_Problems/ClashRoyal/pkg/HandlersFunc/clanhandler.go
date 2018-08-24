@@ -4,38 +4,57 @@ import (
 	"net/http"
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errorhandlers"
+	"github.com/gorilla/mux"
+	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/errorhandle"
+
 )
 
 
 
-func (a *App) GetClanByTag (tag string, w http.ResponseWriter, r *http.Request){
-	clan := structures.SelectClanByTag(a.DB,tag)
-	if clan != nil {
-		switch clan {
+/*func (a *App) GetClanByTag (w http.ResponseWriter, r *http.Request){
+
+	vars := mux.Vars(r)
+	tag := (vars["tag"])
+	/*if err != nil {
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid clan tag")
+		return
+	}
+
+	e := structures.Clan{Tag: tag}
+	if err := e.GetTagClan(a.DB); err != nil {
+
+		switch err {
 		case sql.ErrNoRows:
-			errorhandlers.RespondWithError(w, http.StatusNotFound, "no clans found")
+			errorhandle.RespondWithError(w, http.StatusNotFound, "Clan not found")
 		default:
-			errorhandlers.RespondWithError(w, http.StatusInternalServerError,"Server Error")
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, "Server Error")
 		}
 		return
 	}
 
-	errorhandlers.RespondWithJSON(w, http.StatusOK, clan)
+	errorhandle.RespondWithJSON(w, http.StatusOK, e)
 }
+ */
+func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 
-func (a *App) GetClanByName (name string,w http.ResponseWriter, r *http.Request){
-	clan := structures.SelectClanByName(a.DB,name)
-	if clan != nil {
-		switch clan {
+	vars := mux.Vars(r)
+	name := (vars["name"])
+	/*if err != nil {
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid clan name")
+		return
+	} */
+
+	e := structures.Clan{Name: name}
+	if err := e.GetNameClan(a.DB); err != nil {
+
+		switch err {
 		case sql.ErrNoRows:
-			errorhandlers.RespondWithError(w, http.StatusNotFound, "no clans found")
+			errorhandle.RespondWithError(w, http.StatusNotFound, "Clan not found")
 		default:
-			errorhandlers.RespondWithError(w, http.StatusInternalServerError,"Server Error")
+			errorhandle.RespondWithError(w, http.StatusInternalServerError, "Server Error")
 		}
 		return
 	}
 
-	errorhandlers.RespondWithJSON(w, http.StatusOK, clan)
+	errorhandle.RespondWithJSON(w, http.StatusOK, e)
 }
-

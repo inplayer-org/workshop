@@ -1,8 +1,6 @@
 package structures
 
-import (
-	"database/sql"
-)
+import "database/sql"
 
 type Clan struct {
 	//Structure with information for the Clans
@@ -11,22 +9,24 @@ type Clan struct {
 
 }
 
+func (c *Clan) GetTagClan(db *sql.DB) error {
 
-func  SelectClanByTag(db *sql.DB, clantag string) interface{} {
-	var clanTag, name string
-	err := db.QueryRow("SELECT * FROM clans WHERE clanTag=(?)", clantag).Scan(&clanTag, &name)
+	err := db.QueryRow("SELECT clanTag,clanName from clans where clanTag='%s'",c.Tag).Scan(&c.Tag,&c.Name)
 	if err!=nil {
-		return nil
+		return err
 	}
-	return Clan{Tag: clanTag, Name: name}
+
+	return nil
 }
 
-func  SelectClanByName(db *sql.DB, name string) interface{} {
-	var Cname, clantag string
-	err := db.QueryRow("SELECT * FROM clans WHERE clanName=(?)", Cname).Scan(&Cname, &clantag)
+
+func (c *Clan) GetNameClan(db *sql.DB) error {
+
+	err := db.QueryRow("SELECT clanTag from clans where clanName=(?)",c.Name).Scan(&c.Tag)
 	if err!=nil {
-		return nil
+		return err
 	}
-	return Clan{Name: Cname, Tag: clantag}
+
+	return nil
 }
 
