@@ -1,27 +1,26 @@
 package main
 
 import (
-	"fmt"
-	"flag"
 	"database/sql"
+	"flag"
+	"fmt"
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 )
 
-
-func handleErr(err error){
-	if(err!=nil){
+func handleErr(err error) {
+	if err != nil {
 		log.Println(err)
 	}
 }
 
 //enterFlags flags for DbName UserName and Password
-func enterFlags() (string,string,string) {
+func enterFlags() (string, string, string) {
 
 	DbName := flag.String("database", "Clash_Royale", "the name of you database")
 
@@ -31,54 +30,52 @@ func enterFlags() (string,string,string) {
 
 	flag.Parse()
 
-	return *DbName,*UserName,*Password
+	return *DbName, *UserName, *Password
 }
 
-
-func dailyUpdate(db *sql.DB){
+func dailyUpdate(db *sql.DB) {
 	log.Println("Updating all locations data")
-	allLocations,err := locations.DailyUpdateLocations(db)
+	allLocations, err := locations.DailyUpdateLocations(db)
 	log.Println("Finished updating locations data")
 	handleErr(err)
-	for _,elem := range allLocations.Location{
-		playerTags,err := locations.GetPlayerTagsPerLocation(elem.ID)
+	for _, elem := range allLocations.Location {
+		playerTags, err := locations.GetPlayerTagsPerLocation(elem.ID)
 
 		handleErr(err)
 		if elem.IsCountry {
-			log.Println("Updating players for country -> ",elem.Name)
+			log.Println("Updating players for country -> ", elem.Name)
 			update.Players(db, parser.ToUrlTags(playerTags.GetTags()), elem.ID)
 		}
 	}
-	allClans,err := update.GetAllClans(db)
+	allClans, err := update.GetAllClans(db)
 	handleErr(err)
 	log.Println("Refreshing data for all clans present in the database")
-	for _,elem := range allClans{
+	for _, elem := range allClans {
 		clan := get.GetTagByClans(elem.Tag)
-		log.Println("Updating players for clan ->",elem.Name)
-		update.Players(db,parser.ToUrlTags(clan),0)
+		log.Println("Updating players for clan ->", elem.Name)
+		update.Players(db, parser.ToUrlTags(clan), 0)
 	}
 }
 
+func main() {
 
-func main (){
-
-	dbName,userName,password:=enterFlags()
+	dbName, userName, password := enterFlags()
 
 	connectionString := fmt.Sprintf("%s:%s@/%s", userName, password, dbName)
-	fmt.Println("Connection string =",connectionString)
-	db,err := sql.Open("mysql", connectionString)
+	fmt.Println("Connection string =", connectionString)
+	db, err := sql.Open("mysql", connectionString)
 
 	if err != nil {
-		panic(err)    }
+		panic(err)
+	}
 
 	router := mux.NewRouter()
 
 	var app routeranddb.App
 
-	app.Initialize(db,router)
+	app.Initialize(db, router)
 
 	dailyUpdate(db)
-
 
 	//ushte da se koristi bazata
 
