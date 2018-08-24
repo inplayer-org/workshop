@@ -5,21 +5,10 @@ import (
 "encoding/json"
 )
 
-//Structure with a slice of Location
-type Locations struct {
-	//Structure with information for the Location
-	Location []struct {
-		ID          int    `json:"id"`
-		Name        string `json:"name"`
-		IsCountry   bool   `json:"isCountry"`
-		CountryCode string `json:"countryCode"`
-	} `json:"items"`
-}
-
 //GetLocations gets the locations and returns error when cant make request or client cant do the request
-func Get()(Locations,error){
+func Get()(structures.Locations,error){
 
-	var locations Locations
+	var locations structures.Locations
 
 	client := &http.Client{}
 
@@ -46,7 +35,7 @@ func Get()(Locations,error){
 
 
 //LocationMap convert all countries from locations into map with key country name and value country id
-func ToMap(locations Locations)map[string]int{
+func ToMap(locations structures.Locations)map[string]int{
 
 	locationMap:=make(map[string]int)
 

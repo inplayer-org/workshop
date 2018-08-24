@@ -5,7 +5,7 @@ type PlayerStats struct {
 	Name   string `json:"name"`
 	Wins   int    `json:"wins"`
 	Losses int    `json:"losses"`
-	Trophies string `json:"trophies"`
+	Trophies int `json:"trophies"`
 	Clan Clan  `json:"clan"`
 }
 

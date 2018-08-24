@@ -13,6 +13,12 @@ import (
 )
 
 
+func handleErr(err error){
+	if(err!=nil){
+		log.Println(err)
+	}
+}
+
 //enterFlags flags for DbName UserName and Password
 func enterFlags() (string,string,string) {
 
@@ -25,6 +31,30 @@ func enterFlags() (string,string,string) {
 	flag.Parse()
 
 	return *DbName,*UserName,*Password
+}
+
+func dailyUpdate(db *sql.DB){
+	log.Println("Updating all locations data")
+	allLocations,err := locations.DailyUpdateLocations(db)
+	log.Println("Finished updating locations data")
+	handleErr(err)
+	for _,elem := range allLocations.Location{
+		playerTags,err := locations.GetPlayerTagsPerLocation(elem.ID)
+
+		handleErr(err)
+		if elem.IsCountry {
+			log.Println("Updating players for country -> ",elem.Name)
+			update.Players(db, parser.ToUrlTags(playerTags.GetTags()), elem.ID)
+		}
+	}
+	allClans,err := update.GetAllClans(db)
+	handleErr(err)
+	log.Println("Refreshing data for all clans present in the database")
+	for _,elem := range allClans{
+		clan := get.GetTagByClans(elem.Tag)
+		log.Println("Updating players for clan ->",elem.Name)
+		update.Players(db,parser.ToUrlTags(clan),0)
+	}
 }
 
 func main (){
@@ -44,15 +74,17 @@ func main (){
 
 	app.Initialize(db,router)
 
-	//ushte da se koristi bazata
+	dailyUpdate(db)
 
-	loc,err:=locations.Get()
+	//ushte da se koristi bazata
+/*
+	loc,err:=locations.GetLocations()
 
 	if err!=nil {
 		panic(err)
 	}
 
-	locationsMap:=locations.ToMap(loc)
+	locationsMap:=locations.LocationMap(loc)
 
 	mkdID:=locationsMap["Albania"]
 
@@ -73,5 +105,5 @@ func main (){
 	sortplayers.ByWins(tagsFromClan)
 
 	sortplayers.ByWins(tagsFromLoc)
-
+*/
 }

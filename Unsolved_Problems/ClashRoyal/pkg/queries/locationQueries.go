@@ -2,43 +2,16 @@ package queries
 
 import (
 	"database/sql"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	_ "github.com/go-sql-driver/mysql"
-	"strconv"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
-//UpdateLocations if the location exists in database then it updates it if it doeesnt then it inserts it
-func UpdateLocations(db *sql.DB,locs locations.Locations)error{
 
-	for _,elem:=range locs.Location {
-
-		if Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
-
-			err := insertInto(db,elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
-
-			if err != nil {
-				return err
-			}
-
-		} else {
-
-			err := update(db,elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
-
-			if err != nil {
-				return err
-			}
-
-		}
-	}
-
-	return nil
-
-}
 
 //insertInto inserts location into database
-func insertInto(db *sql.DB,id int,name string,isCountry bool,code string)error{
+func InsertIntoLocationsTable(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
-	_, err := db.Exec("INSERT INTO locations(id,countryName,isCountry,countryCode) VALUES ((?).(?),(?),(?));", id, name, isCountry, code)
+	_, err := db.Exec("INSERT INTO locations(id,countryName,isCountry,countryCode) VALUES ((?),(?),(?),(?));", id, name, isCountry, code)
 
 	if err != nil {
 		return err
@@ -50,9 +23,9 @@ func insertInto(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
 
 //update for an id updates a location
-func update(db *sql.DB,id int,name string,isCountry bool,code string)error{
+func UpdateLocationsTable(db *sql.DB,id int,name string,isCountry bool,code string)error{
 
-	_, err := db.Exec("UPDATE locations SET countryName=(?),isCounrty=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
+	_, err := db.Exec("UPDATE locations SET countryName=(?),isCountry=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
 
 	if err != nil {
 		return err
@@ -75,4 +48,30 @@ func GetID(db *sql.DB,name string)(int,error){
 
 	return id ,nil
 
+}
+
+//GetAllLocations returns all locations from locations table in database
+func GetAllLocations(db *sql.DB)(structures.Locations,error){
+
+	var locs structures.Locations
+
+	rows,err:=db.Query("SELECT (id,countryName,isCountry,countryCode) FROM locations;")
+
+	if err !=nil {
+		return locs,err
+	}
+
+	i:=0
+	for rows.Next(){
+		err:=rows.Scan(&locs.Location[i].ID,&locs.Location[i].Name,&locs.Location[i].IsCountry,&locs.Location[i].CountryCode)
+
+		if err!=nil {
+			return locs,err
+		}
+
+		i++
+
+		}
+
+	return locs,nil
 }
