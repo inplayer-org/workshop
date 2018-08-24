@@ -63,7 +63,7 @@ func update(db *sql.DB,id int,name string,isCountry bool,code string)error{
 }
 
 //GetLocationID for location returns its id
-func GetLocationID(db *sql.DB,name string)(int,error){
+func GetID(db *sql.DB,name string)(int,error){
 
 	var id int
 

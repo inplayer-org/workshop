@@ -46,13 +46,13 @@ func main (){
 
 	//ushte da se koristi bazata
 
-	loc,err:=locations.GetLocations()
+	loc,err:=locations.Get()
 
 	if err!=nil {
 		panic(err)
 	}
 
-	locationsMap:=locations.LocationMap(loc)
+	locationsMap:=locations.ToMap(loc)
 
 	mkdID:=locationsMap["Albania"]
 

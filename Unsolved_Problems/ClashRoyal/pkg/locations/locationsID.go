@@ -17,7 +17,7 @@ type Locations struct {
 }
 
 //GetLocations gets the locations and returns error when cant make request or client cant do the request
-func GetLocations()(Locations,error){
+func Get()(Locations,error){
 
 	var locations Locations
 
@@ -46,7 +46,7 @@ func GetLocations()(Locations,error){
 
 
 //LocationMap convert all countries from locations into map with key country name and value country id
-func LocationMap(locations Locations)map[string]int{
+func ToMap(locations Locations)map[string]int{
 
 	locationMap:=make(map[string]int)
 
@@ -61,7 +61,7 @@ func LocationMap(locations Locations)map[string]int{
 }
 
 //FindLocationID returns the id of location or 0 if its not country
-func FindLocationID(locationMap map[string]int,country string)int{
+func Find(locationMap map[string]int,country string)int{
 
 	return locationMap[country]
 
