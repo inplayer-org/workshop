@@ -3,6 +3,9 @@ package locations
 import (
 "net/http"
 "encoding/json"
+"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"database/sql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 )
 
 //GetLocations gets the locations and returns error when cant make request or client cant do the request
@@ -53,5 +56,24 @@ func ToMap(locations structures.Locations)map[string]int{
 func Find(locationMap map[string]int,country string)int{
 
 	return locationMap[country]
+
+}
+
+//DailyUpdateLocation makes request and updates the location table
+func DailyUpdate(db *sql.DB)(structures.Locations,error){
+
+	locations,err:=Get()
+
+	if err!=nil{
+		return locations,err
+	}
+
+	err=update.Locations(db,locations)
+
+	if err!=nil{
+		return locations,err
+	}
+
+	return locations,nil
 
 }

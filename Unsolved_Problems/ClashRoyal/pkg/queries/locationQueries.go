@@ -51,7 +51,7 @@ func GetID(db *sql.DB,name string)(int,error){
 }
 
 //GetAllLocations returns all locations from locations table in database
-func GetAllLocations(db *sql.DB)(structures.Locations,error){
+func GetAll(db *sql.DB)(structures.Locations,error){
 
 	var locs structures.Locations
 

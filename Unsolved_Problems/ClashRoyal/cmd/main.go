@@ -4,12 +4,13 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/sortplayers"
 	"flag"
 	"database/sql"
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
+	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 )
 
 
@@ -35,7 +36,7 @@ func enterFlags() (string,string,string) {
 
 func dailyUpdate(db *sql.DB){
 	log.Println("Updating all locations data")
-	allLocations,err := locations.DailyUpdateLocations(db)
+	allLocations,err := locations.DailyUpdate(db)
 	log.Println("Finished updating locations data")
 	handleErr(err)
 	for _,elem := range allLocations.Location{

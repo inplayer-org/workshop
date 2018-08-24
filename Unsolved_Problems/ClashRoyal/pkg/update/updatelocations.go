@@ -8,7 +8,7 @@ import (
 )
 
 //UpdateLocations if the location exists in database then it updates it if it doeesnt then it inserts it
-func UpdateLocations(db *sql.DB,locs structures.Locations)error{
+func Locations(db *sql.DB,locs structures.Locations)error{
 
 	for _,elem:=range locs.Location {
 
