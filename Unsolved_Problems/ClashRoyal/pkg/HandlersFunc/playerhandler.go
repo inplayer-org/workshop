@@ -6,7 +6,7 @@ import (
 	"database/sql"
 
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/jsonExample/pkg/errorhandle"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errorhandlers"
 )
 
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
@@ -23,12 +23,31 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 		switch err {
 		case sql.ErrNoRows:
-			errorhandle.RespondWithError(w, http.StatusNotFound, "Player not found")
+			errorhandlers.RespondWithError(w, http.StatusNotFound, "Player not found")
 		default:
-			errorhandle.RespondWithError(w, http.StatusInternalServerError, "Server Error")
+			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server Error")
 		}
 		return
 	}
 
-	errorhandle.RespondWithJSON(w, http.StatusOK, e)
+	errorhandlers.RespondWithJSON(w, http.StatusOK, e)
+}
+
+
+func (a *App) GetPlayers(w http.ResponseWriter, r *http.Request) {
+
+
+	players, err := structures.GetAllPlayers(a.DB)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			errorhandlers.RespondWithError(w, http.StatusNotFound, "no players found")
+
+		default:
+			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server Error")
+		}
+		return
+	}
+
+	errorhandlers.RespondWithJSON(w, http.StatusOK, players)
 }

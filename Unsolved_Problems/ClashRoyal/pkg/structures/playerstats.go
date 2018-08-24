@@ -9,8 +9,7 @@ type PlayerStats struct {
 	Losses int    `json:"losses"`
 	Trophies int `json:"trophies"`
 	Clan Clan  `json:"clan"`
-	Tags *PlayerStats `"json:"tags"`
-	Names *PlayerStats `"json:"names"`
+
 }
 
 type ByWins []PlayerStats
@@ -31,37 +30,7 @@ func (p ByWins) Less(i, j int) bool {
 	return p[i].Name<p[j].Name
 }
 
-/*
-func (p *PlayerStats) GetTagPlayer(db *sql.DB) error {
 
-	err := db.QueryRow("SELECT playerTag,playerName from players where playerTag='%s'",p.Tag).Scan(&p.Tag,&p.Name)
-	if err!=nil {
-		return err
-	}
-	s,err:=SelectPlayerByTag(db, p.Tag)
-
-	if err!=nil {
-		return err
-	}
-
-	p.Tags=&s
-
-	return nil
-}
-
-func SelectPlayerByTag(db *sql.DB,tag string) (PlayerStats,error){
-	var p PlayerStats
-
-	err := db.QueryRow("SELECT playerTag,playerName from players where playertag='%s'",tag).Scan(&p.Tag,&p.Name)
-	if err!=nil {
-		return p,err
-	}
-
-	return p,nil
-}
-
-
-*/
 
 
 func (p *PlayerStats) GetNamePlayer(db *sql.DB) error {
@@ -74,3 +43,31 @@ func (p *PlayerStats) GetNamePlayer(db *sql.DB) error {
 	return nil
 }
 
+
+
+func GetAllPlayers(db *sql.DB)([]PlayerStats,error){
+
+	rows, _ := db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationID from players")
+
+
+	defer rows.Close()
+
+	return playerRows(rows)
+}
+
+func playerRows(rows *sql.Rows)([]PlayerStats,error){
+	var players  []PlayerStats
+
+	for rows.Next() {
+		var p PlayerStats
+		err:=rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan)
+
+		if err!=nil {
+			return nil,err
+		}
+
+		players=append(players,p)
+	}
+
+	return players,nil
+}
