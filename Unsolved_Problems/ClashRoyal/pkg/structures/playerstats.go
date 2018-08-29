@@ -55,6 +55,6 @@ func (p *PlayerStats) GetPlayersByLocation(db *sql.DB,name string)([]PlayerStats
 	return players,nil
 	}
 
-func (p *PlayerStats) GetTop100()([]PlayerStats,error){
+/*func (p *PlayerStats) GetTop100()([]PlayerStats,error){
 
-}
+}*/

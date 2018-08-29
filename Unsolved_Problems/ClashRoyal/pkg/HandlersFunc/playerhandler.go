@@ -34,7 +34,7 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 }
 
 
-func (a *App) Home(w http.ResponseWriter, r *http.Request) {
+/*func (a *App) Home(w http.ResponseWriter, r *http.Request) {
 
 
 	players, err := structures.GetTop100(a.DB)
@@ -43,4 +43,4 @@ func (a *App) Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	structures.Tmpl.ExecuteTemplate(w,"",players)
-}
+}*/
