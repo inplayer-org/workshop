@@ -1,5 +1,7 @@
 package structures
 
+import "database/sql"
+
 type PlayerStats struct {
 	Tag    string `json:"tag"`
 	Name   string `json:"name"`
