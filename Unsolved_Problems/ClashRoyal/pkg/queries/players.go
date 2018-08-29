@@ -48,3 +48,30 @@ func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 		return insert(DB,player,locID,clanTag)
 	}
 }
+
+func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]structures.RankedPlayer,error){
+
+		var Players []structures.RankedPlayer
+
+	rows,err := DB.Query("SELECT playerTag,playerName,wins,losses,trophies from players order by (?) desc limit (?)",orderBy,numberOfPlayers)
+
+	defer rows.Close()
+
+	if err!=nil{
+		return nil,err
+	}
+	rank :=1
+	if rows.Next(){
+		var currentPlayer structures.PlayerStats
+
+		err = rows.Scan(&currentPlayer.Tag,&currentPlayer.Name,&currentPlayer.Wins,&currentPlayer.Losses,&currentPlayer.Trophies)
+
+		if err!=nil{
+			return nil,err
+		}
+
+		Players = append(Players,structures.RankedPlayer{Player:currentPlayer,Rank:rank})
+		rank++
+	}
+	return Players,nil
+}

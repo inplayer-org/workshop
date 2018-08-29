@@ -9,7 +9,7 @@ type PlayerStats struct {
 	Losses int    `json:"losses"`
 	Trophies int `json:"trophies"`
 	Clan Clan  `json:"clan"`
-	LocationID int `json:"location_id"`
+	LocationID interface{} `json:"location_id"`
 }
 
 type ByWins []PlayerStats
