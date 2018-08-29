@@ -6,32 +6,43 @@ import (
 )
 
 
-func update(DB *sql.DB,player structures.PlayerStats,locationID int){
+func update(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 	if locationID==0{
 		_,err := DB.Exec("update players SET playerName=(?),wins=(?),losses=(?),trophies=(?),clanTag=(?) where playerTag=(?);",
 			player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag, player.Tag)
 		UpdateError(err)
+		return err
 	}else{
 		_,err := DB.Exec("update players SET playerName=(?),wins=(?),losses=(?),trophies=(?),clanTag=(?),locationID=(?) where playerTag=(?);",
 			player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag, locationID,player.Tag)
 		UpdateError(err)
+		return err
 	}
 }
 
-func insert(DB *sql.DB,player structures.PlayerStats,locationID int){
-	_,err := DB.Exec(`INSERT INTO players(playerTag,playerName,wins,losses,trophies,clanTag,locationID) values((?),(?),(?),(?),(?),(?),(?));`,
-		player.Tag, player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag, locationID)
-	InsertError(err)
+func insert(DB *sql.DB,player structures.PlayerStats,locationID int) error{
+	if locationID == 0{
+		_,err := DB.Exec(`INSERT INTO players(playerTag,playerName,wins,losses,trophies,clanTag) values((?),(?),(?),(?),(?),(?));`,
+			player.Tag, player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag)
+		InsertError(err)
+		return err
+	}else {
+		_, err := DB.Exec(`INSERT INTO players(playerTag,playerName,wins,losses,trophies,clanTag,locationID) values((?),(?),(?),(?),(?),(?),(?));`,
+			player.Tag, player.Name, player.Wins, player.Losses, player.Trophies, player.Clan.Tag, locationID)
+		InsertError(err)
+		return err
+	}
 }
 
-func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int){
+func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 
 	//log.Println("Updating for player ",player)
-	UpdateClans(DB,structures.Clan{Tag:player.Clan.Tag,Name:player.Clan.Name})
-
+	if !(player.Clan.Tag=="") && !(player.Clan.Name==""){
+		UpdateClans(DB,structures.Clan{Tag:player.Clan.Tag,Name:player.Clan.Name})
+	}
 	if Exists(DB,PlayersTable,PlayerTag,player.Tag){
-		update(DB,player,locationID)
+		return update(DB,player,locationID)
 	}else {
-		insert(DB,player,locationID)
+		return insert(DB,player,locationID)
 	}
 }

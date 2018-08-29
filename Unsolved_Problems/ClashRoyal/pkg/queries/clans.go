@@ -8,6 +8,9 @@ import (
 
 func UpdateClans(db *sql.DB,clan structures.Clan)error{
 	//log.Println("Tried to insert clan -> ",clan)
+	if clan.Name=="" || clan.Tag==""{
+		return nil
+	}
 	if !Exists(db,"clans","clanTag", clan.Tag) {
 		_, err := db.Exec("INSERT INTO clans(clanTag,clanName) VALUES (?,?)", clan.Tag, clan.Name)
 

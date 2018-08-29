@@ -1,16 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"flag"
 	"database/sql"
+	"flag"
+	"fmt"
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
+	"time"
 )
 
 
@@ -36,26 +37,78 @@ func enterFlags() (string,string,string) {
 
 
 func dailyUpdate(db *sql.DB){
+
+	done := make(chan interface{})
+	defer close(done)
+
+	start := make(chan bool)
+	defer close(start)
+
+	isStarted := false
+
+	countFinished := 0
+	//Section 1 - Update for locations table
 	log.Println("Updating all locations data")
 	allLocations,err := locations.DailyUpdateLocations(db)
 	log.Println("Finished updating locations data")
 	handleErr(err)
-	for _,elem := range allLocations.Location{
-		playerTags,err := locations.GetPlayerTagsPerLocation(elem.ID)
 
-		handleErr(err)
-		if elem.IsCountry {
-			log.Println("Updating players for country -> ",elem.Name)
-			update.Players(db, parser.ToUrlTags(playerTags.GetTags()), elem.ID)
+
+	//Section 2 - Update players from locations table
+	go func(){
+		for _, elem := range allLocations.Location {
+			playerTags, err := locations.GetPlayerTagsPerLocation(elem.ID)
+			for ; countFinished >= 40; {
+				time.Sleep(time.Second * 5)
+			}
+			handleErr(err)
+
+			if elem.IsCountry {
+
+				log.Println("Updating players for country -> ", elem.Name)
+
+				go update.Players(db, parser.ToUrlTags(playerTags.GetTags()), elem.ID, done)
+				countFinished++
+
+				if isStarted==false{
+					isStarted=true
+					start<-true
+				}
+
+			}
+
 		}
+	}()
+	<-start
+	log.Println("Ready for information through done for locations ...")
+	for ;countFinished>0;countFinished--{
+		log.Println("Finished Updating for location ",<-done )
 	}
+	isStarted = false
+
+	//Section 3 - Update players from clans table
 	allClans,err := update.GetAllClans(db)
 	handleErr(err)
 	log.Println("Refreshing data for all clans present in the database")
-	for _,elem := range allClans{
-		clan := get.GetTagByClans(elem.Tag)
-		log.Println("Updating players for clan ->",elem.Name)
-		update.Players(db,parser.ToUrlTags(clan),0)
+	go func() {
+		for _, elem := range allClans {
+			for ; countFinished >= 40; {
+				time.Sleep(time.Second * 5)
+			}
+			clan := get.GetTagByClans(parser.ToUrlTag(elem.Tag))
+			log.Println("Updating players for clan ->", elem.Name)
+			countFinished++
+			go update.Players(db, clan, 0, done)
+			if isStarted == false {
+				isStarted = true
+				start <- true
+			}
+		}
+	}()
+	<-start
+	log.Println("Ready for information through done for clans ...")
+	for ;countFinished>0;countFinished--{
+		log.Println("Finished Updating for clan ",<-done )
 	}
 }
 
