@@ -35,7 +35,7 @@ func enterFlags() (string,string,string) {
 	return *DbName,*UserName,*Password
 }
 
-
+//Possible of failing in some very specific edge cases (first data processing has finished before second request is made)
 func dailyUpdate(db *sql.DB){
 
 	done := make(chan interface{})
