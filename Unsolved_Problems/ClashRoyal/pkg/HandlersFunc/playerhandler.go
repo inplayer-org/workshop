@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errorhandlers"
+	"log"
 )
 
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
@@ -18,7 +19,7 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 		return
 	} */
 
-	e := structures.PlayerInfo{Name: name}
+	e := structures.PlayerStats{Name: name}
 	if err := e.GetNamePlayer(a.DB); err != nil {
 
 		switch err {
@@ -41,10 +42,12 @@ func (a *App) GetPlayers(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
+
 			errorhandlers.RespondWithError(w, http.StatusNotFound, "no players found")
 
 		default:
-			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server Error")
+			log.Println(err)
+			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server error")
 		}
 		return
 	}
