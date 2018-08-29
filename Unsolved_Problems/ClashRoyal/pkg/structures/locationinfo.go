@@ -13,7 +13,7 @@ type Locationsinfo struct {
 
 func (c *Locationsinfo) GetNameLocation(db *sql.DB) error {
 
-	err := db.QueryRow("SELECT countryCode from locations where countryName=(?)",c.Name).Scan(&c.CountryCode)
+	err := db.QueryRow("SELECT countryName,countryCode from locations where countryName=(?)",c.Name).Scan(&c.Name,&c.CountryCode)
 	if err!=nil {
 		return err
 	}

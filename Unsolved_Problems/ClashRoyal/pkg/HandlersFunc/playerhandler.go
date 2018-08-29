@@ -34,20 +34,13 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 }
 
 
-func (a *App) GetPlayers(w http.ResponseWriter, r *http.Request) {
+func (a *App) Home(w http.ResponseWriter, r *http.Request) {
 
 
-	players, err := structures.GetAllPlayers(a.DB)
+	players, err := structures.GetTop100(a.DB)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			errorhandlers.RespondWithError(w, http.StatusNotFound, "no players found")
-
-		default:
-			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server Error")
-		}
-		return
+		panic(err)
 	}
 
-	errorhandlers.RespondWithJSON(w, http.StatusOK, players)
+	structures.Tmpl.ExecuteTemplate(w,"",players)
 }

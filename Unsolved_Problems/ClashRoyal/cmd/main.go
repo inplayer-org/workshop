@@ -8,7 +8,6 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/HandlersFunc"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"time"
@@ -20,6 +19,7 @@ func handleErr(err error){
 		log.Println(err)
 	}
 }
+
 
 //enterFlags flags for DbName UserName and Password
 func enterFlags() (string,string,string) {
@@ -47,7 +47,7 @@ func dailyUpdate(db *sql.DB){
 	isStarted := false
 
 	countFinished := 0
-	//Section 1 - Update for locations table
+/*	//Section 1 - Update for locations table
 	log.Println("Updating all locations data")
 	allLocations,err := locations.DailyUpdate(db)
 	log.Println("Finished updating locations data")
@@ -84,7 +84,7 @@ func dailyUpdate(db *sql.DB){
 	for ;countFinished>0;countFinished--{
 		log.Println("Finished Updating for location ",<-done )
 	}
-	isStarted = false
+	isStarted = false*/
 
 	//Section 3 - Update players from clans table
 	allClans,err := update.GetAllClans(db)
@@ -95,6 +95,7 @@ func dailyUpdate(db *sql.DB){
 			for ; countFinished >= 40; {
 				time.Sleep(time.Second * 5)
 			}
+			fmt.Println(elem.Tag)
 			clan := get.GetTagByClans(parser.ToUrlTag(elem.Tag))
 			log.Println("Updating players for clan ->", elem.Name)
 			countFinished++

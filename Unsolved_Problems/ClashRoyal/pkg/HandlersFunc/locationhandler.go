@@ -17,20 +17,23 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 		return
 	} */
 
-	e := structures.Locationsinfo{Name: name}
-	if err := e.GetNameLocation(a.DB); err != nil {
-
+	e := structures.PlayerStats{}
+	player,err := e.GetPlayersByLocation(a.DB,name)
+/*
 		switch err {
 		case sql.ErrNoRows:
 			errorhandlers.RespondWithError(w, http.StatusNotFound, "Location not found")
 		default:
 			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server Error")
 		}
-		return
+		return*/
+		if err!=nil {
+			panic(err)
 	}
-
-	errorhandlers.RespondWithJSON(w, http.StatusOK, e)
+	//fmt.Println(player)
+	structures.Tmpl.ExecuteTemplate(w,"TableRanking",player)
 }
+
 
 
 func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {

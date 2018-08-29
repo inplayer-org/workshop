@@ -1,3 +1,5 @@
+{{ define "TableRanking" }}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -101,13 +103,15 @@
                 </tr>
                 </thead>
                 <tbody>
+                {{ range . }}
                 <tr>
-                    <th>Gligor</th>
-                    <th>123456</th>
-                    <th>432</th>
-                    <th>123456</th>
-                    <th>fuckers</th>
+                    <th>{{ .Name}}</th>
+                    <th>{{ .Wins}}</th>
+                    <th>{{ .Losses}}</th>
+                    <th>{{ .Trophies}}</th>
+                    <th>{{ .Clan.Name}}</th>
                 </tr>
+                        {{ end }}
                 </tbody>
             </table>
         </div>
@@ -134,3 +138,4 @@
 
 </body>
 </html>
+        {{ end }}
