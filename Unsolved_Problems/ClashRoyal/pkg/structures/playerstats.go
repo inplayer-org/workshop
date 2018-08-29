@@ -1,7 +1,5 @@
 package structures
 
-import "database/sql"
-
 type PlayerStats struct {
 	Tag    string `json:"tag"`
 	Name   string `json:"name"`
@@ -58,3 +56,48 @@ func (p *PlayerStats) GetPlayersByLocation(db *sql.DB,name string)([]PlayerStats
 /*func (p *PlayerStats) GetTop100()([]PlayerStats,error){
 
 }*/
+
+
+
+func (p *PlayerStats) GetNamePlayer(db *sql.DB) error {
+
+	err := db.QueryRow("SELECT playerName,playerTag from players where playerName='%s'like ",p.Name).Scan(&p.Name,&p.Tag)
+	if err!=nil {
+		return err
+	}
+
+	return nil
+}
+
+
+
+func GetAllPlayers(db *sql.DB)([]PlayerStats,error){
+
+	rows, err:= db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationID from players")
+
+	if err!=nil{
+
+		return nil,err
+	}
+
+	defer rows.Close()
+
+	return playerRows(rows)
+}
+
+func playerRows(rows *sql.Rows)([]PlayerStats,error){
+	var players  []PlayerStats
+	for rows.Next() {
+		var p PlayerStats
+		err:=rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.LocationID)
+
+		if err!=nil {
+
+			return nil,err
+		}
+
+		players=append(players,p)
+	}
+
+	return players,nil
+}
