@@ -3,15 +3,13 @@ package locations
 import (
 "net/http"
 "encoding/json"
+"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
-
-
 //GetLocations gets the locations and returns error when cant make request or client cant do the request
-func GetLocations()(structures.Locations,error){
+func Get()(structures.Locations,error){
 
 	var locations structures.Locations
 
@@ -40,7 +38,7 @@ func GetLocations()(structures.Locations,error){
 
 
 //LocationMap convert all countries from locations into map with key country name and value country id
-func LocationMap(locations structures.Locations)map[string]int{
+func ToMap(locations structures.Locations)map[string]int{
 
 	locationMap:=make(map[string]int)
 
@@ -55,23 +53,22 @@ func LocationMap(locations structures.Locations)map[string]int{
 }
 
 //FindLocationID returns the id of location or 0 if its not country
-func FindLocationID(locationMap map[string]int,country string)int{
+func Find(locationMap map[string]int,country string)int{
 
 	return locationMap[country]
 
 }
 
-//DailyUpdateLocations updates the locations table in database and returns all locations
+//DailyUpdateLocation makes request and updates the location table
+func DailyUpdate(db *sql.DB)(structures.Locations,error){
 
-func DailyUpdateLocations(db *sql.DB)(structures.Locations,error){
-
-	locations,err:=GetLocations()
+	locations,err:=Get()
 
 	if err!=nil{
 		return locations,err
 	}
 
-	err=update.UpdateLocations(db,locations)
+	err=update.Locations(db,locations)
 
 	if err!=nil{
 		return locations,err

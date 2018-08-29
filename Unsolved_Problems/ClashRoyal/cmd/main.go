@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/HandlersFunc"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"time"
 )
@@ -49,7 +49,7 @@ func dailyUpdate(db *sql.DB){
 	countFinished := 0
 	//Section 1 - Update for locations table
 	log.Println("Updating all locations data")
-	allLocations,err := locations.DailyUpdateLocations(db)
+	allLocations,err := locations.DailyUpdate(db)
 	log.Println("Finished updating locations data")
 	handleErr(err)
 
@@ -126,7 +126,7 @@ func main (){
 
 	router := mux.NewRouter()
 
-	var app routeranddb.App
+	var app HandlersFunc.App
 
 	app.Initialize(db,router)
 
@@ -138,7 +138,7 @@ func main (){
 	//loc,err:=locations.GetLocations()
 	//
 	//if err!=nil {
-	//	panic(err)
+	//  panic(err)
 	//}
 	//
 	//locationsMap:=locations.LocationMap(loc)
@@ -150,7 +150,7 @@ func main (){
 	//playerTags,err:=locations.GetPlayerTagsPerLocation(mkdID)
 	//
 	//if err!=nil{
-	//	panic(err)
+	//  panic(err)
 	//}
 	//
 	//tagsFromLoc:=parser.ToUrlTags(playerTags.GetTags())

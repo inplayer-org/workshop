@@ -7,6 +7,7 @@ type PlayerStats struct {
 	Losses int    `json:"losses"`
 	Trophies int `json:"trophies"`
 	Clan Clan  `json:"clan"`
+	LocationID int `json:"location_id"`
 }
 
 type ByWins []PlayerStats
@@ -26,3 +27,5 @@ func (p ByWins) Less(i, j int) bool {
 	}
 	return p[i].Name<p[j].Name
 }
+
+
