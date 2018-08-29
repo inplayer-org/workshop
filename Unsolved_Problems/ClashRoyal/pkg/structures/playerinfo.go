@@ -42,7 +42,6 @@ func GetAllPlayers(db *sql.DB)([]PlayerInfo,error){
 
 func playerRows(rows *sql.Rows)([]PlayerInfo,error){
 	var players  []PlayerInfo
-
 	for rows.Next() {
 		var p PlayerInfo
 		err:=rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan,&p.LocationID)
