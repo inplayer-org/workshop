@@ -8,6 +8,7 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/HandlersFunc"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"time"
@@ -47,7 +48,7 @@ func dailyUpdate(db *sql.DB){
 	isStarted := false
 
 	countFinished := 0
-/*	//Section 1 - Update for locations table
+	//Section 1 - Update for locations table
 	log.Println("Updating all locations data")
 	allLocations,err := locations.DailyUpdate(db)
 	log.Println("Finished updating locations data")
@@ -84,7 +85,7 @@ func dailyUpdate(db *sql.DB){
 	for ;countFinished>0;countFinished--{
 		log.Println("Finished Updating for location ",<-done )
 	}
-	isStarted = false*/
+	isStarted = false
 
 	//Section 3 - Update players from clans table
 	allClans,err := update.GetAllClans(db)
@@ -132,36 +133,5 @@ func main (){
 	app.Initialize(db,router)
 
 	dailyUpdate(db)
-
-
-	//ushte da se koristi bazata
-
-	//loc,err:=locations.GetLocations()
-	//
-	//if err!=nil {
-	//  panic(err)
-	//}
-	//
-	//locationsMap:=locations.LocationMap(loc)
-	//
-	//mkdID:=locationsMap["Albania"]
-	//
-	//fmt.Println(mkdID)
-	//
-	//playerTags,err:=locations.GetPlayerTagsPerLocation(mkdID)
-	//
-	//if err!=nil{
-	//  panic(err)
-	//}
-	//
-	//tagsFromLoc:=parser.ToUrlTags(playerTags.GetTags())
-	//
-	////fmt.Println(tags)
-	//
-	//tagsFromClan := get.GetTagByClans(parser.ToUrlTag("#2LQGYRV"))
-	//
-	//sortplayers.ByWins(tagsFromClan)
-	//
-	//sortplayers.ByWins(tagsFromLoc)
 
 }
