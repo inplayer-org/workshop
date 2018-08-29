@@ -1,4 +1,4 @@
-package routeranddb
+package HandlersFunc
 
 import (
 	_ "github.com/go-sql-driver/mysql"
@@ -21,7 +21,8 @@ func (a *App) Initialize(db *sql.DB,router *mux.Router) {
 
 	a.Router=router
 
-//	a.initializeRoutes()
+	a.initializeRoutes()
+	a.Run(":3030")
 }
 
 //Run starts server
@@ -30,4 +31,3 @@ func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 
 }
-

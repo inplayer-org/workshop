@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/HandlersFunc"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/routeranddb"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"time"
 )
@@ -28,14 +28,14 @@ func enterFlags() (string,string,string) {
 
 	UserName := flag.String("username", "root", "the username to make a connection to the database")
 
-	Password := flag.String("password", "12345", "the password for your username to make a conection to the database")
+	Password := flag.String("password", "darko123", "the password for your username to make a conection to the database")
 
 	flag.Parse()
 
 	return *DbName,*UserName,*Password
 }
 
-
+//Possible of failing in some very specific edge cases (first data processing has finished before second request is made)
 func dailyUpdate(db *sql.DB){
 
 	done := make(chan interface{})
@@ -126,7 +126,7 @@ func main (){
 
 	router := mux.NewRouter()
 
-	var app routeranddb.App
+	var app HandlersFunc.App
 
 	app.Initialize(db,router)
 
@@ -138,7 +138,7 @@ func main (){
 	//loc,err:=locations.GetLocations()
 	//
 	//if err!=nil {
-	//	panic(err)
+	//  panic(err)
 	//}
 	//
 	//locationsMap:=locations.LocationMap(loc)
@@ -150,7 +150,7 @@ func main (){
 	//playerTags,err:=locations.GetPlayerTagsPerLocation(mkdID)
 	//
 	//if err!=nil{
-	//	panic(err)
+	//  panic(err)
 	//}
 	//
 	//tagsFromLoc:=parser.ToUrlTags(playerTags.GetTags())
