@@ -17,7 +17,7 @@ func Locations(db *sql.DB,locs structures.Locations)error {
 	responsesCount := 0
 	for _, elem := range locs.Location {
 		responsesCount++
-		go UpdateCurrentLocation(db,elem,done)
+		go CurrentLocation(db,elem,done)
 		time.Sleep(time.Millisecond*15)
 	}
 	for ; responsesCount > 0; responsesCount-- {
@@ -29,7 +29,7 @@ func Locations(db *sql.DB,locs structures.Locations)error {
 	return nil
 }
 
-	func UpdateCurrentLocation(db *sql.DB,elem structures.Location,done chan <- error){
+	func CurrentLocation(db *sql.DB,elem structures.Location,done chan <- error){
 		var err error
 		for {
 			if !queries.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
