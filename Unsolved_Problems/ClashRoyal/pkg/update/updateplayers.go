@@ -9,9 +9,10 @@ import (
 	"net/url"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"log"
+	"time"
 )
 
-func Players(DB *sql.DB,playerTags []string,locationID int){
+func Players(DB *sql.DB,playerTags []string,locationID int,done chan <- interface{}){
 
 	var currentPlayer structures.PlayerStats
 
@@ -27,22 +28,41 @@ func Players(DB *sql.DB,playerTags []string,locationID int){
 	for _,nextTag := range playerTags{
 
 		req,err := url.Parse(baseUrl+nextTag)
-
+		errorLimit := 0;
 		if err!=nil{
 			fmt.Println(err)
 		}
+		for {
+			resp, err := client.Do(&http.Request{Method: "GET", Header: reqHeader, URL: req})
 
-		resp,err := client.Do(&http.Request{Method:"GET",Header:reqHeader,URL:req})
+			if err != nil {
+				fmt.Println(err)
+			}
+			if resp.StatusCode>=200 && resp.StatusCode<=300{
 
-		if err!=nil{
-			fmt.Println(err)
-		}
+				json.NewDecoder(resp.Body).Decode(&currentPlayer)
+				currentPlayer.Tag = "#"+currentPlayer.Tag[1:]
+				queries.UpdatePlayer(DB,currentPlayer,locationID)
 
-		json.NewDecoder(resp.Body).Decode(&currentPlayer)
-		currentPlayer.Tag = "#"+currentPlayer.Tag[1:]
-		queries.UpdatePlayer(DB,currentPlayer,locationID)
+				break
+			}
+			//log.Println("REQUEST PROBLEM !! -> ",resp.Status,",  Retrying ...")
+			if resp.StatusCode!=http.StatusTooManyRequests{
+				errorLimit++
+			}
+			if errorLimit>=9{
+				log.Println(nextTag,currentPlayer," Failed to get a response from the API ",resp.Status)
+				break
+			}
+			time.Sleep(time.Second*1)
+			}
+
 
 
 	}
-	log.Println("Finished Updating for location",locationID )
+		if locationID!=0 {
+			done <- locationID
+		}else{
+			done <- currentPlayer.Clan.Name
+		}
 }
