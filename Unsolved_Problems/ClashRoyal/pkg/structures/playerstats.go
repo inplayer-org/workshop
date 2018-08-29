@@ -73,7 +73,8 @@ func (p *PlayerStats) GetNamePlayer(db *sql.DB) error {
 
 
 
-func GetAllPlayers(db *sql.DB)([]PlayerStats,error){
+func  GetAllPlayers(db *sql.DB)([]PlayerStats,error){
+
 
 	rows, err:= db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationID from players")
 
@@ -84,14 +85,21 @@ func GetAllPlayers(db *sql.DB)([]PlayerStats,error){
 
 	defer rows.Close()
 
-	return playerRows(rows)
+	return playerRows(db,rows)
 }
 
-func playerRows(rows *sql.Rows)([]PlayerStats,error){
+func playerRows(db *sql.DB,rows *sql.Rows)([]PlayerStats,error){
 	var players  []PlayerStats
 	for rows.Next() {
 		var p PlayerStats
 		err:=rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.LocationID)
+
+		if err!=nil {
+
+			return nil,err
+		}
+
+		err=db.QueryRow("select clanName from clans where clanTag=?",p.Clan.Tag).Scan(&p.Clan.Name)
 
 		if err!=nil {
 

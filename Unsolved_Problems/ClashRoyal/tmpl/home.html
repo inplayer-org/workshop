@@ -67,7 +67,7 @@ a{
 
     <div class="header">
 
-        <a href="home.html"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="145" height="110"></a>
+        <a href="/"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="145" height="110"></a>
 
 
         <div style="    padding-top: 5%;">
@@ -216,13 +216,15 @@ a{
                 </tr>
                 </thead>
                 <tbody>
+                {{ range . }}
                 <tr>
-                    <th>Gligor</th>
-                    <th>123456</th>
-                    <th>432</th>
-                    <th>123456</th>
-                    <th>fuckers</th>
+                    <th>{{ .Name}}</th>
+                    <th>{{ .Wins}}</th>
+                    <th>{{ .Losses}}</th>
+                    <th>{{ .Trophies}}</th>
+                    <th>{{ .Clan.Name}}</th>
                 </tr>
+                {{ end }}
                 </tbody>
             </table>
         </div>
