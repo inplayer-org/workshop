@@ -33,3 +33,5 @@ json.NewDecoder(resp.Body).Decode(&clans)
 return clans,nil
 
 }
+
+
