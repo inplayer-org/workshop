@@ -75,3 +75,28 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 	}
 	return Players,nil
 }
+
+func GetPlayersByLocation(db *sql.DB,name string)([]structures.PlayerStats,error){
+	var c int
+	err := db.QueryRow("SELECT id from locations where countryName like (?)",name).Scan(&c)
+	if err!=nil {
+		return nil,err
+	}
+	var players []structures.PlayerStats
+	rows,err:=db.Query("SELECT PlayerName,wins,losses,trophies,clanTag from players where locationID=?",c)
+
+	if err!=nil {
+		return nil,err
+	}
+
+	for rows.Next(){
+		var t structures.PlayerStats
+		rows.Scan(&t.Name,&t.Wins,&t.Losses,&t.Trophies,&t.Clan.Tag)
+		err:=db.QueryRow("SELECT clanName from clans where clanTag=?",t.Clan.Tag).Scan(&t.Clan.Name)
+		if err!=nil {
+			return nil,err
+		}
+		players=append(players,t)
+	}
+	return players,nil
+}

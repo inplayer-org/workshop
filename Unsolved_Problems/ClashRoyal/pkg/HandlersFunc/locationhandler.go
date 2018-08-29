@@ -6,6 +6,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errorhandlers"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 )
 
 func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
@@ -18,7 +19,7 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 	} */
 
 	e := structures.PlayerStats{}
-	player,err := e.GetPlayersByLocation(a.DB,name)
+	player,err := queries.GetPlayersByLocation(a.DB,name)
 /*
 		switch err {
 		case sql.ErrNoRows:

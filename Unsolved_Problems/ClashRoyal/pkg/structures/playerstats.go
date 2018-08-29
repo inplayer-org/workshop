@@ -30,30 +30,7 @@ func (p ByWins) Less(i, j int) bool {
 	return p[i].Name<p[j].Name
 }
 
-func (p *PlayerStats) GetPlayersByLocation(db *sql.DB,name string)([]PlayerStats,error){
-	var c int
-	err := db.QueryRow("SELECT id from locations where countryName like (?)",name).Scan(&c)
-	if err!=nil {
-		return nil,err
-	}
-	var players []PlayerStats
-	rows,err:=db.Query("SELECT PlayerName,wins,losses,trophies,clanTag from players where locationID=?",c)
 
-	if err!=nil {
-		return nil,err
-	}
-
-	for rows.Next(){
-		var t PlayerStats
-		rows.Scan(&t.Name,&t.Wins,&t.Losses,&t.Trophies,&t.Clan.Tag)
-		err:=db.QueryRow("SELECT clanName from clans where clanTag=?",t.Clan.Tag).Scan(&t.Clan.Name)
-		if err!=nil {
-			return nil,err
-		}
-		players=append(players,t)
-	}
-	return players,nil
-	}
 
 /*func (p *PlayerStats) GetTop100()([]PlayerStats,error){
 
