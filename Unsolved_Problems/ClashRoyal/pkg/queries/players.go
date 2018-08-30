@@ -97,3 +97,42 @@ func GetPlayersByLocation(db *sql.DB,name int)([]structures.PlayerStats,error){
 	}
 	return players,nil
 }
+
+func  GetAllPlayers(db *sql.DB,)([]structures.PlayerStats,error){
+
+
+	rows, err:= db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationID from players limit 50")
+
+	if err!=nil{
+
+		return nil,err
+	}
+
+	defer rows.Close()
+
+	return playerRows(db,rows)
+}
+
+func playerRows(db *sql.DB,rows *sql.Rows)([]structures.PlayerStats,error){
+	var players  []structures.PlayerStats
+	for rows.Next() {
+		var p structures.PlayerStats
+		err:=rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.LocationID)
+
+		if err!=nil {
+
+			return nil,err
+		}
+
+		err=db.QueryRow("select clanName from clans where clanTag=?",p.Clan.Tag).Scan(&p.Clan.Name)
+
+		if err!=nil {
+
+			return nil,err
+		}
+
+		players=append(players,p)
+	}
+
+	return players,nil
+}

@@ -3,6 +3,7 @@ package HandlersFunc
 import (
 	"net/http"
 	"database/sql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errorhandlers"
@@ -62,7 +63,7 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 func (a *App) GetClans(w http.ResponseWriter, r *http.Request) {
 
 
-	clans, err := structures.GetAllClans(a.DB)
+	clans, err := queries.GetAllClans(a.DB)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:

@@ -75,3 +75,30 @@ func GetAll(db *sql.DB)(structures.Locations,error){
 
 	return locs,nil
 }
+
+func GetAllLocations(db *sql.DB)([]structures.Locationsinfo,error){
+
+	rows, _ := db.Query("SELECT id,countryName,isCountry,countryCode from locations")
+
+
+	defer rows.Close()
+
+	return locationrows(rows)
+}
+
+func locationrows(rows *sql.Rows)([]structures.Locationsinfo,error){
+	var locations  []structures.Locationsinfo
+
+	for rows.Next() {
+		var l structures.Locationsinfo
+		err:=rows.Scan(&l.ID,&l.Name,&l.IsCountry,&l.CountryCode)
+
+		if err!=nil {
+			return nil,err
+		}
+
+		locations=append(locations,l)
+	}
+
+	return locations,nil
+}

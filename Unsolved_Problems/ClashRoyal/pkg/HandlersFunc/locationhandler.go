@@ -42,7 +42,7 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
 
 
-	locations, err := structures.GetAllLocations(a.DB)
+	locations, err := queries.GetAllLocations(a.DB)
 	if err != nil {
 		panic(err)
 	}
