@@ -70,7 +70,8 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 		if err!=nil{
 			return nil,err
 		}
-
+		currentPlayer.Tag = currentPlayer.Tag[1:]
+		//currentPlayer.Clan.Tag = currentPlayer.Clan.Tag[1:]
 		Players = append(Players,structures.RankedPlayer{Player:currentPlayer,Rank:rank})
 		rank++
 	}

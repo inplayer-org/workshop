@@ -107,11 +107,17 @@ a{
                                 <div class="inlineBlock" style="    width: 60%;">
                                     <div >
                                         <h9 >Name:</h9>
-                                        <h9 style="float:right;"> {{ .Player.Name}}</h9>
+
+                                        <h9 style="float:right;">
+                                        <a href="/players/{{.Player.Name}}/{{.Player.Tag}}">{{ .Player.Name}}</a>
+                                        </h9>
+
                                     </div>
                                     <div>
                                         <h9 >Clan:</h9>
-                                        <h9 style="float:right;"> {{ .Player.Clan.Name}}</h9>
+                                        <h9 style="float:right;">
+                                        <a href="/clans/{{.Player.Clan.Name}}/{{.Player.Clan.Tag}}">{{ .Player.Clan.Name}}</a>
+                                        </h9>
                                     </div>
                                 </div>
                             </div>
@@ -158,11 +164,11 @@ a{
                 {{if gt .Rank 3}}
                 <tr>
                     <th>{{ .Rank}}</th>
-                    <th>{{ .Player.Name}}</th>
+                    <th><a href="/players/{{.Player.Name}}/{{.Player.Tag}}">{{ .Player.Name}}</a></th>
                     <th>{{ .Player.Wins}}</th>
                     <th>{{ .Player.Losses}}</th>
                     <th>{{ .Player.Trophies}}</th>
-                    <th>{{ .Player.Clan.Name}}</th>
+                    <th><a href="/clans/{{.Player.Clan.Name}}/{{.Player.Clan.Tag}}">{{ .Player.Clan.Name}}</a></th>
                 </tr>
                 {{end}}
                 {{end}}
