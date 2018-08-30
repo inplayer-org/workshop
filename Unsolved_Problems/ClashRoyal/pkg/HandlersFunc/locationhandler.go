@@ -18,7 +18,6 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 		return
 	} */
 
-	e := structures.PlayerStats{}
 	player,err := queries.GetPlayersByLocation(a.DB,name)
 /*
 		switch err {
