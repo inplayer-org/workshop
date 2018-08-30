@@ -38,8 +38,8 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 func (a *App) Home(w http.ResponseWriter, r *http.Request) {
 
-
-	players, err := queries.GetSortedRankedPlayers(a.DB,"wins",10)
+	wins := "wins"
+	players, err := queries.GetSortedRankedPlayers(a.DB,wins,10)
 	if err != nil {
 		log.Println(err)
 	}

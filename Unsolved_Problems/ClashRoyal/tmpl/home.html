@@ -90,10 +90,13 @@ a{
     </div>
 
 <div>
+
         <div class="row">
         {{ range . }}
+        {{if lt .Rank  4}}
 
                     <div class="col">
+
                         <div class="card">
                             <div class="card-header">
                                 <span>Rank: {{.Rank}}</span>
@@ -103,26 +106,26 @@ a{
                                 <div class="inlineBlock" style="    width: 60%;">
                                     <div >
                                         <h9 >Name:</h9>
-                                        <h9 style="float:right;"> dino</h9>
+                                        <h9 style="float:right;"> {{ .Player.Name}}</h9>
                                     </div>
                                     <div>
                                         <h9 >Clan:</h9>
-                                        <h9 style="float:right;"> asd</h9>
+                                        <h9 style="float:right;"> TEMP</h9>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer">
                                 <div    >
                                     <h9>wins: </h9>
-                                    <h9 style="float:right;">132</h9>
+                                    <h9 style="float:right;">{{ .Player.Wins}}</h9>
                                 </div>
                                 <div >
                                     <h9>losses: </h9>
-                                    <h9 style="float:right;">132</h9>
+                                    <h9 style="float:right;">{{ .Player.Losses}}</h9>
                                 </div>
                                 <div>
                                     <h9>trophies: </h9>
-                                    <h9 style="float:right;">132</h9>
+                                    <h9 style="float:right;">{{ .Player.Trophies}}</h9>
                                 </div>
                             </div>
 
@@ -130,7 +133,8 @@ a{
                             </div>
 
                     </div>
-
+{{end}}
+{{end}}
                 </div>
 
 
@@ -148,21 +152,23 @@ a{
 
                 <tbody>
 
-
+                {{range .}}
+                {{if gt .Rank 3}}
                 <tr>
-                    <th>{{ .Name}}</th>
-                    <th>{{ .Wins}}</th>
-                    <th>{{ .Losses}}</th>
-                    <th>{{ .Trophies}}</th>
-                    <th>{{ .Clan.Name}}</th>
+                    <th>{{ .Player.Name}}</th>
+                    <th>{{ .Player.Wins}}</th>
+                    <th>{{ .Player.Losses}}</th>
+                    <th>{{ .Player.Trophies}}</th>
+                    <th>{{ .Player.Clan.Name}}</th>
                 </tr>
-
+                {{end}}
+                {{end}}
                 </tbody>
             </table>
         </div>
 
     </div>
-                {{end}}
+
     <div class="footer">
 
         <h3>Contact us:</h3>
