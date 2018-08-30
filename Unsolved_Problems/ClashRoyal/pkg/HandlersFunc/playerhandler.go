@@ -3,10 +3,7 @@ package HandlersFunc
 import (
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
-	"database/sql"
-
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errorhandlers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"log"
 )
@@ -22,18 +19,26 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 	players,err := queries.GetPlayersLike(a.DB,name)
 	if err != nil {
-
-		switch err {
-		case sql.ErrNoRows:
-			errorhandlers.RespondWithError(w, http.StatusNotFound, "Player not found")
-		default:
-			errorhandlers.RespondWithError(w, http.StatusInternalServerError, "Server Error")
-		}
-		return
+panic(err)
 	}
 	log.Println(players)
 	structures.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
 
 }
 
+
+func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
+
+	vars:=mux.Vars(r)
+	tag:=vars["tag"]
+
+	player,err:=queries.GetFromTag(a.DB,tag)
+
+	if err!=nil {
+		panic(err)
+	}
+
+	structures.Tmpl.ExecuteTemplate(w,"player.html",player)
+
+}
 

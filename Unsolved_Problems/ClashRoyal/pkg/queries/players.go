@@ -100,6 +100,21 @@ func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 	return players,nil
 }
 
+func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
+
+	var p structures.PlayerStats
+
+	tag="#"+tag
+
+	err:=db.QueryRow("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag, clans.clanName From players inner join clans where players.clanTag=clans.clanTag and clans.clanTag=players.clanTag and players.playerTag=?",tag).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
+	//p.Tag=p.Tag[1:]
+	if err!=nil{
+		return p,nil
+	}
+
+	return p,nil
+}
+
 func  GetAllPlayers(db *sql.DB,)([]structures.PlayerStats,error){
 
 
@@ -156,6 +171,8 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 		if err !=nil {
 			return nil,err
 		}
+
+		p.Tag=p.Tag[1:]
 
 		players = append(players,p)
 	}
