@@ -2,7 +2,9 @@ package queries
 
 import (
 	"database/sql"
+	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"strconv"
 )
 
 
@@ -52,14 +54,15 @@ func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]structures.RankedPlayer,error){
 
 		var Players []structures.RankedPlayer
-
-	rows,err := DB.Query("SELECT playerTag,playerName,wins,losses,trophies from players order by ? desc limit ?;",orderBy,numberOfPlayers)
+	expression := "SELECT playerTag,playerName,wins,losses,trophies from players order by "+ orderBy + " desc limit " + strconv.Itoa(numberOfPlayers)
+	rows,err := DB.Query(expression)
 
 
 	if err!=nil{
 		return nil,err
 	}
 	rank :=1
+	log.Println(rows.Columns())
 	for rows.Next(){
 		var currentPlayer structures.PlayerStats
 		err = rows.Scan(&currentPlayer.Tag,&currentPlayer.Name,&currentPlayer.Wins,&currentPlayer.Losses,&currentPlayer.Trophies)
