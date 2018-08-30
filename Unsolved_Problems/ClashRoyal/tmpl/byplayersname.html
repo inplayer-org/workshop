@@ -105,25 +105,25 @@
 
                 <tbody>
 
-                {{range .}}
+                {{ range . }}
 
                 <tr>
 
 
                     <th>
-                        <a href="/players/{{.Player.Name}}/{{.Player.Tag}}">
-                        {{ .Player.Name}}
+                        <a href="/players/{{.Name}}/{{.Tag}}">
+                        {{ .Name}}
                         </a>
                     </th>
 
-                    <th>{{ .Player.Wins}}</th>
-                    <th>{{ .Player.Losses}}</th>
-                    <th>{{ .Player.Trophies}}</th>
+                    <th>{{ .Wins}}</th>
+                    <th>{{ .Losses}}</th>
+                    <th>{{ .Trophies}}</th>
 
 
                     <th>
-                        <a href="/clans/{{.Player.Clan.Name}}">
-                        {{ .Player.Clan.Name}}
+                        <a href="/clans/{{.Clan.Name}}">
+                        {{ .Clan.Name}}
                         </a>
                     </th>
 
