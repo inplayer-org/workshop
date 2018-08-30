@@ -29,3 +29,26 @@ func UpdateClans(db *sql.DB,clan structures.Clan)error{
 	return nil
 
 }
+
+func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
+	var clans [] structures.Clan
+	rows,err:=db.Query("SELECT clanName,clanTag FROM clans Where clanName Like (?)",name)
+	if err !=nil {
+		return nil,err
+	}
+
+	for rows.Next(){
+
+		var c structures.Clan
+		err = rows.Scan(&c.Name,&c.Tag)
+
+		if err !=nil {
+			return nil,err
+		}
+
+		clans = append(clans,c)
+	}
+
+	return clans,nil
+
+}
