@@ -100,10 +100,18 @@
                 </thead>
                 <tbody>
                 {{range .}}
-                <tr>
-                    <th>{{.Name}}</th>
+
+                    <tr>
+
+                    <th>
+                        <a href="/clans/{{.Name}}/{{.Tag}}">
+                        {{.Name}}
+                        </a>
+                    </th>
                     <th>{{.Tag}}</th>
-                </tr>
+
+                    </tr>
+
                 {{end}}
                 </tbody>
             </table>
