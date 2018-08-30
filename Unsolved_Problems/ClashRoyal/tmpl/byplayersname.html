@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +19,7 @@
             padding: 1rem;
         }
         .header {
-            background-image: url(clash_royale_logo.png);
+            background-image: url(https://vignette.wikia.nocookie.net/clashofclans/images/6/6c/Clash_Royale_Logo.png/revision/latest?cb=20180217045351);
             background-repeat: no-repeat;
             background-size: 100% 88%;
             padding-left: 6%;
@@ -67,7 +69,7 @@
 
     <div class="header">
 
-        <a href="home.html"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="145" height="110"></a>
+        <a href="/"><img src="https://orig00.deviantart.net/d986/f/2017/129/3/b/king_dab__clash_royale__by_josael281999-db8mdhl.png" class="rounded-circle" width="145" height="110"></a>
 
 
         <div style="    padding-top: 5%;">
@@ -89,30 +91,47 @@
 
     <div>
 
-
         <div class="t">
             <table class="table table-dark table-hover">
                 <thead>
                 <tr>
+                    <th>Player Name</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Trophies</th>
                     <th>Clan Name</th>
-                    <th>Clan Tag</th>
                 </tr>
                 </thead>
+
                 <tbody>
+
                 {{range .}}
 
-                    <tr>
+                <tr>
+
 
                     <th>
-                        <a href="/clans/{{.Name}}/{{.Tag}}">
-                        {{.Name}}
+                        <a href="/players/{{.Player.Name}}/{{.Player.Tag}}">
+                        {{ .Player.Name}}
                         </a>
                     </th>
-                    <th>{{.Tag}}</th>
 
-                    </tr>
+                    <th>{{ .Player.Wins}}</th>
+                    <th>{{ .Player.Losses}}</th>
+                    <th>{{ .Player.Trophies}}</th>
+
+
+                    <th>
+                        <a href="/clans/{{.Player.Clan.Name}}">
+                        {{ .Player.Clan.Name}}
+                        </a>
+                    </th>
+
+
+                </tr>
 
                 {{end}}
+
                 </tbody>
             </table>
         </div>
@@ -129,13 +148,13 @@
                 <li><a href="mailto:someone@example.com">someone@example.com</a></li>
             </ul>
 
-            <a href="www.inplayer.com"><img class="inplayer"  src="inplayer-logo.png"></a>
+            <a href="www.inplayer.com"><img class="inplayer"  src="http://www.marathonartists.com/wp-content/uploads/2017/09/inplayer-logo.png"></a>
         </div>
 
     </div>
 
 </div>
 
-
 </body>
+
 </html>
