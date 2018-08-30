@@ -1,8 +1,8 @@
 package queries
 
 import (
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"database/sql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
 
@@ -53,17 +53,15 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 
 		var Players []structures.RankedPlayer
 
-	rows,err := DB.Query("SELECT playerTag,playerName,wins,losses,trophies from players order by (?) desc limit (?)",orderBy,numberOfPlayers)
+	rows,err := DB.Query("SELECT playerTag,playerName,wins,losses,trophies from players order by ? desc limit ?;",orderBy,numberOfPlayers)
 
-	defer rows.Close()
 
 	if err!=nil{
 		return nil,err
 	}
 	rank :=1
-	if rows.Next(){
+	for rows.Next(){
 		var currentPlayer structures.PlayerStats
-
 		err = rows.Scan(&currentPlayer.Tag,&currentPlayer.Name,&currentPlayer.Wins,&currentPlayer.Losses,&currentPlayer.Trophies)
 
 		if err!=nil{

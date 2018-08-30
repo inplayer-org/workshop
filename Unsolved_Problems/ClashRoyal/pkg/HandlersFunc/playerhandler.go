@@ -1,6 +1,7 @@
 package HandlersFunc
 
 import (
+	"log"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
@@ -40,8 +41,8 @@ func (a *App) Home(w http.ResponseWriter, r *http.Request) {
 
 	players, err := queries.GetSortedRankedPlayers(a.DB,"wins",10)
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
-
+	log.Println(players)
 structures.Tmpl.ExecuteTemplate(w,"home.html",players)
 	}
