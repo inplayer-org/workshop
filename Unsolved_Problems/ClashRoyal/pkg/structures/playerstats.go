@@ -76,7 +76,7 @@ func (p *PlayerStats) GetNamePlayer(db *sql.DB) error {
 func  GetAllPlayers(db *sql.DB)([]PlayerStats,error){
 
 
-	rows, err:= db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationID from players")
+	rows, err:= db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationID from players limit 50")
 
 	if err!=nil{
 
