@@ -96,12 +96,15 @@
                 <tr>
                     <th>Clan Name</th>
                     <th>Clan Tag</th>
+                </tr>
                 </thead>
                 <tbody>
+                {{range .}}
                 <tr>
-                    <th>Gligor</th>
-                    <th>123456</th>
+                    <th>{{.Name}}</th>
+                    <th>{{.Tag}}</th>
                 </tr>
+                {{end}}
                 </tbody>
             </table>
         </div>

@@ -1,6 +1,7 @@
 package HandlersFunc
 
 import (
+	"log"
 	"net/http"
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
@@ -38,14 +39,14 @@ import (
 func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
-	name := (vars["name"])
+	name := vars["name"]
 	/*if err != nil {
 		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid clan name")
 		return
 	} */
 
-	e := structures.Clan{Name: name}
-	if err := e.GetNameClan(a.DB); err != nil {
+	clans,err := queries.GetClansLike(a.DB,name)
+	if err != nil {
 
 		switch err {
 		case sql.ErrNoRows:
@@ -55,8 +56,10 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 		}
 		return
 	}
+	log.Println(clans)
+	structures.Tmpl.ExecuteTemplate(w,"byclansname.html",clans)
 
-	errorhandlers.RespondWithJSON(w, http.StatusOK, e)
+	//errorhandlers.RespondWithJSON(w, http.StatusOK, e)
 }
 
 
