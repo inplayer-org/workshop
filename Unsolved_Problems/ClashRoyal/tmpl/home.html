@@ -73,15 +73,16 @@ a{
 
 
         <div style="    padding-top: 5%;">
-        <form style="display: inline-block; width: 60%">
+        <form style="display: inline-block; width: 60%" method="get" action="/search">
             <select id="searchby" name="searchby">
-                <option value="player">Player Tag</option>
-                <option value="clan">Clan Name</option>
+                <option value="playerName">Player Name</option>
+                <option value="playerTag">Player Tag</option>
+                <option value="clans">Clan Name</option>
                 <option value="location">Location ID</option>
             </select>
             <span>-></span>
 
-            <input class="text" type="text">
+            <input class="text" type="text" name="text">
             <input type="submit">
         </form>
             <a href="compare.html"><button>Compare Players </button></a>
