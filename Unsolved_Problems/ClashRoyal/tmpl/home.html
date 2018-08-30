@@ -92,8 +92,7 @@ a{
 <div>
         <div class="row">
         {{ range . }}
-                {{ $temp := .Rank }}
-        {{ if $temp lt 4 }}
+
                     <div class="col">
                         <div class="card">
                             <div class="card-header">
@@ -128,7 +127,7 @@ a{
                             </div>
 
 
-                    </div>
+                            </div>
 
                     </div>
 
@@ -149,7 +148,7 @@ a{
 
                 <tbody>
 
-        {{ if $temp gt 3 }}
+
                 <tr>
                     <th>{{ .Name}}</th>
                     <th>{{ .Wins}}</th>
@@ -157,13 +156,13 @@ a{
                     <th>{{ .Trophies}}</th>
                     <th>{{ .Clan.Name}}</th>
                 </tr>
-                {{ end }}
+
                 </tbody>
             </table>
         </div>
 
     </div>
-
+                {{end}}
     <div class="footer">
 
         <h3>Contact us:</h3>
