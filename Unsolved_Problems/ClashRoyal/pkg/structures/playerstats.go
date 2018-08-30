@@ -15,7 +15,7 @@ type PlayerStats struct {
 
 func (p *PlayerStats) GetNamePlayer(db *sql.DB) error {
 
-	err := db.QueryRow("SELECT playerName,playerTag from players where playerName='%s'like ",p.Name).Scan(&p.Name,&p.Tag)
+	err := db.QueryRow("SELECT playerName,playerTag from players where playerName='%s'like",p.Name).Scan(&p.Name,&p.Tag)
 	if err!=nil {
 		return err
 	}
@@ -25,3 +25,25 @@ func (p *PlayerStats) GetNamePlayer(db *sql.DB) error {
 
 
 
+func GetPlayersLike(db *sql.DB,name string)([]PlayerStats,error){
+	var players [] PlayerStats
+	rows,err:=db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationid FROM players Where playerName Like (?)",name)
+	if err !=nil {
+		return nil,err
+	}
+
+	for rows.Next(){
+
+		var p PlayerStats
+		err = rows.Scan(&p.Name,&p.Tag,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Name,&p.LocationID)
+
+		if err !=nil {
+			return nil,err
+		}
+
+		players = append(players,p)
+	}
+
+	return players,nil
+
+}
