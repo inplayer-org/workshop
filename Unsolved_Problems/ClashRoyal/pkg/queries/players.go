@@ -163,3 +163,9 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 	return players,nil
 
 }
+
+func GetPlayerName(db *sql.DB,tag string)(string,error){
+	var name string
+	err := db.QueryRow("SELECT playerName FROM players WHERE playerTag=?",tag).Scan(&name)
+	return name,err
+}

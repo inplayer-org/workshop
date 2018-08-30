@@ -14,6 +14,6 @@ players, err := queries.GetSortedRankedPlayers(a.DB,wins,10)
 if err != nil {
 log.Println(err)
 }
-log.Println(players)
+//log.Println(players)
 structures.Tmpl.ExecuteTemplate(w,"home.html",players)
 }
