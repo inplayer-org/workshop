@@ -23,7 +23,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 			//Error
 		}
 		log.Println("name = ",name)
-		http.Redirect(w,r,"http://localhost:3303/players/"+name+"/"+text,http.StatusTemporaryRedirect)
+		http.Redirect(w,r,"http://localhost:3303/players/"+name+"/"+text[1:],http.StatusTemporaryRedirect)
 	}
 	log.Println("text = ",text,"option = ",option)
 }
