@@ -60,7 +60,7 @@ func clanRows(rows *sql.Rows)([]structures.Clan,error){
 
 func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 	var clans [] structures.Clan
-	rows,err:=db.Query("SELECT clanName,clanTag FROM clans Where clanName Like (?)",name)
+	rows,err:=db.Query("SELECT clanName,clanTag FROM clans Where clanName Like (?)","%"+name+"%")
 	if err !=nil {
 		return nil,err
 	}
