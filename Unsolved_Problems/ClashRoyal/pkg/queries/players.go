@@ -77,23 +77,25 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 	return Players,nil
 }
 
-func GetPlayersByLocation(db *sql.DB,name int)([]structures.PlayerStats,error){
+func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 
-	var players []structures.PlayerStats
-	rows,err:=db.Query("SELECT PlayerName,wins,losses,trophies,clanTag from players where locationID=?",name)
+	var players []structures.RankedPlayer
+	rows,err:=db.Query("SELECT PlayerName,wins,losses,trophies,clanTag from players where locationID=? order by wins desc limit 200",name)
 
 	if err!=nil {
 		return nil,err
 	}
-
+	rank:=1
 	for rows.Next(){
-		var t structures.PlayerStats
-		rows.Scan(&t.Name,&t.Wins,&t.Losses,&t.Trophies,&t.Clan.Tag)
-		err:=db.QueryRow("SELECT clanName from clans where clanTag=?",t.Clan.Tag).Scan(&t.Clan.Name)
+		var t structures.RankedPlayer
+		t.Rank=rank
+		rows.Scan(&t.Player.Name,&t.Player.Wins,&t.Player.Losses,&t.Player.Trophies,&t.Player.Clan.Tag)
+		err:=db.QueryRow("SELECT clanName from clans where clanTag=?",t.Player.Clan.Tag).Scan(&t.Player.Clan.Name)
 		if err!=nil {
 			return nil,err
 		}
 		players=append(players,t)
+		rank++
 	}
 	return players,nil
 }
