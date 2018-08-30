@@ -143,7 +143,7 @@ func playerRows(db *sql.DB,rows *sql.Rows)([]structures.PlayerStats,error){
 
 func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 	var players [] structures.PlayerStats
-	rows,err:=db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationid FROM players Where playerName Like (?)","%"+name+"%")
+	rows,err:=db.Query("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag, clans.clanName FROM players inner join clans Where players.clanTag=clans.clanTag and playerName Like (?)","%"+name+"%")
 	if err !=nil {
 		return nil,err
 	}
@@ -151,7 +151,7 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 	for rows.Next(){
 
 		var p structures.PlayerStats
-		err = rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Name,&p.LocationID)
+		err = rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
 
 		if err !=nil {
 			return nil,err
