@@ -48,3 +48,55 @@ func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 		return insert(DB,player,locID,clanTag)
 	}
 }
+
+func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]structures.RankedPlayer,error){
+
+		var Players []structures.RankedPlayer
+
+	rows,err := DB.Query("SELECT playerTag,playerName,wins,losses,trophies from players order by (?) desc limit (?)",orderBy,numberOfPlayers)
+
+	defer rows.Close()
+
+	if err!=nil{
+		return nil,err
+	}
+	rank :=1
+	if rows.Next(){
+		var currentPlayer structures.PlayerStats
+
+		err = rows.Scan(&currentPlayer.Tag,&currentPlayer.Name,&currentPlayer.Wins,&currentPlayer.Losses,&currentPlayer.Trophies)
+
+		if err!=nil{
+			return nil,err
+		}
+
+		Players = append(Players,structures.RankedPlayer{Player:currentPlayer,Rank:rank})
+		rank++
+	}
+	return Players,nil
+}
+
+func GetPlayersByLocation(db *sql.DB,name string)([]structures.PlayerStats,error){
+	var c int
+	err := db.QueryRow("SELECT id from locations where countryName like (?)",name).Scan(&c)
+	if err!=nil {
+		return nil,err
+	}
+	var players []structures.PlayerStats
+	rows,err:=db.Query("SELECT PlayerName,wins,losses,trophies,clanTag from players where locationID=?",c)
+
+	if err!=nil {
+		return nil,err
+	}
+
+	for rows.Next(){
+		var t structures.PlayerStats
+		rows.Scan(&t.Name,&t.Wins,&t.Losses,&t.Trophies,&t.Clan.Tag)
+		err:=db.QueryRow("SELECT clanName from clans where clanTag=?",t.Clan.Tag).Scan(&t.Clan.Name)
+		if err!=nil {
+			return nil,err
+		}
+		players=append(players,t)
+	}
+	return players,nil
+}
