@@ -80,3 +80,10 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 	return clans,nil
 
 }
+
+func GetClanName(db *sql.DB,clanTag string)(string,error){
+	var clanName string
+	err := db.QueryRow("SELECT clanName FROM clans WHERE clanTag=?",clanTag).Scan(&clanName)
+	return clanName,err
+
+}
