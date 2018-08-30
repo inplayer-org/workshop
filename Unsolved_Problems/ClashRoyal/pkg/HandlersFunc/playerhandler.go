@@ -7,19 +7,21 @@ import (
 
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errorhandlers"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
+	"log"
 )
 
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
-	/*if name != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid player name")
+	/*if err != nil {
+		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid clan name")
 		return
 	} */
 
-	e := structures.PlayerStats{Name: name}
-	if err := e.GetNamePlayer(a.DB); err != nil {
+	players,err := queries.GetPlayersLike(a.DB,name)
+	if err != nil {
 
 		switch err {
 		case sql.ErrNoRows:
@@ -29,7 +31,9 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 		}
 		return
 	}
+	log.Println(players)
+	structures.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
 
-	errorhandlers.RespondWithJSON(w, http.StatusOK, e)
 }
+
 
