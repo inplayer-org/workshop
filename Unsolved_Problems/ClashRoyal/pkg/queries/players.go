@@ -55,7 +55,7 @@ func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]structures.RankedPlayer,error){
 
 		var Players []structures.RankedPlayer
-	expression := "SELECT playerTag,playerName,wins,losses,trophies,clans.clanName from players JOIN clans where players.clanTag=clans.clanTag order by "+ orderBy + " desc limit " + strconv.Itoa(numberOfPlayers)
+	expression := "SELECT playerTag,playerName,wins,losses,trophies,clans.clanName,players.clanTag from players JOIN clans where players.clanTag=clans.clanTag order by "+ orderBy + " desc limit " + strconv.Itoa(numberOfPlayers)
 	rows,err := DB.Query(expression)
 
 
@@ -66,12 +66,13 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 	log.Println(rows.Columns())
 	for rows.Next(){
 		var currentPlayer structures.PlayerStats
-		err = rows.Scan(&currentPlayer.Tag,&currentPlayer.Name,&currentPlayer.Wins,&currentPlayer.Losses,&currentPlayer.Trophies,&currentPlayer.Clan.Name)
+		err = rows.Scan(&currentPlayer.Tag,&currentPlayer.Name,&currentPlayer.Wins,&currentPlayer.Losses,&currentPlayer.Trophies,&currentPlayer.Clan.Name,&currentPlayer.Clan.Tag)
 
 		if err!=nil{
 			return nil,err
 		}
 		currentPlayer.Tag = currentPlayer.Tag[1:]
+		currentPlayer.Clan.Tag = currentPlayer.Clan.Tag[1:]
 		//currentPlayer.Clan.Tag = currentPlayer.Clan.Tag[1:]
 		Players = append(Players,structures.RankedPlayer{Player:currentPlayer,Rank:rank})
 		rank++
@@ -175,7 +176,7 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 		}
 
 		p.Tag=p.Tag[1:]
-
+		p.Clan.Tag = p.Clan.Tag[1:]
 		players = append(players,p)
 	}
 

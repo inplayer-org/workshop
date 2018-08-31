@@ -73,7 +73,7 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 		if err !=nil {
 			return nil,err
 		}
-
+		c.Tag = c.Tag[1:]
 		clans = append(clans,c)
 	}
 
