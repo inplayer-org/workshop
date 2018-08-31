@@ -70,6 +70,6 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 		panic(err)
 	}
 
-	structures.Tmpl.ExecuteTemplate(w,"home.html",players)
+	structures.Tmpl.ExecuteTemplate(w,"clan.html",players)
 
 }

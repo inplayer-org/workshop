@@ -85,7 +85,14 @@
                 <input class="text" type="text" name="text">
                 <input type="submit">
             </form>
+
             <a href="/locations"><button>Locations</button></a>
+            {{range .}}
+            {{if eq .Rank 1}}
+            <a href="/clans/{{.Player.Clan.Name}}/{{.Player.Clan.Tag}}/update"><button>Refresh</button></a>
+                    {{end}}
+                    {{end}}
+
 
         </div>
     </div>
