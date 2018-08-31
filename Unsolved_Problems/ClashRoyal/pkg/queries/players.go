@@ -196,7 +196,7 @@ func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,er
 
 	var players []structures.RankedPlayer
 
-	rows,err:=db.Query("SELECT players.playerName,players.wins,players.losses,players.trophies,players.clanTag,clans.clanName from players join clans where clans.clanTag=players.clanTag and players.clanTag=? order by wins desc limit 50",clanTag)
+	rows,err:=db.Query("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag,clans.clanName from players join clans where clans.clanTag=players.clanTag and players.clanTag=? order by wins desc limit 50",clanTag)
 
 	if err != nil {
 		return nil,err
@@ -205,11 +205,14 @@ func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,er
 	for rows.Next(){
 		var player structures.RankedPlayer
 		player.Rank=rank
-		err=rows.Scan(&player.Player.Name,&player.Player.Wins,&player.Player.Losses,&player.Player.Trophies,&player.Player.Clan.Tag,&player.Player.Clan.Name)
+		err=rows.Scan(&player.Player.Tag,&player.Player.Name,&player.Player.Wins,&player.Player.Losses,&player.Player.Trophies,&player.Player.Clan.Tag,&player.Player.Clan.Name)
 
 		if err != nil {
 			return nil,err
 		}
+
+		player.Player.Tag=player.Player.Tag[1:]
+		player.Player.Clan.Tag=player.Player.Clan.Tag[1:]
 
 		players=append(players,player)
 		rank++
