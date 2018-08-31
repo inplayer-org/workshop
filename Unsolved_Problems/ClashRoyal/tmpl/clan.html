@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,58 +69,112 @@
 
     <div class="header">
 
-        <a href="home.html"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="145" height="110"></a>
+        <a href="/"><img src="https://orig00.deviantart.net/d986/f/2017/129/3/b/king_dab__clash_royale__by_josael281999-db8mdhl.png" class="rounded-circle" width="145" height="110"></a>
 
 
-        <div>
-            <form>
+        <div style="    padding-top: 5%;">
+            <form style="display: inline-block; width: 60%" method="get" action="/search">
+                <select id="searchby" name="searchby">
+                    <option value="playerName">Player Name</option>
+                    <option value="playerTag">Player Tag</option>
+                    <option value="clanName">Clan Name</option>
+                    <option value="clanTag">Clan Tag</option>
+                </select>
+                <span>-></span>
 
-                <input class="text" type="text">
-                <input type="submit" value="Compare Players">
+                <input class="text" type="text" name="text">
+                <input type="submit">
             </form>
+            <a href="/locations"><button>Locations</button></a>
+
         </div>
     </div>
 
     <div>
+
         <div class="row">
+        {{ range . }}
+        {{if lt .Rank  4}}
 
             <div class="col">
+
                 <div class="card">
                     <div class="card-header">
-                        <span>{{ .Tag}}</span>
+                        <span>Rank: {{.Rank}}</span>
                     </div>
                     <div class="card-body">
-                        <div class="inlineBlock"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="100" height="100"></div>
+                        <div class="inlineBlock"><img src="https://orig00.deviantart.net/d986/f/2017/129/3/b/king_dab__clash_royale__by_josael281999-db8mdhl.png" class="rounded-circle" width="100" height="100"></div>
                         <div class="inlineBlock" style="    width: 60%;">
                             <div >
                                 <h9 >Name:</h9>
-                                <h9 style="float:right;"> {{ .Name }}</h9>
+
+                                <h9 style="float:right;">
+                                    <a href="/players/{{.Player.Name}}/{{.Player.Tag}}">{{ .Player.Name}}</a>
+                                </h9>
+
                             </div>
                             <div>
                                 <h9 >Clan:</h9>
-                                <h9 style="float:right;"><a href="/clans/{{.Clan.Name}}/{{.Clan.Tag}}">{{ .Clan.Name }}</a></h9>
+                                <h9 style="float:right;">
+                                    <a href="/clans/{{.Player.Clan.Name}}/{{.Player.Clan.Tag}}">{{ .Player.Clan.Name}}</a>
+                                </h9>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
                         <div    >
                             <h9>wins: </h9>
-                            <h9 style="float:right;">{{ .Wins }}</h9>
+                            <h9 style="float:right;">{{ .Player.Wins}}</h9>
                         </div>
                         <div >
                             <h9>losses: </h9>
-                            <h9 style="float:right;">{{ .Losses }}</h9>
+                            <h9 style="float:right;">{{ .Player.Losses}}</h9>
                         </div>
                         <div>
                             <h9>trophies: </h9>
-                            <h9 style="float:right;">{{ .Trophies }}</h9>
+                            <h9 style="float:right;">{{ .Player.Trophies}}</h9>
                         </div>
                     </div>
-                </div>
-            </div>
 
+
+                </div>
+
+            </div>
+        {{end}}
+        {{end}}
         </div>
 
+
+        <div class="t">
+            <table class="table table-dark table-hover">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player Name</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Trophies</th>
+                    <th>Clan Name</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {{range .}}
+                {{if gt .Rank 3}}
+                <tr>
+                    <th>{{ .Rank}}</th>
+                    <th><a href="/players/{{.Player.Name}}/{{.Player.Tag}}">{{ .Player.Name}}</a></th>
+                    <th>{{ .Player.Wins}}</th>
+                    <th>{{ .Player.Losses}}</th>
+                    <th>{{ .Player.Trophies}}</th>
+                    <th><a href="/clans/{{.Player.Clan.Name}}/{{.Player.Clan.Tag}}">{{ .Player.Clan.Name}}</a></th>
+                </tr>
+                {{end}}
+                {{end}}
+                </tbody>
+            </table>
+        </div>
 
     </div>
 
@@ -132,13 +188,13 @@
                 <li><a href="mailto:someone@example.com">someone@example.com</a></li>
             </ul>
 
-            <a href="www.inplayer.com"><img class="inplayer"  src="inplayer-logo.png"></a>
+            <a href="www.inplayer.com"><img class="inplayer"  src="http://www.marathonartists.com/wp-content/uploads/2017/09/inplayer-logo.png"></a>
         </div>
 
     </div>
 
 </div>
 
-
 </body>
+
 </html>
