@@ -105,7 +105,6 @@ func GetRequestForPlayer(db *sql.DB,tag string)int{
 		if resp.StatusCode!=http.StatusNotFound{
 			return 404
 		}
-		time.Sleep(time.Second*1)
 	}
 
 
