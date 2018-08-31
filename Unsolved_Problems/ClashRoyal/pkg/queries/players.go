@@ -114,7 +114,7 @@ func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 	if err!=nil{
 		return p,nil
 	}
-
+	p.Clan.Tag = p.Clan.Tag[1:]
 	return p,nil
 }
 
