@@ -110,10 +110,10 @@ func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 	tag="#"+tag
 
 	err:=db.QueryRow("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag, clans.clanName From players inner join clans where players.clanTag=clans.clanTag and clans.clanTag=players.clanTag and players.playerTag=?",tag).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
-	//p.Tag=p.Tag[1:]
+	p.Tag=p.Tag[1:]
 	if err!=nil{
 		//fmt.Println(err)
-		return p,nil
+		return p,err
 	}
 	p.Clan.Tag = p.Clan.Tag[1:]
 	return p,nil
