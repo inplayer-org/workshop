@@ -28,7 +28,7 @@ func Players(DB *sql.DB,playerTags []string,locationID int,done chan <- interfac
 	for _,nextTag := range playerTags{
 
 		req,err := url.Parse(baseUrl+nextTag)
-		errorLimit := 0;
+		errorLimit := 0
 		if err!=nil{
 			fmt.Println(err)
 		}

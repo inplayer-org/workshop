@@ -25,6 +25,7 @@ func insert(DB *sql.DB,player structures.PlayerStats,locationID interface{},clan
 		return err
 }
 
+
 func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 
 	var clanTag interface{}
