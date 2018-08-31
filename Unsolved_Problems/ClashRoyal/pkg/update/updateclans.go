@@ -2,6 +2,9 @@ package update
 
 import (
 	"database/sql"
+	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
@@ -47,3 +50,25 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 	return clans, nil
 }
 
+func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)int{
+
+	clan := get.GetTagByClans(parser.ToUrlTag(clanTag))
+	if len(clan)<=0{
+		return 404
+	}
+	done := make(chan int)
+
+	countChan := 0
+	for _,playerTag := range clan {
+		go chanRequest(db,playerTag,done)
+		countChan++
+	}
+	for ;countChan>0;countChan--{
+		log.Println("done = ",<-done)
+	}
+	return 0
+}
+
+func chanRequest(db *sql.DB,playerTag string,done chan <- int){
+	done<- GetRequestForPlayer(db, playerTag)
+}
