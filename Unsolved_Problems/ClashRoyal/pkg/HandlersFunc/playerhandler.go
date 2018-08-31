@@ -42,3 +42,17 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 }
 
+func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
+
+	vars:=mux.Vars(r)
+	tag:=vars["tag"]
+
+	players,err:=queries.GetPlayersByClanTag(a.DB,tag)
+
+	if err != nil {
+		panic(err)
+	}
+
+	structures.Tmpl.ExecuteTemplate(w,"home.html",players)
+
+}

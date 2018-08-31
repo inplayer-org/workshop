@@ -189,7 +189,7 @@ func GetPlayerName(db *sql.DB,tag string)(string,error){
 	return name,err
 }
 
-func GetPlayersByClanName(db *sql.DB,clanTag string)([]structures.RankedPlayer,error){
+func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,error){
 
 	clanTag="#"+clanTag
 
