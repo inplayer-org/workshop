@@ -76,6 +76,9 @@
                 <input class="text" type="text">
                 <input type="submit" value="Compare Players">
             </form>
+
+            <a href="http://localhost:3303/players/{{.Name}}/{{.Tag}}/update"><button>Update</button></a>
+
         </div>
     </div>
 
@@ -85,7 +88,7 @@
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <span>{{ .Tag}}</span>
+                        <span>#{{ .Tag}}</span>
                     </div>
                     <div class="card-body">
                         <div class="inlineBlock"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="100" height="100"></div>
