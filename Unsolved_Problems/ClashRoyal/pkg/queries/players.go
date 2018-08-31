@@ -189,3 +189,31 @@ func GetPlayerName(db *sql.DB,tag string)(string,error){
 	err := db.QueryRow("SELECT playerName FROM players WHERE playerTag=?",tag).Scan(&name)
 	return name,err
 }
+
+func GetPlayersByClanName(db *sql.DB,clanTag string)([]structures.RankedPlayer,error){
+
+	clanTag="#"+clanTag
+
+	var players []structures.RankedPlayer
+
+	rows,err:=db.Query("SELECT playerName,wins,losses,trophies,clanTag from players where clanTag=? order by wins desc limit 50",clanTag)
+
+	if err != nil {
+		return nil,err
+	}
+	rank:=0
+	for rows.Next(){
+		var player structures.RankedPlayer
+		player.Rank=rank
+		err=rows.Scan(&player.Player.Name,&player.Player.Wins,&player.Player.Losses,&player.Player.Trophies,&player.Player.Clan.Tag)
+
+		if err != nil {
+			return nil,err
+		}
+
+		players=append(players,player)
+		rank++
+	}
+
+	return players,nil
+	}
