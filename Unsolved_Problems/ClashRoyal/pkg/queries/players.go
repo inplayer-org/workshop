@@ -54,7 +54,7 @@ func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 
 func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]structures.RankedPlayer,error){
 
-	var Players []structures.RankedPlayer
+		var Players []structures.RankedPlayer
 	expression := "SELECT playerTag,playerName,wins,losses,trophies,clans.clanName,players.clanTag from players JOIN clans where players.clanTag=clans.clanTag order by "+ orderBy + " desc limit " + strconv.Itoa(numberOfPlayers)
 	rows,err := DB.Query(expression)
 

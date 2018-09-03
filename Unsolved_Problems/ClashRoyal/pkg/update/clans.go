@@ -30,6 +30,7 @@ import (
 	return err
 }*/
 
+//GetAllClans - Returns slice of all structure Clan present in the database
 func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 
 	var clans []structures.Clan
@@ -54,6 +55,8 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 	return clans, nil
 }
 
+
+//GetRequestForPlayersFromClan -
 func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)int{
 
 	clan := GetTagByClans(parser.ToUrlTag(clanTag))
