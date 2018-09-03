@@ -9,6 +9,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
+//UpdateClans - Inserts a slice of Clan structures into the database
 func UpdateClans(db *sql.DB, clan []structures.Clan) error {
 
 	for _, elem := range clan {
@@ -29,6 +30,7 @@ func UpdateClans(db *sql.DB, clan []structures.Clan) error {
 	return err
 }
 
+//GetAllClans - Returns slice of all structure Clan present in the database
 func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 
 	var clans []structures.Clan
@@ -51,6 +53,8 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 	return clans, nil
 }
 
+
+//GetRequestForPlayersFromClan -
 func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)int{
 
 	clan := GetTagByClans(parser.ToUrlTag(clanTag))

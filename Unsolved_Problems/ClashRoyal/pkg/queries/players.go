@@ -104,11 +104,11 @@ func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 	return players,nil
 }
 
-func ClanNotFound(db *sql.DB)(structures.PlayerStats,error){
-
-
-
-}
+//func ClanNotFound(db *sql.DB)(structures.PlayerStats,error){
+//
+//
+//
+//}
 
 func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
