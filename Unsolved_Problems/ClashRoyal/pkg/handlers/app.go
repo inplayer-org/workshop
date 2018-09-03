@@ -1,4 +1,4 @@
-package HandlersFunc
+package handlers
 
 import (
 	_ "github.com/go-sql-driver/mysql"
@@ -22,7 +22,9 @@ func (a *App) Initialize(db *sql.DB,router *mux.Router) {
 	a.Router=router
 
 	a.initializeRoutes()
+
 	a.Run(":3303")
+
 }
 
 //Run starts server

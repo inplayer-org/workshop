@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/HandlersFunc"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/handlers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"time"
@@ -126,7 +126,7 @@ func main (){
 
 	router := mux.NewRouter()
 
-	var app HandlersFunc.App
+	var app handlers.App
 
 	app.Initialize(db,router)
 

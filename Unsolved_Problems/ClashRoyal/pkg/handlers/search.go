@@ -1,4 +1,4 @@
-package HandlersFunc
+package handlers
 
 import (
 	"log"

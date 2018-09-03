@@ -5,6 +5,7 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"strconv"
+	"fmt"
 )
 
 
@@ -103,6 +104,12 @@ func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 	return players,nil
 }
 
+func ClanNotFound(db *sql.DB)(structures.PlayerStats,error){
+
+
+
+}
+
 func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	var p structures.PlayerStats
@@ -112,53 +119,12 @@ func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 	err:=db.QueryRow("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag, clans.clanName From players inner join clans where players.clanTag=clans.clanTag and clans.clanTag=players.clanTag and players.playerTag=?",t).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
 	p.Tag=tag
 	if err!=nil{
-		//fmt.Println(err)
+		fmt.Println(err)
 		return p,err
 	}
 	p.Clan.Tag = p.Clan.Tag[1:]
 	return p,nil
 }
-
-func  GetAllPlayers(db *sql.DB,)([]structures.PlayerStats,error){
-
-
-	rows, err:= db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag,locationID from players limit 50")
-
-	if err!=nil{
-
-		return nil,err
-	}
-
-	defer rows.Close()
-
-	return playerRows(db,rows)
-}
-
-func playerRows(db *sql.DB,rows *sql.Rows)([]structures.PlayerStats,error){
-	var players  []structures.PlayerStats
-	for rows.Next() {
-		var p structures.PlayerStats
-		err:=rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.LocationID)
-
-		if err!=nil {
-
-			return nil,err
-		}
-
-		err=db.QueryRow("select clanName from clans where clanTag=?",p.Clan.Tag).Scan(&p.Clan.Name)
-
-		if err!=nil {
-
-			return nil,err
-		}
-
-		players=append(players,p)
-	}
-
-	return players,nil
-}
-
-
 
 func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 	var players [] structures.PlayerStats

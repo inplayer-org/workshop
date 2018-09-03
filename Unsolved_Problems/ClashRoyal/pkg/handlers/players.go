@@ -1,4 +1,4 @@
-package HandlersFunc
+package handlers
 
 import (
 	"net/http"
@@ -16,20 +16,16 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
-	/*if err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid clan name")
-		return
-	} */
 
 	players,err := queries.GetPlayersLike(a.DB,name)
+
 	if err != nil {
-panic(err)
+		panic(err)
 	}
-	log.Println(players)
+
 	structures.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
 
 }
-
 
 func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
@@ -38,27 +34,27 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	player,err:=queries.GetFromTag(a.DB,tag)
 
-	//fmt.Println(err)
-
 	if err!=nil{
 		if err==sql.ErrNoRows {
 			t := "#" + tag
 			i := update.GetRequestForPlayer(a.DB, parser.ToUrlTag(t))
 			if i == 404 {
 				fmt.Println(http.StatusNotFound)
+				panic(err)
 			} else {
-				p, err := queries.GetFromTag(a.DB, tag)
+				player, err := queries.GetFromTag(a.DB, tag)
+
 				if err != nil {
 					panic(err)
 				}
-				structures.Tmpl.ExecuteTemplate(w, "player.html", p)
+
+				structures.Tmpl.ExecuteTemplate(w, "player.html", player)
 				return
 			}
 		}else{
-			fmt.Println(err)
+			panic(err)
 			}
 	}else {
-
 		structures.Tmpl.ExecuteTemplate(w, "player.html", player)
 	}
 }
@@ -89,9 +85,11 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 		fmt.Println(http.StatusNotFound)
 	}else{
 		name, err := queries.GetPlayerName(a.DB, t)
+
 		if err != nil {
 			panic(err)
 		}
+
 		log.Println("name = ", name)
 		http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+t[1:], http.StatusTemporaryRedirect)
 	}

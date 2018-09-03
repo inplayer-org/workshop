@@ -1,10 +1,10 @@
-package HandlersFunc
+package handlers
 
 
 func (a *App) initializeRoutes() {
 
 
-	a.Router.HandleFunc("/clans", a.GetClans).Methods("GET")
+	//a.Router.HandleFunc("/clans", a.GetClans).Methods("GET")
 	a.Router.HandleFunc("/clans/{name}", a.GetClanByName).Methods("GET")
 	a.Router.HandleFunc("/clans/{name}/{tag}", a.GetPlayersByClanTag).Methods("GET")
 	a.Router.HandleFunc("/clans/{name}/{tag}/update",a.UpdateClan).Methods("GET")
