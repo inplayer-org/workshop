@@ -5,36 +5,10 @@ import (
 	"log"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
-
-//pojma neam zaso e tova
-/*func (a *App) GetClanByTag (w http.ResponseWriter, r *http.Request){
-
-	vars := mux.Vars(r)
-	tag := (vars["tag"])
-	/*if err != nil {
-		errorhandle.RespondWithError(w, http.StatusBadRequest, "Invalid clan tag")
-		return
-	}
-
-	e := structures.Clan{Tag: tag}
-	if err := e.GetTagClan(a.DB); err != nil {
-
-		switch err {
-		case sql.ErrNoRows:
-			errorhandle.RespondWithError(w, http.StatusNotFound, "Clan not found")
-		default:
-			errorhandle.RespondWithError(w, http.StatusInternalServerError, "Server Error")
-		}
-		return
-	}
-
-	errorhandle.RespondWithJSON(w, http.StatusOK, e)
-}
- */
 
 func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 
@@ -47,7 +21,7 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 		panic(err)
 	}
 
-	structures.Tmpl.ExecuteTemplate(w,"byclansname.html",clans)
+	tmpl.Tmpl.ExecuteTemplate(w,"byclansname.html",clans)
 
 }
 

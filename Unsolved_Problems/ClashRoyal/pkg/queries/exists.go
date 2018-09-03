@@ -13,8 +13,6 @@ func Exists(DB *sql.DB,table string,column string,value string) bool{
 
 	DB.QueryRow(query).Scan(&result)
 
-	//fmt.Println(err)
-
 	if result==0{
 		return false
 	}

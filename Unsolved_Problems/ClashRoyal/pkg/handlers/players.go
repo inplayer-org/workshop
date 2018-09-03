@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"log"
@@ -10,6 +9,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
 
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
@@ -23,7 +23,7 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 		panic(err)
 	}
 
-	structures.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
+	tmpl.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
 
 }
 
@@ -45,17 +45,29 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 				player, err := queries.GetFromTag(a.DB, tag)
 
 				if err != nil {
+					if err==sql.ErrNoRows{
+						player,err:=queries.ClanNotFoundByTag(a.DB,tag)
+
+						if err!=nil{
+							panic(err)
+						}
+
+						fmt.Println(player)
+						tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+						return
+					}else {
 					panic(err)
+					}
 				}
 
-				structures.Tmpl.ExecuteTemplate(w, "player.html", player)
+				tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
 				return
 			}
 		}else{
 			panic(err)
 			}
 	}else {
-		structures.Tmpl.ExecuteTemplate(w, "player.html", player)
+		tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
 	}
 }
 
@@ -70,7 +82,7 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 		panic(err)
 	}
 
-	structures.Tmpl.ExecuteTemplate(w,"clan.html",players)
+	tmpl.Tmpl.ExecuteTemplate(w,"clan.html",players)
 
 }
 

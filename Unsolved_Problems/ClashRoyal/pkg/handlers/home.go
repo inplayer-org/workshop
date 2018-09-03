@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
 
 func (a *App) Home(w http.ResponseWriter, r *http.Request) {
@@ -15,6 +15,6 @@ func (a *App) Home(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	structures.Tmpl.ExecuteTemplate(w,"home.html",players)
+	tmpl.Tmpl.ExecuteTemplate(w,"home.html",players)
 
 }

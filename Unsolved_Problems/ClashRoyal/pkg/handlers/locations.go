@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"strconv"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
 
 func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
@@ -24,7 +24,7 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 			panic(err)
 	}
 
-	structures.Tmpl.ExecuteTemplate(w,"tableranking.html",player)
+	tmpl.Tmpl.ExecuteTemplate(w,"tableranking.html",player)
 
 }
 
@@ -36,6 +36,6 @@ func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	structures.Tmpl.ExecuteTemplate(w,"locs.html",locations)
+	tmpl.Tmpl.ExecuteTemplate(w,"locs.html",locations)
 
 }
