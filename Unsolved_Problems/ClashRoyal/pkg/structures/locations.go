@@ -2,6 +2,7 @@ package structures
 
 import "database/sql"
 
+//Locationsinfo - structure for handling location info from Clash Royale api
 type Locationsinfo struct {
 
 
@@ -11,14 +12,15 @@ type Locationsinfo struct {
 	CountryCode string `json:"countryCode"`
 }
 
-//Structure with a slice of Location
+//Structure with a slice of LocationsInfo
 type Locations struct {
-	//Structure with information for the Location
+
 	Location []Locationsinfo `json:"items"`
 
 }
 
 
+//Not used, Needs to be removed
 func (c *Locationsinfo) GetNameLocation(db *sql.DB) error {
 
 	err := db.QueryRow("SELECT countryName,countryCode from locations where countryName=(?)",c.Name).Scan(&c.Name,&c.CountryCode)

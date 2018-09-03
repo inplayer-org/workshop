@@ -1,5 +1,6 @@
 package structures
 
+//PlayerTags - Contains only player Tags for a slice of Player structure
 type PlayerTags struct {
 	Player []struct {
 		Tag          string `json:"tag"`
@@ -20,6 +21,8 @@ type PlayerTags struct {
 	} `json:"items"`
 }
 
+
+//GetTags - Returns string slice of all tags present in a PlayersTags structure
 func (p *PlayerTags) GetTags()[]string{
 	var ret []string
 
