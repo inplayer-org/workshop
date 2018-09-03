@@ -34,7 +34,7 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 			panic(err)
 	}
 	//fmt.Println(player)
-	structures.Tmpl.ExecuteTemplate(w,"TableRanking",player)
+	structures.Tmpl.ExecuteTemplate(w,"tableranking.html",player)
 }
 
 
