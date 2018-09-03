@@ -38,21 +38,25 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	player,err:=queries.GetFromTag(a.DB,tag)
 
-	if err==sql.ErrNoRows {
-		t:="#"+tag
-		i:=update.GetRequestForPlayer(a.DB, parser.ToUrlTag(t))
-		if i==404{
-			fmt.Println(http.StatusNotFound)
-		}else {
-			p, err := queries.GetFromTag(a.DB, tag)
-			if err != nil {
-				panic(err)
+	//fmt.Println(err)
+
+	if err!=nil{
+		if err==sql.ErrNoRows {
+			t := "#" + tag
+			i := update.GetRequestForPlayer(a.DB, parser.ToUrlTag(t))
+			if i == 404 {
+				fmt.Println(http.StatusNotFound)
+			} else {
+				p, err := queries.GetFromTag(a.DB, tag)
+				if err != nil {
+					panic(err)
+				}
+				structures.Tmpl.ExecuteTemplate(w, "player.html", p)
+				return
 			}
-			structures.Tmpl.ExecuteTemplate(w, "player.html", p)
-			return
-		}
-	} else if err!=nil{
-		panic(err)
+		}else{
+			fmt.Println(err)
+			}
 	}else {
 
 		structures.Tmpl.ExecuteTemplate(w, "player.html", player)
