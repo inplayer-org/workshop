@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/HandlersFunc"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/get"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
@@ -97,7 +96,7 @@ func dailyUpdate(db *sql.DB){
 				time.Sleep(time.Second * 5)
 			}
 			fmt.Println(elem.Tag)
-			clan := get.GetTagByClans(parser.ToUrlTag(elem.Tag))
+			clan := update.GetTagByClans(parser.ToUrlTag(elem.Tag))
 			log.Println("Updating players for clan ->", elem.Name)
 			countFinished++
 			go update.Players(db, clan, 0, done)
