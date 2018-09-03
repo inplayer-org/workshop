@@ -31,7 +31,7 @@ func Locations(db *sql.DB,locs structures.Locations)error {
 	return nil
 }
 
-	func CurrentLocation(db *sql.DB,elem structures.Location,done chan <- error){
+	func CurrentLocation(db *sql.DB,elem structures.Locationsinfo,done chan <- error){
 		var err error
 		for {
 			if !queries.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {

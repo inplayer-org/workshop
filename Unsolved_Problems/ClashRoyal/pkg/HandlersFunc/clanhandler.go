@@ -50,6 +50,7 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 	clans,err := queries.GetClansLike(a.DB,name)
 	if err != nil {
 
+		//Needs to be reworked into error template
 		switch err {
 		case sql.ErrNoRows:
 			errorhandlers.RespondWithError(w, http.StatusNotFound, "Clan not found")
