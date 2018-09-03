@@ -9,7 +9,8 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 
-func UpdateClans(db *sql.DB, clan []structures.Clan) error {
+//not used
+/*func UpdateClans(db *sql.DB, clan []structures.Clan) error {
 
 	for _, elem := range clan {
 
@@ -27,12 +28,13 @@ func UpdateClans(db *sql.DB, clan []structures.Clan) error {
 	}
 
 	return err
-}
+}*/
 
 func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 
 	var clans []structures.Clan
 	var clan structures.Clan
+
 	rows, err := db.Query("SELECT clanTag,clanName FROM clans;")
 
 	if err != nil {
@@ -45,6 +47,7 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 		if err != nil {
 			return clans, err
 		}
+
 		clans = append(clans, clan)
 	}
 
@@ -54,19 +57,24 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)int{
 
 	clan := GetTagByClans(parser.ToUrlTag(clanTag))
+
 	if len(clan)<=0{
 		return 404
 	}
+
 	done := make(chan int)
 
 	countChan := 0
+
 	for _,playerTag := range clan {
 		go chanRequest(db,playerTag,done)
 		countChan++
 	}
+
 	for ;countChan>0;countChan--{
 		log.Println("done = ",<-done)
 	}
+
 	return 0
 }
 
