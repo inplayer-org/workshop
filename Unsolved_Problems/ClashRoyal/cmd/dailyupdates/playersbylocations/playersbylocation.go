@@ -50,7 +50,7 @@ func main() {
 	countFinished := 0
 	//Section 1 - Update for locations table
 	log.Println("Updating all locations data")
-	allLocations,err := locations.DailyUpdate(db)
+	allLocations,err := update.DailyUpdate(db)
 	log.Println("Finished updating locations data")
 	handleErr(err)
 
@@ -58,7 +58,7 @@ func main() {
 	//Section 2 - Update players from locations table
 	go func(){
 		for _, elem := range allLocations.Location {
-			playerTags, err := locations.GetPlayerTagsPerLocation(elem.ID)
+			playerTags, err := update.GetPlayerTagsPerLocation(elem.ID)
 			for ; countFinished >= 40; {
 				time.Sleep(time.Second * 5)
 			}
