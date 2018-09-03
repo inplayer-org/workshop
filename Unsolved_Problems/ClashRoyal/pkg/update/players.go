@@ -39,6 +39,7 @@ func Players(DB *sql.DB,playerTags []string,locationID int,done chan <- interfac
 			if err != nil {
 				fmt.Println(err)
 			}
+
 			if resp.StatusCode>=200 && resp.StatusCode<=300{
 
 				json.NewDecoder(resp.Body).Decode(&currentPlayer)
@@ -51,14 +52,14 @@ func Players(DB *sql.DB,playerTags []string,locationID int,done chan <- interfac
 			if resp.StatusCode!=http.StatusTooManyRequests{
 				errorLimit++
 			}
+
 			if errorLimit>=9{
 				log.Println(nextTag,currentPlayer," Failed to get a response from the API ",resp.Status)
 				break
 			}
+
 			time.Sleep(time.Second*1)
 			}
-
-
 
 	}
 		if locationID!=0 {
@@ -67,7 +68,6 @@ func Players(DB *sql.DB,playerTags []string,locationID int,done chan <- interfac
 			done <- currentPlayer.Clan.Name
 		}
 }
-
 
 func GetRequestForPlayer(db *sql.DB,tag string)int{
 
@@ -94,6 +94,7 @@ func GetRequestForPlayer(db *sql.DB,tag string)int{
 		if err != nil {
 			fmt.Println(err)
 		}
+
 		if resp.StatusCode>=200 && resp.StatusCode<=300{
 
 			json.NewDecoder(resp.Body).Decode(&currentPlayer)
@@ -107,7 +108,6 @@ func GetRequestForPlayer(db *sql.DB,tag string)int{
 			return 404
 		}
 	}
-
 
 return 0
 }

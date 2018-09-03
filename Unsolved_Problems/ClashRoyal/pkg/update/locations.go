@@ -9,49 +9,51 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"strconv"
 	"time"
+	"log"
 )
 
 //UpdateLocations if the location exists in database then it updates it if it doeesnt then it inserts it
 func Locations(db *sql.DB,locs structures.Locations)error {
+
 	var err error
 	done := make(chan error)
 	defer close(done)
 	responsesCount := 0
+
 	for _, elem := range locs.Location {
 		responsesCount++
 		go CurrentLocation(db,elem,done)
 		time.Sleep(time.Millisecond*15)
 	}
+
 	for ; responsesCount > 0; responsesCount-- {
 		err = <-done
+
 		if err!=nil{
 			return err
 		}
+
 	}
+
 	return nil
 }
 
-	func CurrentLocation(db *sql.DB,elem structures.Locationsinfo,done chan <- error){
-		var err error
-		for {
-			if !queries.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
-
-				err = queries.InsertIntoLocationsTable(db, elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
-
-			} else {
-
-				err = queries.UpdateLocationsTable(db, elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
-
-			}
-			if err==nil{
-				break
-			}
-			fmt.Println("Error for ",elem.Name," -> ",err)
+func CurrentLocation(db *sql.DB,elem structures.Locationsinfo,done chan <- error){
+	var err error
+	for {
+		if !queries.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
+			err = queries.InsertIntoLocationsTable(db, elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
+		} else {
+			err = queries.UpdateLocationsTable(db, elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
 		}
-		//log.Println("Finished for -> ",elem.Name)
+		if err==nil{
+			break
+		}
+		fmt.Println("Error for ",elem.Name," -> ",err)
+	}
+		log.Println("Finished for -> ",elem.Name)
 		done<-err
 	}
-	//log.Println("Finished updating for location ->",elem)
 
 //GetLocations gets the locations and returns error when cant make request or client cant do the request
 func Get()(structures.Locations,error){
@@ -78,29 +80,6 @@ func Get()(structures.Locations,error){
 	json.NewDecoder(resp.Body).Decode(&locations)
 
 	return locations,nil
-
-}
-
-
-//LocationMap convert all countries from locations into map with key country name and value country id
-func ToMap(locations structures.Locations)map[string]int{
-
-	locationMap:=make(map[string]int)
-
-	for _,location:= range locations.Location{
-		if location.IsCountry {
-			locationMap[location.Name]=location.ID
-		}
-	}
-
-	return locationMap
-
-}
-
-//FindLocationID returns the id of location or 0 if its not country
-func Find(locationMap map[string]int,country string)int{
-
-	return locationMap[country]
 
 }
 

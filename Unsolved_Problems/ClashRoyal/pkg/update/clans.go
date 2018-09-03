@@ -85,7 +85,8 @@ func chanRequest(db *sql.DB,playerTag string,done chan <- int){
 	done<- GetRequestForPlayer(db, playerTag)
 }
 
-func GetClans(clanTag string)(structures.Clan,error){
+//not used
+/*func GetClans(clanTag string)(structures.Clan,error){
 
 	var clans structures.Clan
 
@@ -110,9 +111,10 @@ func GetClans(clanTag string)(structures.Clan,error){
 
 	return clans,nil
 
-}
+}*/
 
 func GetTagByClans(clanTag string) []string {
+
 	var tag structures.PlayerTags
 	client := &http.Client{}
 
