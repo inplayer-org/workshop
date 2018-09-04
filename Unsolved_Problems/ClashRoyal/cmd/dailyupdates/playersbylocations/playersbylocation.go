@@ -5,10 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
-	"time"
 )
 
 func handleErr(err error){
@@ -16,6 +15,8 @@ func handleErr(err error){
 		log.Println(err)
 	}
 }
+
+var  locationsCounter int
 
 func enterFlags() (string,string,string) {
 
@@ -38,51 +39,73 @@ func main() {
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
 
+	locationInfoChan := make(chan structures.Locationsinfo,300)
+	defer close(locationInfoChan)
 
-	done := make(chan interface{})
+	done := make(chan string,300)
 	defer close(done)
 
-	start := make(chan bool)
-	defer close(start)
+	locationsCounter = 0
 
-	isStarted := false
 
-	countFinished := 0
 	//Section 1 - Update for locations table
 	log.Println("Updating all locations data")
 	allLocations,err := update.DailyUpdate(db)
 	log.Println("Finished updating locations data")
 	handleErr(err)
 
-
 	//Section 2 - Update players from locations table
-	go func(){
-		for _, elem := range allLocations.Location {
-			playerTags, err := update.GetPlayerTagsPerLocation(elem.ID)
-			for ; countFinished >= 40; {
-				time.Sleep(time.Second * 5)
-			}
-			handleErr(err)
 
-			if elem.IsCountry {
+	//Starting Workers
+	for i:=0;i<40;i++{
+		go PlayerWorker(db,locationInfoChan,done)
 
-				log.Println("Updating players for country -> ", elem.Name)
+	}
 
-				go update.Players(db, parser.ToUrlTags(playerTags.GetTags()), elem.ID, done)
-				countFinished++
+	//Sending Locations to workers
+		for _, location := range allLocations.Location {
 
-				if isStarted==false{
-					isStarted=true
-					start<-true
-				}
+			if location.IsCountry {
+
+				locationInfoChan <- location
+				locationsCounter++
 
 			}
-
 		}
-	}()
-	<-start
+
+
 	log.Println("Ready for information through done for locations ...")
-	for ;countFinished>0;countFinished--{
+
+		//Waiting the responses from the workers
+	for i:=0;i<locationsCounter;i++{
+
 		log.Println("Finished Updating for location ",<-done )
+
+	}
+
+	log.Println("\n finished with the locations update")
+	}
+
+
+
+
+
+func PlayerWorker(db *sql.DB,locationInfoChan <- chan structures.Locationsinfo,done chan <- string){
+
+
+	for location :=  range locationInfoChan {
+
+		playerTags, err := update.GetPlayerTagsPerLocation(location.ID)
+
+		handleErr(err)
+
+		log.Println("Sending players for country -> ", location.Name)
+
+		allErrors := update.Players(db, parser.ToUrlTags(playerTags.GetTags()), location.ID)
+
+		for _, err := range allErrors {
+			log.Println(err)
+		}
+		done <- location.Name
 	}
 }
