@@ -42,7 +42,7 @@ func GetAllLocations(db *sql.DB)([]structures.Locationsinfo,error){
 	return locationrows(rows)
 }
 
-func locationrows(rows *sql.Rows)([]structures.Locationsinfo,error){
+func locationrows (rows *sql.Rows)([]structures.Locationsinfo,error){
 	var locations  []structures.Locationsinfo
 
 	for rows.Next() {
