@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 )
@@ -45,7 +45,7 @@ func main() {
 
 	//Starting Workers
 	for i:=0;i<40;i++{
-		go PlayerWorker(db,clanInfoChan,done)
+		go workers.Clans(db,clanInfoChan,done)
 
 	}
 
@@ -74,24 +74,3 @@ func main() {
 	log.Println("Finished with the clans update")
 }
 
-
-
-
-
-func PlayerWorker(db *sql.DB,clanInfoChan <- chan structures.Clan,done chan <- string){
-
-
-	for clan :=  range clanInfoChan {
-
-			playerTags := update.GetTagByClans(parser.ToUrlTag(clan.Tag))
-
-
-			allErrors := update.Players(db, playerTags, 0)
-
-			for _, err := range allErrors {
-				log.Println(err)
-			}
-
-		done <- clan.Name
-	}
-}

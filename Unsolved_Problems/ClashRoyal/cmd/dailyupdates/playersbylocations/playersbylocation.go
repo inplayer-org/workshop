@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 )
@@ -55,7 +55,7 @@ func main() {
 
 	//Starting Workers
 	for i:=0;i<40;i++{
-		go PlayerWorker(db,locationInfoChan,done)
+		go workers.Locations(db,locationInfoChan,done)
 
 	}
 
@@ -80,26 +80,3 @@ func main() {
 
 	log.Println("Finished with the locations update")
 	}
-
-
-
-
-
-func PlayerWorker(db *sql.DB,locationInfoChan <- chan structures.Locationsinfo,done chan <- string){
-
-
-	for location :=  range locationInfoChan {
-		if location.IsCountry {
-			playerTags, err := update.GetPlayerTagsPerLocation(location.ID)
-
-			handleErr(err)
-
-			allErrors := update.Players(db, parser.ToUrlTags(playerTags.GetTags()), location.ID)
-
-			for _, err := range allErrors {
-				log.Println(err)
-			}
-		}
-		done <- location.Name
-	}
-}
