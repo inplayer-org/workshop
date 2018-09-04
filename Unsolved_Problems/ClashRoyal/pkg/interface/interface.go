@@ -10,18 +10,6 @@ import (
 	"net/http"
 )
 
-package _interface
-
-import (
-"net/http"
-"database/sql"
-"encoding/json"
-"strconv"
-"repo.inplayer.com/workshop/Unsolved_Problems/testing/pkg/queries"
-"repo.inplayer.com/workshop/Unsolved_Problems/testing/pkg/structures"
-"fmt"
-)
-
 //ClientInterface imeto ne e dobro --Darko: moze ApiInterface
 type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
