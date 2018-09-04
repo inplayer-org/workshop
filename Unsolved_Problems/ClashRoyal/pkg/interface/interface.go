@@ -27,7 +27,7 @@ type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
 	GetPlayerTagByClans(string) (structures.PlayerTags,error)
-
+//	GetRequestForPlayer(string) (int,error) not implemented
 
 }
 
