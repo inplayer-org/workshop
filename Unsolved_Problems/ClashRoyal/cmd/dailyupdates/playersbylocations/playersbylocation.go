@@ -38,13 +38,11 @@ func main() {
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
 
-	locationInfoChan := make(chan structures.Locationsinfo,300)
+	locationInfoChan := make(chan structures.Locationsinfo)
 	defer close(locationInfoChan)
 
-	done := make(chan string,300)
+	done := make(chan string)
 	defer close(done)
-
-
 
 
 	//Section 1 - Update for locations table
