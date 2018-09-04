@@ -16,7 +16,6 @@ func handleErr(err error){
 	}
 }
 
-var  locationsCounter int
 
 func enterFlags() (string,string,string) {
 
@@ -45,7 +44,7 @@ func main() {
 	done := make(chan string,300)
 	defer close(done)
 
-	locationsCounter = 0
+
 
 
 	//Section 1 - Update for locations table
@@ -63,27 +62,25 @@ func main() {
 	}
 
 	//Sending Locations to workers
-		for _, location := range allLocations.Location {
-
-			if location.IsCountry {
+		go func(){
+			for _, location := range allLocations.Location {
 
 				locationInfoChan <- location
-				locationsCounter++
 
 			}
-		}
+		}()
 
 
 	log.Println("Ready for information through done for locations ...")
 
 		//Waiting the responses from the workers
-	for i:=0;i<locationsCounter;i++{
+	for i:=0;i<len(allLocations.Location);i++{
 
-		log.Println("Finished Updating for location ",<-done )
+		log.Println("Finished Updating for location ",<-done,",",len(allLocations.Location)-i,"locations left to update" )
 
 	}
 
-	log.Println("\n finished with the locations update")
+	log.Println("Finished with the locations update")
 	}
 
 
@@ -94,17 +91,16 @@ func PlayerWorker(db *sql.DB,locationInfoChan <- chan structures.Locationsinfo,d
 
 
 	for location :=  range locationInfoChan {
+		if location.IsCountry {
+			playerTags, err := update.GetPlayerTagsPerLocation(location.ID)
 
-		playerTags, err := update.GetPlayerTagsPerLocation(location.ID)
+			handleErr(err)
 
-		handleErr(err)
+			allErrors := update.Players(db, parser.ToUrlTags(playerTags.GetTags()), location.ID)
 
-		log.Println("Sending players for country -> ", location.Name)
-
-		allErrors := update.Players(db, parser.ToUrlTags(playerTags.GetTags()), location.ID)
-
-		for _, err := range allErrors {
-			log.Println(err)
+			for _, err := range allErrors {
+				log.Println(err)
+			}
 		}
 		done <- location.Name
 	}
