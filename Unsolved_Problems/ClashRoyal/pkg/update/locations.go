@@ -101,3 +101,4 @@ func DailyUpdate(db *sql.DB)(structures.Locations,error){
 	return locations,nil
 
 }
+
