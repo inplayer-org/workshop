@@ -42,7 +42,7 @@ func NewGetRequest(url string)(*http.Request,error){
 	return http.NewRequest("GET",url,nil)
 }
 
-func (c *MyClient)GetRequestForPlayer (db *sql.DB,tag string) int {
+func (c *MyClient)GetRequestForPlayer (db *sql.DB,tag string) (int,error) {
 
 	var currentPlayer structures.PlayerStats
 
@@ -74,11 +74,11 @@ func (c *MyClient)GetRequestForPlayer (db *sql.DB,tag string) int {
 		}
 		//log.Println("REQUEST PROBLEM !! -> ",resp.Status,",  Retrying ...")
 		if resp.StatusCode!=http.StatusNotFound{
-			return 404
+			return 404,err
 		}
 	}
 
-	return 0
+	return 0,err
 }
 func (c *MyClient) GetPlayerTagByClans(clanTag string) (structures.PlayerTags,error) {
 	var  playerTags structures.PlayerTags
