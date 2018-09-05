@@ -12,7 +12,7 @@ import (
 	"fmt"
 )
 
-//ClientInterface imeto ne e dobro --Darko: moze ApiInterface
+//ClientInterface imeto ne e dobro
 type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
