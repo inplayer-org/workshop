@@ -37,27 +37,15 @@ func main(){
 
 	fmt.Println("sadfg")
 
-	locs,err:=client.GetLocations()
+	playerTags,err:=client.GetPlayerTagFromClans("#8YL8802Y")
 
-	fmt.Println(locs)
+	fmt.Println(playerTags)
 
-	if err != nil {
+	if err!=nil{
 		log.Println(err)
 	}
 
-	for _,elem:=range locs.Location {
-		fmt.Println(elem.Name, elem.ID)
-		tags,err:=client.GetPlayerTagsFromLocation(elem.ID)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		for _,t:=range tags.Player{
-			fmt.Println(t.Tag)
-		}
+	for i,elem:=range playerTags.Player{
+		fmt.Println(i,elem.Tag)
 	}
-
-
-
 }

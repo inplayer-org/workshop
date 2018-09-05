@@ -1,19 +1,21 @@
 package _interface
 
 import (
-	"net/http"
-	"database/sql"
-	"encoding/json"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"strconv"
-	"repo.inplayer.com/workshop/Unsolved_Problems/testing/pkg/queries"
-	"repo.inplayer.com/workshop/Unsolved_Problems/testing/pkg/structures"
-	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"encoding/json"
+	"database/sql"
+	"net/http"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
-//ClientInterface imeto ne e dobro
+//ClientInterface imeto ne e dobro --Darko: moze ApiInterface
 type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
+	GetPlayerTagFromClans(string) (structures.PlayerTags,error)
+	//	GetRequestForPlayer(string) (int,error) not implemented
 
 }
 
@@ -36,8 +38,39 @@ func SetHeaders(req *http.Request){
 }
 
 func NewGetRequest(url string)(*http.Request,error){
-	return http.NewRequest("GET",url,nil)
+	req,err:=http.NewRequest("GET",url,nil)
+	if err!=nil {
+		return nil, err
+	}
+	SetHeaders(req)
+	return req,nil
 }
+
+func (c *MyClient) GetPlayerTagFromClans(clanTag string) (structures.PlayerTags,error) {
+
+	tag:=parser.ToUrlTag(clanTag)
+
+	var  playerTags structures.PlayerTags
+	urlStr :="https://api.clashroyale.com/v1/clans/"+tag+"/members"
+	req,err:=NewGetRequest(urlStr)
+
+	//fail to parse url
+	if err!= nil {
+		return playerTags,err
+	}
+
+	resp,err:=c.client.Do(req)
+
+
+	//fail to parse header,timeout,no header provided
+	if err!=nil {
+		return playerTags, err
+	}
+	json.NewDecoder(resp.Body).Decode(&playerTags)
+	return playerTags,nil
+	//should return parse Tags with %25 how?? cant do it with parser pkg(GLS help)
+}
+
 
 func (c *MyClient) GetLocations()(structures.Locations,error){
 
@@ -49,10 +82,6 @@ func (c *MyClient) GetLocations()(structures.Locations,error){
 	if err != nil {
 		return locations,err
 	}
-
-	SetHeaders(req)
-
-	fmt.Println(req.Header["authorization"])
 
 	resp,err:=c.client.Do(req)
 
@@ -95,8 +124,6 @@ func (c *MyClient)GetPlayerTagsFromLocation(id int)(structures.PlayerTags,error)
 	if err!=nil {
 		return playerTags,err
 	}
-
-	SetHeaders(req)
 
 	resp,err:=c.client.Do(req)
 
