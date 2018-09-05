@@ -5,9 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
-	"time"
 )
 
 func handleErr(err error){
@@ -37,40 +37,40 @@ func main() {
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
 
+	clanInfoChan := make(chan structures.Clan)
+	defer close(clanInfoChan)
 
-	done := make(chan interface{})
+	done := make(chan string)
 	defer close(done)
 
-	start := make(chan bool)
-	defer close(start)
+	//Starting Workers
+	for i:=0;i<40;i++{
+		go workers.Clans(db,clanInfoChan,done)
 
-	isStarted := false
+	}
 
-	countFinished := 0
-
-	//Section 3 - Update players from clans table
 	allClans,err := update.GetAllClans(db)
 	handleErr(err)
 	log.Println("Refreshing data for all clans present in the database")
-	go func() {
-		for _, elem := range allClans {
-			for ; countFinished >= 40; {
-				time.Sleep(time.Second * 5)
-			}
-			fmt.Println(elem.Tag)
-			clan := update.GetTagByClans(parser.ToUrlTag(elem.Tag))
-			log.Println("Updating players for clan ->", elem.Name)
-			countFinished++
-			go update.Players(db, clan, 0, done)
-			if isStarted == false {
-				isStarted = true
-				start <- true
-			}
+
+	//Sending Clans to workers
+	go func(){
+		for _,clan := range allClans{
+
+			clanInfoChan <- clan
+
 		}
 	}()
-	<-start
+
 	log.Println("Ready for information through done for clans ...")
-	for ;countFinished>0;countFinished--{
-		log.Println("Finished Updating for clan ",<-done )
+
+	//Waiting the responses from the workers
+	for i:=0;i<len(allClans);i++{
+
+		log.Println("Finished Updating for clan ",<-done,",",len(allClans)-i,"clans left to update" )
+
 	}
+
+	log.Println("Finished with the clans update")
 }
+

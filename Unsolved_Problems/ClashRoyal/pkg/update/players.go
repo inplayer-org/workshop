@@ -2,21 +2,29 @@ package update
 
 import (
 	"database/sql"
-	"fmt"
 	"encoding/json"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"fmt"
+	"github.com/pkg/errors"
 	"net/http"
 	"net/url"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"strconv"
-	"time"
 )
 
-func Players(DB *sql.DB,playerTags []string,locationID int,done chan <- interface{}){
+func NewError(errorType string,locationID int,playerTag string,tags structures.PlayerStats,msg interface{})error{
+
+	return errors.Errorf("ERROR WITH %s for location id %d: playerTag - %s, structure - %s, %s",
+		errorType,locationID,playerTag,tags,msg)
+
+}
+
+
+func Players(DB *sql.DB,playerTags []string,locationID int)[]error{
 
 	var currentPlayer structures.PlayerStats
 
+	var allErrors []error
 
 	baseUrl := "https://api.clashroyale.com/v1/players/"
 
@@ -28,25 +36,38 @@ func Players(DB *sql.DB,playerTags []string,locationID int,done chan <- interfac
 
 	for _,nextTag := range playerTags{
 
+
+
 		req,err := url.Parse(baseUrl+nextTag)
 		errorLimit := 0
 		if err!=nil{
-			fmt.Println(err)
+			err = NewError("URL PARSING",locationID, nextTag,currentPlayer,err)
+			allErrors = append(allErrors,err)
+			continue
 		}
 		for {
 			resp, err := client.Do(&http.Request{Method: "GET", Header: reqHeader, URL: req})
 
 			if err != nil {
-				fmt.Println(err)
+				err = NewError("REQUEST",locationID, nextTag,currentPlayer,err)
+				allErrors = append(allErrors,err)
+				break
 			}
 
 			if resp.StatusCode>=200 && resp.StatusCode<=300{
 
 				json.NewDecoder(resp.Body).Decode(&currentPlayer)
 				currentPlayer.Tag = "#"+currentPlayer.Tag[1:]
-				queries.UpdatePlayer(DB,currentPlayer,locationID)
+				err := queries.UpdatePlayer(DB,currentPlayer,locationID)
 
+				if err!=nil{
+					err = NewError("DATABASE",locationID, nextTag,currentPlayer,err)
+					allErrors=append(allErrors,err)
+				}
 				break
+
+
+
 			}
 			//log.Println("REQUEST PROBLEM !! -> ",resp.Status,",  Retrying ...")
 			if resp.StatusCode!=http.StatusTooManyRequests{
@@ -54,19 +75,15 @@ func Players(DB *sql.DB,playerTags []string,locationID int,done chan <- interfac
 			}
 
 			if errorLimit>=9{
-				log.Println(nextTag,currentPlayer," Failed to get a response from the API ",resp.Status)
-				break
+				err := NewError("RESPONSE",locationID, nextTag,currentPlayer,"Response Status ->" + resp.Status)
+				allErrors = append(allErrors,err)
 			}
 
-			time.Sleep(time.Second*1)
 			}
 
 	}
-		if locationID!=0 {
-			done <- locationID
-		}else{
-			done <- currentPlayer.Clan.Name
-		}
+
+	return allErrors
 }
 
 func GetRequestForPlayer(db *sql.DB,tag string)int{

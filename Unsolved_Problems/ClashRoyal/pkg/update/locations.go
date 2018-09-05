@@ -9,7 +9,6 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"strconv"
 	"time"
-	"log"
 )
 
 //UpdateLocations if the location exists in database then it updates it if it doeesnt then it inserts it
@@ -51,7 +50,7 @@ func CurrentLocation(db *sql.DB,elem structures.Locationsinfo,done chan <- error
 		}
 		fmt.Println("Error for ",elem.Name," -> ",err)
 	}
-		log.Println("Finished for -> ",elem.Name)
+		//log.Println("Finished for -> ",elem.Name)
 		done<-err
 	}
 

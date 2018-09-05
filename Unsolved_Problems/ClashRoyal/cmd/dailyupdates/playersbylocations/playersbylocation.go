@@ -5,10 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
-	"time"
 )
 
 func handleErr(err error){
@@ -16,6 +15,7 @@ func handleErr(err error){
 		log.Println(err)
 	}
 }
+
 
 func enterFlags() (string,string,string) {
 
@@ -38,51 +38,45 @@ func main() {
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
 
+	locationInfoChan := make(chan structures.Locationsinfo)
+	defer close(locationInfoChan)
 
-	done := make(chan interface{})
+	done := make(chan string)
 	defer close(done)
 
-	start := make(chan bool)
-	defer close(start)
 
-	isStarted := false
-
-	countFinished := 0
 	//Section 1 - Update for locations table
 	log.Println("Updating all locations data")
 	allLocations,err := update.DailyUpdate(db)
 	log.Println("Finished updating locations data")
 	handleErr(err)
 
-
 	//Section 2 - Update players from locations table
-	go func(){
-		for _, elem := range allLocations.Location {
-			playerTags, err := update.GetPlayerTagsPerLocation(elem.ID)
-			for ; countFinished >= 40; {
-				time.Sleep(time.Second * 5)
-			}
-			handleErr(err)
 
-			if elem.IsCountry {
+	//Starting Workers
+	for i:=0;i<40;i++{
+		go workers.Locations(db,locationInfoChan,done)
 
-				log.Println("Updating players for country -> ", elem.Name)
-
-				go update.Players(db, parser.ToUrlTags(playerTags.GetTags()), elem.ID, done)
-				countFinished++
-
-				if isStarted==false{
-					isStarted=true
-					start<-true
-				}
-
-			}
-
-		}
-	}()
-	<-start
-	log.Println("Ready for information through done for locations ...")
-	for ;countFinished>0;countFinished--{
-		log.Println("Finished Updating for location ",<-done )
 	}
-}
+
+	//Sending Locations to workers
+		go func(){
+			for _, location := range allLocations.Location {
+
+				locationInfoChan <- location
+
+			}
+		}()
+
+
+	log.Println("Ready for information through done for locations ...")
+
+		//Waiting the responses from the workers
+	for i:=0;i<len(allLocations.Location);i++{
+
+		log.Println("Finished Updating for location ",<-done,",",len(allLocations.Location)-i,"locations left to update" )
+
+	}
+
+	log.Println("Finished with the locations update")
+	}
