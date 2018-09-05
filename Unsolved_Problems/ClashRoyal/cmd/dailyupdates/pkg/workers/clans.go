@@ -22,7 +22,7 @@ func NewClanWorker(c structures.Clan) Worker {
 func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB)string{
 
 	//log.Println(parser.ToUrlTag(clanWorker.Clan.Tag))
-	playerTags := update.GetTagByClans(parser.ToUrlTag(clanWorker.Clan.Tag))
+	playerTags := update.GetTagByClans(parser.ToUrlTag(clanWorker.Clan.Tag)) //DINOO treba da implementiras so client GetTagByClans se vika funckijata vo client
 
 
 	allErrors := update.Players(db, playerTags, 0)

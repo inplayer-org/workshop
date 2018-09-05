@@ -21,7 +21,7 @@ func NewLocationWorker(loc structures.Locationsinfo)Worker{
 func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB)string{
 
 	if locationWorker.Loc.IsCountry {
-		playerTags, err := update.GetPlayerTagsPerLocation(locationWorker.Loc.ID)
+		playerTags, err := update.GetPlayerTagsPerLocation(locationWorker.Loc.ID) //DINOO treba da se preraboti so client mojata funckcija se vika GetPlayerTagsFromLocation ne e PER tuku FROM
 
 		if err!=nil{
 			log.Println(err)

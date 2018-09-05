@@ -49,7 +49,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	if option=="clanTag" {
 		clanName,err := queries.GetClanName(a.DB,text)
 		if err==sql.ErrNoRows{
-			i := update.GetRequestForPlayersFromClan(a.DB,text)
+			i := update.GetRequestForPlayersFromClan(a.DB,text)     // koga kje sredis za clans so interface od client isto tuka moras da pormenis
 			if i == 404 {
 				fmt.Println(http.StatusNotFound)
 			} else {
