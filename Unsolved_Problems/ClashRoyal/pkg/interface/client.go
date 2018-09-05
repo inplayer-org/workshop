@@ -18,7 +18,7 @@ type ClientInterface interface {
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
 	GetPlayerTagFromClans(string) (structures.PlayerTags,error)
 	GetRequestForPlayer(string) (int,error)
-
+	GetTagByClans(string) []string
 }
 
 type MyClient struct {
@@ -37,6 +37,30 @@ func NewClient(db *sql.DB) ClientInterface {
 func SetHeaders(req *http.Request){
 	req.Header.Add("Content-Type","application/json")
 	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
+}
+
+func (c *MyClient) GetTagByClans(clanTag string) []string {
+	tag:=parser.ToUrlTag(clanTag)
+
+	var  playerTags structures.PlayerTags
+	urlStr :="https://api.clashroyale.com/v1/clans/"+tag+"/members"
+	req,err:=NewGetRequest(urlStr)
+
+	//fail to parse url
+	if err!= nil {
+		return playerTags.GetTags()
+	}
+
+	resp,err:=c.client.Do(req)
+
+
+	//fail to parse header,timeout,no header provided
+	if err!=nil {
+		return playerTags.GetTags()
+	}
+	json.NewDecoder(resp.Body).Decode(&playerTags)
+	return playerTags.GetTags()
+
 }
 func (c *MyClient) GetRequestForPlayer (tag string) (int,error) {
 
