@@ -1,44 +1,76 @@
 package _interface
 
 import (
-	"net/http"
-	"database/sql"
-	"encoding/json"
-	"strconv"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"repo.inplayer.com/workshop/Unsolved_Problems/testing/pkg/structures"
+	"strconv"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"encoding/json"
+	"database/sql"
+	"net/http"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
-//ClientInterface imeto ne e dobro
+//ClientInterface imeto ne e dobro --Darko: moze ApiInterface
 type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
+	GetPlayerTagFromClans(string) (structures.PlayerTags,error)
+	//	GetRequestForPlayer(string) (int,error) not implemented
 
 }
 
 type MyClient struct {
 	client *http.Client
-	reqHeader http.Header
 	db *sql.DB
 }
 
 func NewClient(db *sql.DB) ClientInterface {
 	return &MyClient{&http.Client{},
-		http.Header{},
 		db,
 	}
 }
 
 
 
-func (c *MyClient)SetHeaders(){
-	c.reqHeader.Add("Content-Type","application/json")
-	c.reqHeader.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
+func SetHeaders(req *http.Request){
+	req.Header.Add("Content-Type","application/json")
+	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
 }
 
 func NewGetRequest(url string)(*http.Request,error){
-	return http.NewRequest("GET",url,nil)
+	req,err:=http.NewRequest("GET",url,nil)
+	if err!=nil {
+		return nil, err
+	}
+	SetHeaders(req)
+	return req,nil
 }
+
+func (c *MyClient) GetPlayerTagFromClans(clanTag string) (structures.PlayerTags,error) {
+
+	tag:=parser.ToUrlTag(clanTag)
+
+	var  playerTags structures.PlayerTags
+	urlStr :="https://api.clashroyale.com/v1/clans/"+tag+"/members"
+	req,err:=NewGetRequest(urlStr)
+
+	//fail to parse url
+	if err!= nil {
+		return playerTags,err
+	}
+
+	resp,err:=c.client.Do(req)
+
+
+	//fail to parse header,timeout,no header provided
+	if err!=nil {
+		return playerTags, err
+	}
+	json.NewDecoder(resp.Body).Decode(&playerTags)
+	return playerTags,nil
+	//should return parse Tags with %25 how?? cant do it with parser pkg(GLS help)
+}
+
 
 func (c *MyClient) GetLocations()(structures.Locations,error){
 
@@ -50,8 +82,6 @@ func (c *MyClient) GetLocations()(structures.Locations,error){
 	if err != nil {
 		return locations,err
 	}
-
-	c.SetHeaders()
 
 	resp,err:=c.client.Do(req)
 
@@ -94,8 +124,6 @@ func (c *MyClient)GetPlayerTagsFromLocation(id int)(structures.PlayerTags,error)
 	if err!=nil {
 		return playerTags,err
 	}
-
-	c.SetHeaders()
 
 	resp,err:=c.client.Do(req)
 
