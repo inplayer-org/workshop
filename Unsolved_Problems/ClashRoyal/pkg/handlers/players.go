@@ -6,10 +6,10 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"log"
 	"database/sql"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
@@ -30,14 +30,18 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	vars:=mux.Vars(r)
+
 	tag:=vars["tag"]
+
+	client := _interface.NewClient()
 
 	player,err:=queries.GetFromTag(a.DB,tag)
 
 	if err!=nil{
 		if err==sql.ErrNoRows {
 			t := "#" + tag
-			i := update.GetRequestForPlayer(a.DB, parser.ToUrlTag(t))
+			i := client.GetRequestForPlayer(parser.ToUrlTag(t))
+
 			if i == 404 {
 				fmt.Println(http.StatusNotFound)
 				panic(err)
@@ -89,9 +93,9 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
-
+	client := _interface.NewClient()
 	t:="#"+tag
-	i:=update.GetRequestForPlayer(a.DB, parser.ToUrlTag(t))
+	i:=client.GetRequestForPlayer(parser.ToUrlTag(t))
 
 	if i==404{
 		fmt.Println(http.StatusNotFound)

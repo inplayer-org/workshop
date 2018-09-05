@@ -2,11 +2,10 @@ package update
 
 import (
 	"database/sql"
-	"encoding/json"
 	"log"
-	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 //not used
@@ -58,8 +57,8 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 
 //GetRequestForPlayersFromClan -
 func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)int{
-
-	clan := GetTagByClans(parser.ToUrlTag(clanTag))
+	client := _interface.NewClient()
+	clan := client.GetTagByClans(parser.ToUrlTag(clanTag))
 
 	if len(clan)<=0{
 		return 404
@@ -112,7 +111,7 @@ func chanRequest(db *sql.DB,playerTag string,done chan <- int){
 	return clans,nil
 
 }*/
-
+/*
 func GetTagByClans(clanTag string) []string {
 
 	var tag structures.PlayerTags
@@ -136,3 +135,4 @@ func GetTagByClans(clanTag string) []string {
 	return parser.ToUrlTags(tag.GetTags())
 }
 
+*/  //NOT USING ANYMORE USING GETtagBYCLANS From INTERFACE client **** <<<<<<<

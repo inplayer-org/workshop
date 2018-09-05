@@ -1,15 +1,13 @@
 package _interface
 
 import (
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"strconv"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"encoding/json"
-	"database/sql"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"net/url"
 	"fmt"
+	"strconv"
 )
 
 //ClientInterface imeto ne e dobro
@@ -17,18 +15,18 @@ type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
 	GetPlayerTagFromClans(string) (structures.PlayerTags,error)
-	GetRequestForPlayer(string) (int,error)
+	GetRequestForPlayer(string) int
 	GetTagByClans(string) []string
 }
 
 type MyClient struct {
 	client *http.Client
-	db *sql.DB
+
 }
 
-func NewClient(db *sql.DB) ClientInterface {
+func NewClient() ClientInterface {
 	return &MyClient{&http.Client{},
-		db,
+
 	}
 }
 
@@ -62,7 +60,7 @@ func (c *MyClient) GetTagByClans(clanTag string) []string {
 	return playerTags.GetTags()
 
 }
-func (c *MyClient) GetRequestForPlayer (tag string) (int,error) {
+func (c *MyClient) GetRequestForPlayer (tag string) int {
 
 	var currentPlayer structures.PlayerStats
 
@@ -88,17 +86,17 @@ func (c *MyClient) GetRequestForPlayer (tag string) (int,error) {
 
 			json.NewDecoder(resp.Body).Decode(&currentPlayer)
 			currentPlayer.Tag = "#"+currentPlayer.Tag[1:]
-			queries.UpdatePlayer(c.db,currentPlayer,0)
+		//	queries.UpdatePlayer(c.db,currentPlayer,0)  not using anymore updating players in handlres >>>
 
 			break
 		}
 		//log.Println("REQUEST PROBLEM !! -> ",resp.Status,",  Retrying ...")
 		if resp.StatusCode!=http.StatusNotFound{
-			return 404,err
+			return 404
 		}
 	}
 
-	return 0,err
+	return 0
 }
 
 
@@ -157,12 +155,12 @@ func (c *MyClient) GetLocations()(structures.Locations,error){
 
 	json.NewDecoder(resp.Body).Decode(&locations)
 
-	Locs(c.db,locations)
+//	Locs(c.db,locations) updating locations db in handlers not here anymore
 
 	return locations,nil
 }
 
-func Locs(db *sql.DB,locations structures.Locations){
+/*func Locs(db *sql.DB,locations structures.Locations){
 
 	for _,elem:=range locations.Location {
 
@@ -174,7 +172,7 @@ func Locs(db *sql.DB,locations structures.Locations){
 
 	}
 
-}
+} */  // NOT USING ANYMORE UPDATING LOCS IN HANDLERS LOCATIONS
 
 func (c *MyClient)GetPlayerTagsFromLocation(id int)(structures.PlayerTags,error)  {
 
