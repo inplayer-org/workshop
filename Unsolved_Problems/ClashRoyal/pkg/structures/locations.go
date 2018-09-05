@@ -26,3 +26,4 @@ func (c *Locationsinfo) GetNameLocation(db *sql.DB) error {
 
 	return nil
 }
+
