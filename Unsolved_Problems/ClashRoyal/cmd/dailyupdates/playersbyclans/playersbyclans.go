@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 )
 
@@ -37,7 +36,7 @@ func main() {
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
 
-	clanInfoChan := make(chan structures.Clan)
+	clanInfoChan := make(chan workers.Worker)
 	defer close(clanInfoChan)
 
 	done := make(chan string)
@@ -45,7 +44,7 @@ func main() {
 
 	//Starting Workers
 	for i:=0;i<40;i++{
-		go workers.Clans(db,clanInfoChan,done)
+		go workers.StartWorker(db,clanInfoChan,done)
 
 	}
 
@@ -57,7 +56,7 @@ func main() {
 	go func(){
 		for _,clan := range allClans{
 
-			clanInfoChan <- clan
+			clanInfoChan <- workers.NewClanWorker(clan)
 
 		}
 	}()
