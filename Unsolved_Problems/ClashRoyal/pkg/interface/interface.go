@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"database/sql"
 	"net/http"
+	"net/url"
 )
 
 //ClientInterface imeto ne e dobro --Darko: moze ApiInterface
@@ -15,7 +16,7 @@ type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
 	GetPlayerTagByClans(string) (structures.PlayerTags,error)
-//	GetRequestForPlayer(string) (int,error) not implemented
+	GetRequestForPlayer(string) (int,error)
 
 }
 
@@ -39,6 +40,45 @@ func SetHeaders(req *http.Request){
 
 func NewGetRequest(url string)(*http.Request,error){
 	return http.NewRequest("GET",url,nil)
+}
+
+func (c *MyClient)GetRequestForPlayer (db *sql.DB,tag string) int {
+
+	var currentPlayer structures.PlayerStats
+
+
+	urlStr := "https://api.clashroyale.com/v1/players/"
+
+	url.Parse(urlStr+tag)
+
+	req,err:=NewGetRequest(urlStr+tag)
+
+	if err!=nil{
+		fmt.Println(err)
+	}
+
+	for {
+		resp, err := c.client.Do(req)
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		if resp.StatusCode>=200 && resp.StatusCode<=300{
+
+			json.NewDecoder(resp.Body).Decode(&currentPlayer)
+			currentPlayer.Tag = "#"+currentPlayer.Tag[1:]
+			queries.UpdatePlayer(db,currentPlayer,0)
+
+			break
+		}
+		//log.Println("REQUEST PROBLEM !! -> ",resp.Status,",  Retrying ...")
+		if resp.StatusCode!=http.StatusNotFound{
+			return 404
+		}
+	}
+
+	return 0
 }
 func (c *MyClient) GetPlayerTagByClans(clanTag string) (structures.PlayerTags,error) {
 	var  playerTags structures.PlayerTags
