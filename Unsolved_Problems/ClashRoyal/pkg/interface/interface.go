@@ -11,7 +11,7 @@ import (
 	"net/url"
 )
 
-//ClientInterface imeto ne e dobro --Darko: moze ApiInterface
+//ClientInterface imeto ne e dobro
 type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
@@ -42,7 +42,7 @@ func NewGetRequest(url string)(*http.Request,error){
 	return http.NewRequest("GET",url,nil)
 }
 
-func (c *MyClient)GetRequestForPlayer (db *sql.DB,tag string) (int,error) {
+func (c *MyClient) GetRequestForPlayer (db *sql.DB,tag string) (int,error) {
 
 	var currentPlayer structures.PlayerStats
 
