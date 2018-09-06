@@ -102,7 +102,7 @@ func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,erro
 			break
 		}
 		//log.Println("REQUEST PROBLEM !! -> ",resp.Status,",  Retrying ...")
-		if resp.StatusCode!=http.StatusNotFound{
+		if resp.StatusCode==http.StatusNotFound{
 			return currentPlayer,NewNotFound("Player Not Fount")
 		}
 	}

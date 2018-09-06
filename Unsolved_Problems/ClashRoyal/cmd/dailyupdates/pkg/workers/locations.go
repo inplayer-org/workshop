@@ -19,21 +19,23 @@ func NewLocationWorker(loc structures.Locationsinfo)Worker{
 
 }
 
-func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB)string{
+func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.ClientInterface)string{
 
+	//Checks if the location is a country and skips the whole operation if it's not
+	// (there aren't player rankings available for locations that aren't a country in the clash royale api)
 	if locationWorker.Loc.IsCountry {
 
-		client :=_interface.NewClient()
-
+		//Get PlayerTags structure of all players from the location
 		players, err := client.GetPlayerTagsFromLocation(locationWorker.Loc.ID)
 
 		if err!=nil{
 			log.Println(err)
 		}
 
-		//log.Println(playerTags.GetTags())
+		//Converting PlayerTags structure into string[]
 		playerTags := players.GetTags()
 
+		//Requesting and updating information for every player
 		for _,nextPlayerTag := range playerTags{
 
 			currentPlayer,err := client.GetRequestForPlayer(parser.ToUrlTag(nextPlayerTag))

@@ -28,17 +28,31 @@ func enterFlags() (string,string,string) {
 	return *DbName,*UserName,*Password
 }
 
+
+/*Daily update using clans present in our database
+
+It updates all of the players from all of clans that are already present in our database that have been registered
+either though the web app or the the location daily update
+
+-Should be started after finishing the Daily update using the locations since the players gotten from
+location api might have new clans that aren't already present in our database.
+
+*/
 func main() {
 
+	//Database information through flags
 	dbName,userName,password:=enterFlags()
 
+	//Opening connection to the databse
 	connectionString := fmt.Sprintf("%s:%s@/%s", userName, password, dbName)
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
 
+	//Channel for sending Clans to the Workers
 	clanInfoChan := make(chan workers.Worker)
 	defer close(clanInfoChan)
 
+	//Channel for counting finished jobs
 	done := make(chan string)
 	defer close(done)
 
@@ -48,11 +62,12 @@ func main() {
 
 	}
 
+	//Getting all clans present in the database
 	allClans,err := update.GetAllClans(db)
 	handleErr(err)
 	log.Println("Refreshing data for all clans present in the database")
 
-	//Sending Clans to workers
+	//Sending Clans to active workers
 	go func(){
 		for _,clan := range allClans{
 
