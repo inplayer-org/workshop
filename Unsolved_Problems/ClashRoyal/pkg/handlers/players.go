@@ -88,31 +88,7 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 			tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
 			return
 
-			/*	if i == 404 {
-					fmt.Println(http.StatusNotFound)
-					panic(err)
-				} else {
-					player, err := queries.GetFromTag(a.DB, tag)
 
-					if err != nil {
-						if err==sql.ErrNoRows{
-							player,err:=queries.ClanNotFoundByTag(a.DB,tag)
-
-							if err!=nil{
-								panic(err)
-							}
-
-							fmt.Println(player)
-							tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
-							return
-						}else {
-						panic(err)
-						}
-					}
-
-					tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
-					return
-				}*/
 		}else{
 			panic(err)
 			}
