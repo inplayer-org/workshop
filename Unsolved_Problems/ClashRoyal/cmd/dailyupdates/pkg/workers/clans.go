@@ -3,9 +3,10 @@ package workers
 import (
 	"database/sql"
 	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 )
 
 
@@ -21,15 +22,21 @@ func NewClanWorker(c structures.Clan) Worker {
 
 func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB)string{
 
-	//log.Println(parser.ToUrlTag(clanWorker.Clan.Tag))
-	playerTags := update.GetTagByClans(parser.ToUrlTag(clanWorker.Clan.Tag)) //DINOO treba da implementiras so client GetTagByClans se vika funckijata vo client
+	client := _interface.NewClient()
 
+	//log.Println(clanWorker.Clan.Tag)
+	playerTags := client.GetTagByClans(clanWorker.Clan.Tag)
 
-	allErrors := update.Players(db, playerTags, 0)
-
-	for _, err := range allErrors {
-		log.Println(err)
+	//log.Println(playerTags)
+	for _,nextPlayer := range playerTags{
+		currentPlayer,err := client.GetRequestForPlayer(parser.ToUrlTag(nextPlayer))
+		if err!=nil{
+			log.Println(err)
+		}else{
+			queries.UpdatePlayer(db,currentPlayer,0)
+		}
 	}
+
 	return clanWorker.Clan.Name
 }
 
