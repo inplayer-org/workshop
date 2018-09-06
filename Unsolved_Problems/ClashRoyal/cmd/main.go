@@ -24,7 +24,7 @@ func enterFlags() (string,string,string) {
 
 	UserName := flag.String("username", "root", "the username to make a connection to the database")
 
-	Password := flag.String("password", "darko123", "the password for your username to make a conection to the database")
+	Password := flag.String("password", "12345", "the password for your username to make a conection to the database")
 
 	flag.Parse()
 

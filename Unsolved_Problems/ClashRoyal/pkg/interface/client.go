@@ -6,16 +6,27 @@ import (
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"net/url"
-	"fmt"
 	"strconv"
 )
+
+type NotFound struct {
+	message string
+}
+func NewNotFound(message string) *NotFound {
+	return &NotFound{
+		message: message,
+	}
+}
+func (e *NotFound) Error() string {
+	return e.message
+}
 
 //ClientInterface imeto ne e dobro
 type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
 	GetPlayerTagFromClans(string) (structures.PlayerTags,error)
-	GetRequestForPlayer(string) int
+	GetRequestForPlayer(string) (structures.PlayerStats,error)
 	GetTagByClans(string) []string
 }
 
@@ -60,7 +71,7 @@ func (c *MyClient) GetTagByClans(clanTag string) []string {
 	return playerTags.GetTags()
 
 }
-func (c *MyClient) GetRequestForPlayer (tag string) int {
+func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,error) {
 
 	var currentPlayer structures.PlayerStats
 
@@ -72,14 +83,14 @@ func (c *MyClient) GetRequestForPlayer (tag string) int {
 	req,err:=NewGetRequest(urlStr+tag)
 
 	if err!=nil{
-		fmt.Println(err)
+		return currentPlayer,err
 	}
 
 	for {
 		resp, err := c.client.Do(req)
 
 		if err != nil {
-			fmt.Println(err)
+			return currentPlayer,err
 		}
 
 		if resp.StatusCode>=200 && resp.StatusCode<=300{
@@ -92,11 +103,11 @@ func (c *MyClient) GetRequestForPlayer (tag string) int {
 		}
 		//log.Println("REQUEST PROBLEM !! -> ",resp.Status,",  Retrying ...")
 		if resp.StatusCode!=http.StatusNotFound{
-			return 404
+			return currentPlayer,NewNotFound("Player Not Fount")
 		}
 	}
 
-	return 0
+	return currentPlayer,nil
 }
 
 
@@ -159,20 +170,6 @@ func (c *MyClient) GetLocations()(structures.Locations,error){
 
 	return locations,nil
 }
-
-/*func Locs(db *sql.DB,locations structures.Locations){
-
-	for _,elem:=range locations.Location {
-
-		if queries.Exists(db,"locations","id",strconv.Itoa(elem.ID)){
-			queries.UpdateLocationsTable(db,elem.ID,elem.Name,elem.IsCountry,elem.CountryCode)
-		} else {
-			queries.InsertIntoLocationsTable(db,elem.ID,elem.Name,elem.IsCountry,elem.CountryCode)
-		}
-
-	}
-
-} */  // NOT USING ANYMORE UPDATING LOCS IN HANDLERS LOCATIONS
 
 func (c *MyClient)GetPlayerTagsFromLocation(id int)(structures.PlayerTags,error)  {
 

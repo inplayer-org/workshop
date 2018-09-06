@@ -40,38 +40,85 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 	if err!=nil{
 		if err==sql.ErrNoRows {
 			t := "#" + tag
-			i := client.GetRequestForPlayer(parser.ToUrlTag(t))
+			player,err:= client.GetRequestForPlayer(parser.ToUrlTag(t))
 
-			if i == 404 {
-				fmt.Println(http.StatusNotFound)
+			//player cant be updated
+			//moze da se staj od bazata so ima tova da dade ako nemoze da napraj req
+			//poposle da sesredi
+			if err!=nil {
 				panic(err)
-			} else {
-				player, err := queries.GetFromTag(a.DB, tag)
-
-				if err != nil {
-					if err==sql.ErrNoRows{
-						player,err:=queries.ClanNotFoundByTag(a.DB,tag)
-
-						if err!=nil{
-							panic(err)
-						}
-
-						fmt.Println(player)
-						tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
-						return
-					}else {
-					panic(err)
-					}
-				}
-
-				tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
-				return
 			}
+
+			var i int
+
+			if player.LocationID==nil{
+				i=0
+			}else{
+				i=player.LocationID.(int)
+			}
+
+			err=queries.UpdatePlayer(a.DB,player,i)
+
+			//nemoze da napraj insert ili update
+			if err!=nil{
+				log.Println(err)
+			}
+
+			player,err=queries.GetFromTag(a.DB,tag)
+
+			//nemoze da go zapisha u databaza
+			if err!=nil {
+				if err==sql.ErrNoRows{
+					player,err:=queries.ClanNotFoundByTag(a.DB,tag)
+
+					if err!=nil{
+						panic(err)
+					}
+
+					fmt.Println(player)
+					tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+					return
+				}else {
+					panic(err)
+				}
+			}
+
+
+
+			tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+			return
+
+			/*	if i == 404 {
+					fmt.Println(http.StatusNotFound)
+					panic(err)
+				} else {
+					player, err := queries.GetFromTag(a.DB, tag)
+
+					if err != nil {
+						if err==sql.ErrNoRows{
+							player,err:=queries.ClanNotFoundByTag(a.DB,tag)
+
+							if err!=nil{
+								panic(err)
+							}
+
+							fmt.Println(player)
+							tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+							return
+						}else {
+						panic(err)
+						}
+					}
+
+					tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+					return
+				}*/
 		}else{
 			panic(err)
 			}
 	}else {
 		tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+		return
 	}
 }
 
@@ -95,10 +142,24 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	tag:=vars["tag"]
 	client := _interface.NewClient()
 	t:="#"+tag
-	i:=client.GetRequestForPlayer(parser.ToUrlTag(t))
+	player,err:=client.GetRequestForPlayer(parser.ToUrlTag(t))
 
-	if i==404{
-		fmt.Println(http.StatusNotFound)
+	if err !=nil {
+		log.Println(err)
+	}
+	var i int
+
+	if player.LocationID==nil{
+		i=0
+	}else{
+		i=player.LocationID.(int)
+	}
+
+
+	err=queries.UpdatePlayer(a.DB,player,i)
+
+	if err!=nil{
+		panic(err)
 	}else{
 		name, err := queries.GetPlayerName(a.DB, t)
 
