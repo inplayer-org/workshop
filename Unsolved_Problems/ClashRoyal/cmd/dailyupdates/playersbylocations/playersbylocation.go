@@ -42,7 +42,7 @@ func main() {
 	//Database information through flags
 	dbName,userName,password:=enterFlags()
 
-	//Opening connection to the databse
+	//Opening connection to the database
 	connectionString := fmt.Sprintf("%s:%s@/%s", userName, password, dbName)
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
