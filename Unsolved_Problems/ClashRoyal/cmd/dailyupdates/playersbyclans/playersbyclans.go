@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 )
 
 func handleErr(err error){
@@ -63,7 +63,7 @@ func main() {
 	}
 
 	//Getting all clans present in the database
-	allClans,err := update.GetAllClans(db)
+	allClans,err := queries.GetAllClans(db)
 	handleErr(err)
 	log.Println("Refreshing data for all clans present in the database")
 
