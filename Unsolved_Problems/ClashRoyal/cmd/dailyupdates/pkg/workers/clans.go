@@ -30,7 +30,7 @@ func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB)string{
 	//log.Println(playerTags)
 	for _,nextPlayerTag := range playerTags{
 
-		currentPlayer,err := client.GetRequestForPlayer(parser.ToUrlTag(nextPlayerTag))
+		currentPlayer,err := client.GetRequestForPlayer(nextPlayerTag)
 
 		if err!=nil{
 			log.Println(err)

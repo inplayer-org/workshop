@@ -6,7 +6,6 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
 
@@ -62,7 +61,7 @@ func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)error{
 }
 
 func chanRequest(db *sql.DB,clientInterface _interface.ClientInterface,playerTag string,done chan <- error){
-	players,err:=clientInterface.GetRequestForPlayer(parser.ToUrlTag(playerTag))
+	players,err:=clientInterface.GetRequestForPlayer(playerTag)
 
 	if err!=nil{
 		done<-err

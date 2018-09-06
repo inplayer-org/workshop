@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
@@ -36,7 +35,7 @@ func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB)string{
 
 		for _,nextPlayerTag := range playerTags{
 
-			currentPlayer,err := client.GetRequestForPlayer(parser.ToUrlTag(nextPlayerTag))
+			currentPlayer,err := client.GetRequestForPlayer(nextPlayerTag)
 
 			if err!=nil{
 				log.Println(err)

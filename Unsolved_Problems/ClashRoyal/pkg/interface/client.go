@@ -50,7 +50,7 @@ func SetHeaders(req *http.Request){
 
 //
 func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
-	tag:=parser.ToUrlTag(clanTag)
+	tag:=parser.ToRequestTag(clanTag)
 
 	var  playerTags structures.PlayerTags
 	urlStr :="https://api.clashroyale.com/v1/clans/"+tag+"/members"
@@ -75,6 +75,8 @@ func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 
 //GetRequestForPlayer makes request and gets players tag name wins losses trophies clanTag and locationID
 func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,error) {
+
+	tag=parser.ToRequestTag(tag)
 
 	var currentPlayer structures.PlayerStats
 
@@ -125,7 +127,7 @@ func NewGetRequest(url string)(*http.Request,error){
 
 func (c *MyClient) GetPlayerTagFromClans(clanTag string) (structures.PlayerTags,error) {
 
-	tag:=parser.ToUrlTag(clanTag)
+	tag:=parser.ToRequestTag(clanTag)
 
 	var  playerTags structures.PlayerTags
 	urlStr :="https://api.clashroyale.com/v1/clans/"+tag+"/members"
