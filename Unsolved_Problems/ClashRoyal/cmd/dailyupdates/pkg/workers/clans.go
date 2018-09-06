@@ -28,8 +28,10 @@ func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB)string{
 	playerTags := client.GetTagByClans(clanWorker.Clan.Tag)
 
 	//log.Println(playerTags)
-	for _,nextPlayer := range playerTags{
-		currentPlayer,err := client.GetRequestForPlayer(parser.ToUrlTag(nextPlayer))
+	for _,nextPlayerTag := range playerTags{
+
+		currentPlayer,err := client.GetRequestForPlayer(parser.ToUrlTag(nextPlayerTag))
+
 		if err!=nil{
 			log.Println(err)
 		}else{
