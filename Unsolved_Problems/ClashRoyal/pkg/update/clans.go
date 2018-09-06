@@ -150,4 +150,4 @@ func GetTagByClans(clanTag string) []string {
 	return parser.ToUrlTags(tag.GetTags())
 }
 
-*/  //NOT USING ANYMORE USING GETtagBYCLANS From INTERFACE client **** <<<<<<<
+*/
