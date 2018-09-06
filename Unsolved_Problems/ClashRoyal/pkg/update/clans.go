@@ -5,8 +5,6 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
-	"net/http"
-	"encoding/json"
 )
 
 //not used
@@ -112,7 +110,7 @@ func chanRequest(db *sql.DB,playerTag string,done chan <- int){
 	return clans,nil
 
 }*/
-
+/*
 func GetTagByClans(clanTag string) []string {
 
 	var tag structures.PlayerTags
@@ -136,3 +134,4 @@ func GetTagByClans(clanTag string) []string {
 	return parser.ToUrlTags(tag.GetTags())
 }
 
+*/
