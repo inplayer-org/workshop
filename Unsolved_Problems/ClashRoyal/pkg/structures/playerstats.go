@@ -1,6 +1,6 @@
 package structures
 
-//PlayerStats - Contains all information about specific player
+//PlayerStats - Contains all information currently used about a specific player
 type PlayerStats struct {
 	Tag    string `json:"tag"`
 	Name   string `json:"name"`

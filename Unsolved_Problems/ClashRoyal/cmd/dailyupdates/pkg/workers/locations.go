@@ -19,6 +19,7 @@ func NewLocationWorker(loc structures.Locationsinfo)Worker{
 
 }
 
+//Worker for sending request for all player tags from a specific location (present in the database) to the clash royale api and writing the response to database
 func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.ClientInterface)string{
 
 	//Checks if the location is a country and skips the whole operation if it's not
