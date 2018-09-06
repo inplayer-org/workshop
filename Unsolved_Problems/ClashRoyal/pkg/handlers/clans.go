@@ -46,9 +46,9 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 	tag = "#"+tag
 	log.Println("clanTag = ",tag)
 
-	i := update.GetRequestForPlayersFromClan(a.DB,tag)
+	err := update.GetRequestForPlayersFromClan(a.DB,tag)
 
-	if i == 404 {
+	if err!=nil {
 		fmt.Println(http.StatusNotFound)
 	} else {
 		clanName, err := queries.GetClanName(a.DB,tag)

@@ -27,7 +27,7 @@ type ClientInterface interface {
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
 	GetPlayerTagFromClans(string) (structures.PlayerTags,error)
 	GetRequestForPlayer(string) (structures.PlayerStats,error)
-	GetTagByClans(string) []string
+	GetTagByClans(string) (structures.PlayerTags,error)
 }
 
 type MyClient struct {
@@ -48,7 +48,7 @@ func SetHeaders(req *http.Request){
 	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
 }
 
-func (c *MyClient) GetTagByClans(clanTag string) []string {
+func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 	tag:=parser.ToUrlTag(clanTag)
 
 	var  playerTags structures.PlayerTags
@@ -57,7 +57,7 @@ func (c *MyClient) GetTagByClans(clanTag string) []string {
 
 	//fail to parse url
 	if err!= nil {
-		return playerTags.GetTags()
+		return playerTags,err
 	}
 
 	resp,err:=c.client.Do(req)
@@ -65,10 +65,10 @@ func (c *MyClient) GetTagByClans(clanTag string) []string {
 
 	//fail to parse header,timeout,no header provided
 	if err!=nil {
-		return playerTags.GetTags()
+		return playerTags,err
 	}
 	json.NewDecoder(resp.Body).Decode(&playerTags)
-	return playerTags.GetTags()
+	return playerTags,nil
 
 }
 func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,error) {
