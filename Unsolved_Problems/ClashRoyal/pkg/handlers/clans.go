@@ -25,19 +25,6 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 
 }
 
-//feature
-/*func (a *App) GetClans(w http.ResponseWriter, r *http.Request) {
-
-
-	clans, err := queries.GetAllClans(a.DB)
-	if err != nil {
-		if err != nil {
-			//Needs to be reworked into error template
-			panic(err)
-	}
-
-	errorhandlers.RespondWithJSON(w, http.StatusOK, clans)
-}*/
 
 func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 
