@@ -10,6 +10,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"strconv"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
 func NewError(errorType string,locationID int,playerTag string,tags structures.PlayerStats,msg interface{})error{
@@ -99,7 +100,7 @@ func GetRequestForPlayer(db *sql.DB,tag string)int{
 	reqHeader.Set("Content-Type","application/json")
 	reqHeader.Set("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6ImM4NmY2ZjFjLWZlMGEtNDFiZi05NWRlLWY0MWYyYTY0ODQyNCIsImlhdCI6MTUzNDg1MTkxNSwic3ViIjoiZGV2ZWxvcGVyLzNiYmFmOGRhLTg0YmMtOWQyMi1iM2QwLTRlNDA3NmRhMWEzOCIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ._3ZnRmHHPLamGQO6QtNdXXVe7V6hAjrpA0z3sTBl7wJ937U8KEUozers1ZiLQUImDGTz_m-XLAFBlE-12DqVAw")
 
-	req,err := url.Parse(baseUrl+tag)
+	req,err := url.Parse(baseUrl+parser.ToUrlTag(tag))
 
 	if err!=nil{
 		fmt.Println(err)

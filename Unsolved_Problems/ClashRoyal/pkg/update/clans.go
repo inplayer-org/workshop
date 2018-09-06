@@ -3,7 +3,6 @@ package update
 import (
 	"database/sql"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"net/http"
@@ -60,7 +59,7 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 //GetRequestForPlayersFromClan -
 func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)int{
 	client := _interface.NewClient()
-	clan := client.GetTagByClans(parser.ToUrlTag(clanTag))
+	clan := client.GetTagByClans(clanTag)
 
 	if len(clan)<=0{
 		return 404
