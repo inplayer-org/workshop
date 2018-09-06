@@ -11,7 +11,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
-
+// Sending Name as string to DB response Player by Name with all stats from PlayerStats
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
@@ -26,7 +26,7 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 	tmpl.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
 
 }
-
+//RequestTag -> sending to API response generated Player with playerstats struct and updating in DB
 func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	vars:=mux.Vars(r)
@@ -97,7 +97,7 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 		return
 	}
 }
-
+// Sending string clan tag and response from DB clan informations
 func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 
 	vars:=mux.Vars(r)
@@ -112,7 +112,7 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 	tmpl.Tmpl.ExecuteTemplate(w,"clan.html",players)
 
 }
-
+// Sending RequestTag response hashtag .. cheking for player in db if not exist req to API and updating db
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]

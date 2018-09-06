@@ -36,7 +36,7 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 }
 
 
-//GetRequestForPlayersFromClan -
+//GetRequestForPlayersFromClan - Refres Button - Refreshing all informations for players in 1 clan and updating in DB that inf
 func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)error{
 	client := _interface.NewClient()
 	tags,err:= client.GetTagByClans(clanTag)

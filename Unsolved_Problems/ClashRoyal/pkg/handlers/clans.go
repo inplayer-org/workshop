@@ -9,7 +9,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
-
+// Get clan by name from DB
 func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
@@ -25,7 +25,7 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 
 }
 
-
+//Request tag to API to refres clan informations with members
 func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
