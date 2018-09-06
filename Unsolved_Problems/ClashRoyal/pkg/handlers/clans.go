@@ -14,7 +14,7 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
-
+//querry for get clans by name
 	clans,err := queries.GetClansLike(a.DB,name)
 	if err != nil {
 		//Needs to be reworked into error template
@@ -32,12 +32,13 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 	tag := vars["tag"]
 	tag = "#"+tag
 	log.Println("clanTag = ",tag)
-
+// request for range over players in 1 clan
 	err := update.GetRequestForPlayersFromClan(a.DB,tag)
 
 	if err!=nil {
 		fmt.Println(http.StatusNotFound)
 	} else {
+		// querry for clan name in DB
 		clanName, err := queries.GetClanName(a.DB,tag)
 
 		if err != nil {
