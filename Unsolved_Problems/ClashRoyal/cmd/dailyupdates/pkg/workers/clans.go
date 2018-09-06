@@ -20,14 +20,20 @@ func NewClanWorker(c structures.Clan) Worker {
 	}
 }
 
-func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB)string{
+//Worker for sending request for all player tags in a clan (present in the database) to the clash royale api and writing the response to database
+func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB,client _interface.ClientInterface)string{
 
-	client := _interface.NewClient()
+	//Get PlayerTags structure of all players in the clan
+	players,err := client.GetTagByClans(clanWorker.Clan.Tag)
 
-	//log.Println(clanWorker.Clan.Tag)
-	playerTags := client.GetTagByClans(clanWorker.Clan.Tag)
+	if err!=nil{
+		log.Println(err)
+	}
 
-	//log.Println(playerTags)
+	//Converting PlayerTags structure into string[]
+	playerTags := players.GetTags()
+
+	//Requesting and updating information for every player
 	for _,nextPlayerTag := range playerTags{
 
 		currentPlayer,err := client.GetRequestForPlayer(nextPlayerTag)

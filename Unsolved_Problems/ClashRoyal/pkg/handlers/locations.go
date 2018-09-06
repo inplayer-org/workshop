@@ -17,7 +17,7 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 	if err !=nil {
 		panic(err)
 	}
-
+// querry from DB to list and sort 250 players from 1 location
 	player,err := queries.GetPlayersByLocation(a.DB,id)
 
 		if err!=nil {
@@ -29,7 +29,7 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 }
 // Returning all locations from DB
 func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
-
+// listing(returning) all locations from DB
 	locations, err := queries.GetAllLocations(a.DB)
 
 	if err != nil {

@@ -96,3 +96,28 @@ func GetClanName(db *sql.DB,clanTag string)(string,error){
 	return clanName,err
 
 }
+
+//GetAllClans - Returns slice of all Clans present in the database
+func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
+
+	var clans []structures.Clan
+	var clan structures.Clan
+
+	rows, err := db.Query("SELECT clanTag,clanName FROM clans;")
+
+	if err != nil {
+		return clans, err
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&clan.Tag, &clan.Name)
+
+		if err != nil {
+			return clans, err
+		}
+
+		clans = append(clans, clan)
+	}
+
+	return clans, nil
+}

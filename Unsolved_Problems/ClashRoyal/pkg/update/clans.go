@@ -3,36 +3,9 @@ package update
 import (
 	"database/sql"
 	"log"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 )
-
-
-//GetAllClans - Returns slice of all structure Clan present in the database
-func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
-
-	var clans []structures.Clan
-	var clan structures.Clan
-
-	rows, err := db.Query("SELECT clanTag,clanName FROM clans;")
-
-	if err != nil {
-		return clans, err
-	}
-
-	for rows.Next() {
-		err := rows.Scan(&clan.Tag, &clan.Name)
-
-		if err != nil {
-			return clans, err
-		}
-
-		clans = append(clans, clan)
-	}
-
-	return clans, nil
-}
 
 
 //GetRequestForPlayersFromClan - Refres Button - Refreshing all informations for players in 1 clan and updating in DB that inf

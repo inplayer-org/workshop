@@ -15,7 +15,7 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
-
+//get players by name from DB
 	players,err := queries.GetPlayersLike(a.DB,name)
 
 	if err != nil {
@@ -117,6 +117,7 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	tag:=vars["tag"]
 	client := _interface.NewClient()
 	t:="#"+tag
+	//sending request to API For 1 player if doesent exist in DB to update it
 	player,err:=client.GetRequestForPlayer(t)
 
 	if err !=nil {
@@ -130,12 +131,13 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 		i=player.LocationID.(int)
 	}
 
-
+// querry to updateplayer from API To DB
 	err=queries.UpdatePlayer(a.DB,player,i)
 
 	if err!=nil{
 		panic(err)
 	}else{
+		//querry to get PLayer name from DB
 		name, err := queries.GetPlayerName(a.DB, t)
 
 		if err != nil {
