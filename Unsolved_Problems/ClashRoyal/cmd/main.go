@@ -11,7 +11,7 @@ import (
 
 
 func handleErr(err error){
-	if(err!=nil){
+	if err!=nil{
 		log.Println(err)
 	}
 }
