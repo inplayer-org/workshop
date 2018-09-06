@@ -8,6 +8,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 func (a *App) Search(w http.ResponseWriter,r *http.Request){
@@ -15,6 +16,8 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	text := r.FormValue("text")
 
 	log.Println("text = ", text, "option = ", option)
+
+	client:=_interface.NewClient()
 
 	if option=="playerName"{
 		http.Redirect(w,r,"http://localhost:3303/players/"+text,http.StatusTemporaryRedirect)
@@ -24,16 +27,30 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 		name, err := queries.GetPlayerName(a.DB, text)
 
 		if err == sql.ErrNoRows {
-			i := update.GetRequestForPlayer(a.DB, parser.ToUrlTag(text))
-			if i == 404 {
+			player,err := client.GetRequestForPlayer(parser.ToUrlTag(text))
+			if err!=nil {
 				fmt.Println(http.StatusNotFound)
 			} else {
-				name, err = queries.GetPlayerName(a.DB, text)
+
+				var i int
+				if player.LocationID != nil {
+					i = player.LocationID.(int)
+				} else {
+					i = 0
+				}
+
+				err := queries.UpdatePlayer(a.DB, player, i)
+
 				if err != nil {
 					panic(err)
+				} else {
+					name, err = queries.GetPlayerName(a.DB, text)
+					if err != nil {
+						panic(err)
+					}
+					log.Println("name = ", name)
+					http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+text[1:], http.StatusTemporaryRedirect)
 				}
-				log.Println("name = ", name)
-				http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+text[1:], http.StatusTemporaryRedirect)
 			}
 		} else if err != nil {
 			log.Println("Error = ", err)
