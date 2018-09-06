@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
-
+// Get location by name and return top250 players in that location by wins
 func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
@@ -27,7 +27,7 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 	tmpl.Tmpl.ExecuteTemplate(w,"tableranking.html",player)
 
 }
-
+// Returning all locations from DB
 func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
 
 	locations, err := queries.GetAllLocations(a.DB)
