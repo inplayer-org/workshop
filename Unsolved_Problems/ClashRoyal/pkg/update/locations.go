@@ -9,6 +9,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"strconv"
 	"time"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 //UpdateLocations if the location exists in database then it updates it if it doeesnt then it inserts it
@@ -84,8 +85,8 @@ func Get()(structures.Locations,error){
 
 //DailyUpdateLocation makes request and updates the location table
 func DailyUpdate(db *sql.DB)(structures.Locations,error){
-
-	locations,err:=Get()
+	client := _interface.NewClient()
+	locations,err:=client.GetLocations()
 
 	if err!=nil{
 		return locations,err
