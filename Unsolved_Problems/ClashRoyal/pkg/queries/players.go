@@ -85,7 +85,7 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 
 	return Players,nil
 }
-
+// Returning and sorting players from 1 location by wins from DB table clans
 func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 
 	var players []structures.RankedPlayer
@@ -129,7 +129,7 @@ func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 
 	return p,nil
 }*/
-
+// Enterning clanTag as string and returning error if clan is not found from table players (If player dont have clan cant be listed)
 func ClanNotFoundByTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	var p structures.PlayerStats
@@ -147,7 +147,7 @@ func ClanNotFoundByTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	return p,nil
 }
-
+// PlayerTag String and returning all informations for 1 player from PLayerstats with clan information Joining Clans into Players table.
 func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	var p structures.PlayerStats
@@ -163,7 +163,7 @@ func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 	p.Clan.Tag = parser.ToRawTag(p.Clan.Tag)
 	return p,nil
 }
-
+//Returning  Slice of all players with same name
 func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 
 	var players [] structures.PlayerStats
@@ -190,7 +190,7 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 
 	return players,nil
 }
-
+// Geting Player Tag with enterning player Name
 func GetPlayerName(db *sql.DB,tag string)(string,error){
 
 	var name string
@@ -199,7 +199,7 @@ func GetPlayerName(db *sql.DB,tag string)(string,error){
 
 	return name,err
 }
-
+//Slice of RankedPlayer returning all players from 1 clan sorted by wins
 func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,error){
 
 	clanTag=parser.ToHashTag(clanTag)
