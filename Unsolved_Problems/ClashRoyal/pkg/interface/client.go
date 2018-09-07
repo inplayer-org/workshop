@@ -25,7 +25,7 @@ func (e *NotFound) Error() string {
 type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
-	GetPlayerTagFromClans(string) (structures.PlayerTags,error)
+	//GetPlayerTagFromClans(string) (structures.PlayerTags,error)
 	GetRequestForPlayer(string) (structures.PlayerStats,error)
 	GetTagByClans(string) (structures.PlayerTags,error)
 }
@@ -125,6 +125,7 @@ func NewGetRequest(url string)(*http.Request,error){
 	return req,nil
 }
 
+/*
 func (c *MyClient) GetPlayerTagFromClans(clanTag string) (structures.PlayerTags,error) {
 
 	tag:=parser.ToRequestTag(clanTag)
@@ -149,7 +150,7 @@ func (c *MyClient) GetPlayerTagFromClans(clanTag string) (structures.PlayerTags,
 	return playerTags,nil
 	//should return parse Tags with %25 how?? cant do it with parser pkg(GLS help)
 }
-
+*/
 
 func (c *MyClient) GetLocations()(structures.Locations,error){
 
