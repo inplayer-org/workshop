@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 )
@@ -47,6 +48,12 @@ func main() {
 	connectionString := fmt.Sprintf("%s:%s@/%s", userName, password, dbName)
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
+
+	if err!=nil{
+		fmt.Println(err)
+		fmt.Println("There was and error opening the database,")
+		os.Exit(1)
+	}
 
 	//Channel for sending Clans to the Workers
 	clanInfoChan := make(chan workers.Worker)
