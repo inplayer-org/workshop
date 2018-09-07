@@ -9,7 +9,7 @@ import (
 )
 
 
-//GetRequestForPlayersFromClan - Refres Button - Refreshing all informations for players in 1 clan and updating in DB that inf
+//GetRequestForPlayersFromClan - Refresh Button - Refreshing all information for players in a clan and updating that information into a database
 func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)error{
 	client := _interface.NewClient()
 	tags,err:= client.GetTagByClans(clanTag)
