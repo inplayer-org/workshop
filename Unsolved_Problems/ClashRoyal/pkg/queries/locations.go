@@ -31,7 +31,7 @@ func UpdateLocationsTable(db *sql.DB,id int,name string,isCountry bool,code stri
 	return nil
 
 }
-
+// Returning slice of Locations Info from DB Table locations ALLInfo about Location
 func GetAllLocations(db *sql.DB)([]structures.Locationsinfo,error){
 
 	rows, _ := db.Query("SELECT id,countryName,isCountry,countryCode from locations")
