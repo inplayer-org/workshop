@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
@@ -32,14 +31,13 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	tag:=vars["tag"]
 
-	client := _interface.NewClient()
 
 	player,err:=queries.GetFromTag(a.DB,tag)
 
 	if err!=nil{
 		if err==sql.ErrNoRows {
 			t := "#" + tag
-			player,err:= client.GetRequestForPlayer(t)
+			player,err:= a.Client.GetRequestForPlayer(t)
 
 			//player cant be updated
 			//moze da se staj od bazata so ima tova da dade ako nemoze da napraj req
@@ -115,7 +113,6 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
-//	client := _interface.NewClient()
 	t:="#"+tag
 	//sending request to API For 1 player if doesent exist in DB to update it
 	player,err:=a.Client.GetRequestForPlayer(t)
