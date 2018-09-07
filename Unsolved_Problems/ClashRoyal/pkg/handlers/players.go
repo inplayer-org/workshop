@@ -8,6 +8,9 @@ import (
 	"database/sql"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"fmt"
 )
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
@@ -31,13 +34,19 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	tag:=vars["tag"]
 
+	t := parser.ToHashTag(tag)
+
+	fmt.Println(t)
+
+	client := _interface.NewClient()
 
 	player,err:=queries.GetFromTag(a.DB,tag)
 
-	if err!=nil{
-		if err==sql.ErrNoRows {
-			t := "#" + tag
-			player,err:= a.Client.GetRequestForPlayer(t)
+	if err != nil {
+		//fmt.Println(err)
+		if err == sql.ErrNoRows {
+
+			player, err := client.GetRequestForPlayer(t)
 
 			//player cant be updated
 			//moze da se staj od bazata so ima tova da dade ako nemoze da napraj req
@@ -144,4 +153,16 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 		log.Println("name = ", name)
 		http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+t[1:], http.StatusTemporaryRedirect)
 	}
+}
+
+func (a *App) Comapre2Players(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("dasfgh")
+	players, err := queries.GetPlayersByClanTag(a.DB, "#2000CLV")
+
+	if err != nil {
+		panic(err)
+	}
+
+	tmpl.Tmpl.ExecuteTemplate(w, "clan.html", players)
+
 }
