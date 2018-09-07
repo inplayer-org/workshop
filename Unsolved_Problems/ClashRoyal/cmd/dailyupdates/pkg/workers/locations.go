@@ -32,6 +32,7 @@ func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.C
 			log.Println(err)
 		}
 
+
 		//Converting PlayerTags structure into string[]
 		playerTags := players.GetTags()
 
@@ -43,7 +44,7 @@ func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.C
 			if err!=nil{
 				log.Println(err)
 			}else{
-				queries.UpdatePlayer(db,currentPlayer,0)
+				queries.UpdatePlayer(db,currentPlayer,locationWorker.Loc.ID)
 			}
 		}
 

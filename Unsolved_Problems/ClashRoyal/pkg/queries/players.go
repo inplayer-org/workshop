@@ -28,13 +28,13 @@ func insert(DB *sql.DB,player structures.PlayerStats,locationID interface{},clan
 }
 
 
-func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
+func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID interface{})error{
 
 	var clanTag interface{}
-	var locID interface{}
+
 
 	clanTag = nil
-	locID = nil
+
 
 	if !(player.Clan.Tag=="") && !(player.Clan.Name==""){
 		UpdateClans(DB,structures.Clan{Tag:player.Clan.Tag,Name:player.Clan.Name})
@@ -42,15 +42,20 @@ func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID int)error{
 	}
 
 	if locationID!=0{
-		locID = locationID
+		if Exists(DB,PlayersTable,PlayerTag,player.Tag){
+			return update(DB,player,locationID,clanTag)
+		}else {
+			return insert(DB,player,locationID,clanTag)
+		}
+	}else{
+		if Exists(DB,PlayersTable,PlayerTag,player.Tag){
+			return update(DB,player,nil,clanTag)
+		}else {
+			return insert(DB,player,nil,clanTag)
+		}
 	}
 
 
-	if Exists(DB,PlayersTable,PlayerTag,player.Tag){
-		return update(DB,player,locID,clanTag)
-	}else {
-		return insert(DB,player,locID,clanTag)
-	}
 }
 
 func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]structures.RankedPlayer,error){
@@ -89,7 +94,7 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 
 	var players []structures.RankedPlayer
-	rows,err:=db.Query("SELECT PlayerName,wins,losses,trophies,clanTag from players where locationID=? order by wins desc limit 200",name)
+	rows,err:=db.Query("SELECT playerName,wins,losses,trophies,clanTag from players where locationID=? order by wins desc limit 200",name)
 
 	if err!=nil {
 		return nil,err

@@ -74,6 +74,7 @@ func main() {
 
 	}
 
+
 	//Sending Locations to workers
 	go func() {
 		for _, location := range allLocations.Location {
