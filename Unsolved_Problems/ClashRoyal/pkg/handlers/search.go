@@ -14,12 +14,14 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	option := r.FormValue("searchby")
 	text := r.FormValue("text")
 
+//	tag:=parser.ToHashTag(text)
+
 	log.Println("text = ", text, "option = ", option)
 
 	client:=_interface.NewClient()
 
 	if option=="playerName"{
-		http.Redirect(w,r,"http://localhost:3303/players/"+text,http.StatusTemporaryRedirect)
+		http.Redirect(w,r,"http://localhost:3303/players/"+text[1:],http.StatusTemporaryRedirect)
 	}
 	if option=="playerTag" {
 		var name string
