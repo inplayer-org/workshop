@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
-
+//Cheking for clan if exist in db if not inserting if exist updating
 func UpdateClans(db *sql.DB,clan structures.Clan)error{
 
 	if clan.Name=="" || clan.Tag==""{
@@ -33,34 +33,8 @@ func UpdateClans(db *sql.DB,clan structures.Clan)error{
 	return nil
 }
 
-//feature
-/*func GetAllClans(db *sql.DB)([]structures.Clan,error){
 
-	rows, _ := db.Query("SELECT * from clans")
-
-
-	defer rows.Close()
-
-	return clanRows(rows)
-}
-
-func clanRows(rows *sql.Rows)([]structures.Clan,error){
-	var clans  []structures.Clan
-
-	for rows.Next() {
-		var c structures.Clan
-		err:=rows.Scan(&c.Tag,&c.Name)
-
-		if err!=nil {
-			return nil,err
-		}
-
-		clans=append(clans,c)
-	}
-
-	return clans,nil
-}*/
-
+// Returning slice of clan structure with clanname u get clanname and clanTag
 func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 
 	var clans [] structures.Clan
@@ -84,7 +58,7 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 
 	return clans,nil
 }
-
+// Returning string(clan name from DB table clans)
 func GetClanName(db *sql.DB,clanTag string)(string,error){
 
 	fmt.Println(clanTag)

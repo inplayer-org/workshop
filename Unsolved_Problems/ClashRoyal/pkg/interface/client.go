@@ -25,7 +25,6 @@ func (e *NotFound) Error() string {
 type ClientInterface interface {
 	GetLocations() (structures.Locations,error)
 	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
-	//GetPlayerTagFromClans(string) (structures.PlayerTags,error)
 	GetRequestForPlayer(string) (structures.PlayerStats,error)
 	GetTagByClans(string) (structures.PlayerTags,error)
 }
@@ -48,7 +47,7 @@ func SetHeaders(req *http.Request){
 	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
 }
 
-//
+//Get request for Clans with clanTag as string returning all Tagsmembers of 1 clan
 func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 	tag:=parser.ToRequestTag(clanTag)
 
@@ -125,32 +124,6 @@ func NewGetRequest(url string)(*http.Request,error){
 	return req,nil
 }
 
-/*
-func (c *MyClient) GetPlayerTagFromClans(clanTag string) (structures.PlayerTags,error) {
-
-	tag:=parser.ToRequestTag(clanTag)
-
-	var  playerTags structures.PlayerTags
-	urlStr :="https://api.clashroyale.com/v1/clans/"+tag+"/members"
-	req,err:=NewGetRequest(urlStr)
-
-	//fail to parse url
-	if err!= nil {
-		return playerTags,err
-	}
-
-	resp,err:=c.client.Do(req)
-
-
-	//fail to parse header,timeout,no header provided
-	if err!=nil {
-		return playerTags, err
-	}
-	json.NewDecoder(resp.Body).Decode(&playerTags)
-	return playerTags,nil
-	//should return parse Tags with %25 how?? cant do it with parser pkg(GLS help)
-}
-*/
 
 func (c *MyClient) GetLocations()(structures.Locations,error){
 
