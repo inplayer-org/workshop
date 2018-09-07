@@ -6,6 +6,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"log"
 	"database/sql"
+	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
@@ -27,11 +28,11 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 }
 //RequestTag -> sending to API response generated Player with playerstats struct and updating in DB
-func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request) {
+func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
-	vars := mux.Vars(r)
+	vars:=mux.Vars(r)
 
-	tag := vars["tag"]
+	tag:=vars["tag"]
 
 	t := parser.ToHashTag(tag)
 
@@ -39,7 +40,7 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request) {
 
 	client := _interface.NewClient()
 
-	player, err := queries.GetFromTag(a.DB, t)
+	player,err:=queries.GetFromTag(a.DB,tag)
 
 	if err != nil {
 		//fmt.Println(err)
@@ -50,50 +51,53 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request) {
 			//player cant be updated
 			//moze da se staj od bazata so ima tova da dade ako nemoze da napraj req
 			//poposle da sesredi
-			if err != nil {
-
-				var i int
-
-				if player.LocationID == nil {
-					i = 0
-				} else {
-					i = player.LocationID.(int)
-				}
-
-				err = queries.UpdatePlayer(a.DB, player, i)
-
-				//nemoze da napraj insert ili update
-				if err != nil {
-					fmt.Println("no update")
-				}
-
-				player, err = queries.GetFromTag(a.DB, t)
-
-				//nemoze da go zapisha u databaza
-				if err != nil {
-					if err == sql.ErrNoRows {
-						player, err := queries.ClanNotFoundByTag(a.DB, t)
-
-						if err != nil {
-							fmt.Println("ncant find it withut clans")
-						}
-
-						tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
-						return
-					} else {
-						fmt.Println("cant get from tag")
-					}
-				}
-
-				tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
-				return
-
-			} else {
-				fmt.Println("wrong request")
+			if err!=nil {
+				panic(err)
 			}
-		} else {
-			log.Println(err)
-		}
+
+			var i int
+
+			if player.LocationID==nil{
+				i=0
+			}else{
+				i=player.LocationID.(int)
+			}
+
+			err=queries.UpdatePlayer(a.DB,player,i)
+
+			//nemoze da napraj insert ili update
+			if err!=nil{
+				log.Println(err)
+			}
+
+			player,err=queries.GetFromTag(a.DB,tag)
+
+			//nemoze da go zapisha u databaza
+			if err!=nil {
+				if err==sql.ErrNoRows{
+					player,err:=queries.ClanNotFoundByTag(a.DB,tag)
+
+					if err!=nil{
+						panic(err)
+					}
+
+					fmt.Println(player)
+					tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+					return
+				}else {
+					panic(err)
+				}
+			}
+
+
+
+			tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+			return
+
+
+		}else{
+			panic(err)
+			}
 	}else {
 		tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
 		return
@@ -118,10 +122,9 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
-	client := _interface.NewClient()
 	t:="#"+tag
 	//sending request to API For 1 player if doesent exist in DB to update it
-	player,err:=client.GetRequestForPlayer(t)
+	player,err:=a.Client.GetRequestForPlayer(t)
 
 	if err !=nil {
 		log.Println(err)
