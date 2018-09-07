@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"fmt"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
@@ -27,7 +26,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 		name, err := queries.GetPlayerName(a.DB, text)
 
 		if err == sql.ErrNoRows {
-			player,err := client.GetRequestForPlayer(parser.ToUrlTag(text))
+			player,err := client.GetRequestForPlayer(text)
 			if err!=nil {
 				fmt.Println(http.StatusNotFound)
 			} else {

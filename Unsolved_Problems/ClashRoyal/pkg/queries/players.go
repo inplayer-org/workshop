@@ -6,6 +6,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"strconv"
 	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
 
@@ -75,8 +76,8 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 			return nil,err
 		}
 
-		currentPlayer.Tag = currentPlayer.Tag[1:]
-		currentPlayer.Clan.Tag = currentPlayer.Clan.Tag[1:]
+		currentPlayer.Tag = parser.ToRawTag(currentPlayer.Tag)
+		currentPlayer.Clan.Tag = parser.ToRawTag(currentPlayer.Clan.Tag)
 
 		Players = append(Players,structures.RankedPlayer{Player:currentPlayer,Rank:rank})
 		rank++
@@ -133,7 +134,7 @@ func ClanNotFoundByTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	var p structures.PlayerStats
 
-	t:="#"+tag
+	t:=parser.ToHashTag(tag)
 
 	err:=db.QueryRow("SELECT playerTag,playerName,wins,losses,trophies from players where playerTag=?",t).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies)
 
@@ -151,7 +152,7 @@ func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	var p structures.PlayerStats
 
-	t:="#"+tag
+	t:=parser.ToHashTag(tag)
 
 	err:=db.QueryRow("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag, clans.clanName From players inner join clans where players.clanTag=clans.clanTag and clans.clanTag=players.clanTag and players.playerTag=?",t).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
 	p.Tag=tag
@@ -159,7 +160,7 @@ func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 		fmt.Println(err)
 		return p,err
 	}
-	p.Clan.Tag = p.Clan.Tag[1:]
+	p.Clan.Tag = parser.ToRawTag(p.Clan.Tag)
 	return p,nil
 }
 
@@ -181,8 +182,8 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 			return nil,err
 		}
 
-		p.Tag=p.Tag[1:]
-		p.Clan.Tag = p.Clan.Tag[1:]
+		p.Tag=parser.ToRawTag(p.Tag[1:])
+		p.Clan.Tag = parser.ToRawTag(p.Clan.Tag[1:])
 
 		players = append(players,p)
 	}
@@ -201,7 +202,7 @@ func GetPlayerName(db *sql.DB,tag string)(string,error){
 
 func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,error){
 
-	clanTag="#"+clanTag
+	clanTag=parser.ToHashTag(clanTag)
 
 	var players []structures.RankedPlayer
 
@@ -224,8 +225,8 @@ func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,er
 			return nil,err
 		}
 
-		player.Player.Tag=player.Player.Tag[1:]
-		player.Player.Clan.Tag=player.Player.Clan.Tag[1:]
+		player.Player.Tag=parser.ToRawTag(player.Player.Tag)
+		player.Player.Clan.Tag=parser.ToRawTag(player.Player.Clan.Tag)
 
 		players=append(players,player)
 		rank++

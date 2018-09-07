@@ -30,6 +30,7 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	tag := vars["tag"]
+	fmt.Println(tag)
 	tag = "#"+tag
 	log.Println("clanTag = ",tag)
 // request for range over players in 1 clan
@@ -42,7 +43,7 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 		clanName, err := queries.GetClanName(a.DB,tag)
 
 		if err != nil {
-			panic(err)
+			log.Println(err)
 		}
 
 		log.Println("clanName = ", clanName)

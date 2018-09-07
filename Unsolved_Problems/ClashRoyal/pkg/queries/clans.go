@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
 func UpdateClans(db *sql.DB,clan structures.Clan)error{
@@ -77,7 +78,7 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 		if err !=nil {
 			return nil,err
 		}
-		c.Tag = c.Tag[1:]
+		c.Tag = parser.ToRawTag(c.Tag)
 		clans = append(clans,c)
 	}
 
@@ -85,6 +86,8 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 }
 
 func GetClanName(db *sql.DB,clanTag string)(string,error){
+
+	fmt.Println(clanTag)
 
 	var clanName string
 

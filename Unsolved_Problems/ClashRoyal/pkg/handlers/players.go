@@ -7,7 +7,6 @@ import (
 	"log"
 	"database/sql"
 	"fmt"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
@@ -40,7 +39,7 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 	if err!=nil{
 		if err==sql.ErrNoRows {
 			t := "#" + tag
-			player,err:= client.GetRequestForPlayer(parser.ToUrlTag(t))
+			player,err:= client.GetRequestForPlayer(t)
 
 			//player cant be updated
 			//moze da se staj od bazata so ima tova da dade ako nemoze da napraj req
@@ -119,7 +118,7 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	client := _interface.NewClient()
 	t:="#"+tag
 	//sending request to API For 1 player if doesent exist in DB to update it
-	player,err:=client.GetRequestForPlayer(parser.ToUrlTag(t))
+	player,err:=client.GetRequestForPlayer(t)
 
 	if err !=nil {
 		log.Println(err)
