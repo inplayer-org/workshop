@@ -115,10 +115,10 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
-	client := _interface.NewClient()
+//	client := _interface.NewClient()
 	t:="#"+tag
 	//sending request to API For 1 player if doesent exist in DB to update it
-	player,err:=client.GetRequestForPlayer(t)
+	player,err:=a.Client.GetRequestForPlayer(t)
 
 	if err !=nil {
 		log.Println(err)
