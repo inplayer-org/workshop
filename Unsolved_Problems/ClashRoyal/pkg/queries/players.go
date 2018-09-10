@@ -139,15 +139,13 @@ func ClanNotFoundByTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	var p structures.PlayerStats
 
-	t:=parser.ToHashTag(tag)
-
-	err:=db.QueryRow("SELECT playerTag,playerName,wins,losses,trophies from players where playerTag=?",t).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies)
+	err:=db.QueryRow("SELECT playerTag,playerName,wins,losses,trophies from players where playerTag=?",tag).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies)
 
 	if err!=nil {
 		return p,err
 	}
 
-	p.Tag=tag
+	p.Tag=parser.ToRawTag(tag)
 	p.Clan.Name=""
 
 	return p,nil
@@ -187,8 +185,8 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 			return nil,err
 		}
 
-		p.Tag=parser.ToRawTag(p.Tag[1:])
-		p.Clan.Tag = parser.ToRawTag(p.Clan.Tag[1:])
+		p.Tag=parser.ToRawTag(p.Tag)
+		p.Clan.Tag = parser.ToRawTag(p.Clan.Tag)
 
 		players = append(players,p)
 	}

@@ -21,16 +21,18 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	client:=_interface.NewClient()
 
 	if option=="playerName"{
-		http.Redirect(w,r,"http://localhost:3303/players/"+text[1:],http.StatusTemporaryRedirect)
+		http.Redirect(w,r,"http://localhost:3303/players/"+text,http.StatusTemporaryRedirect)
 	}
 	if option=="playerTag" {
 		var name string
 		name, err := queries.GetPlayerName(a.DB, text)
 
 		if err == sql.ErrNoRows {
+
+			fmt.Println(text)
 			player,err := client.GetRequestForPlayer(text)
 			if err!=nil {
-				fmt.Println(http.StatusNotFound)
+				fmt.Println(err)
 			} else {
 
 				var i int
@@ -72,8 +74,9 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 				fmt.Println(http.StatusNotFound)
 			} else {
 				clanName, err = queries.GetClanName(a.DB,text)
+				fmt.Println(clanName)
 				if err != nil {
-					panic(err)
+					log.Println(err)
 				}
 				log.Println("clanName = ", clanName)
 				http.Redirect(w, r, "http://localhost:3303/clans/"+clanName+"/"+text[1:], http.StatusTemporaryRedirect)

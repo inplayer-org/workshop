@@ -10,7 +10,6 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"fmt"
 )
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
@@ -36,11 +35,10 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	t := parser.ToHashTag(tag)
 
-	fmt.Println(t)
 
 	client := _interface.NewClient()
 
-	player,err:=queries.GetFromTag(a.DB,tag)
+	player,err:=queries.GetFromTag(a.DB,t)
 
 	if err != nil {
 		//fmt.Println(err)
@@ -70,12 +68,12 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 				log.Println(err)
 			}
 
-			player,err=queries.GetFromTag(a.DB,tag)
+			player,err=queries.GetFromTag(a.DB,t)
 
 			//nemoze da go zapisha u databaza
 			if err!=nil {
 				if err==sql.ErrNoRows{
-					player,err:=queries.ClanNotFoundByTag(a.DB,tag)
+					player,err:=queries.ClanNotFoundByTag(a.DB,t)
 
 					if err!=nil{
 						panic(err)
@@ -109,6 +107,8 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
 
+	tag = parser.ToHashTag(tag)
+
 	players,err:=queries.GetPlayersByClanTag(a.DB,tag)
 
 	if err != nil {
@@ -122,23 +122,16 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
-	t:="#"+tag
+	t:=parser.ToHashTag(tag)
 	//sending request to API For 1 player if doesent exist in DB to update it
 	player,err:=a.Client.GetRequestForPlayer(t)
 
 	if err !=nil {
 		log.Println(err)
 	}
-	var i int
-
-	if player.LocationID==nil{
-		i=0
-	}else{
-		i=player.LocationID.(int)
-	}
 
 // querry to updateplayer from API To DB
-	err=queries.UpdatePlayer(a.DB,player,i)
+	err=queries.UpdatePlayer(a.DB,player,nil)
 
 	if err!=nil{
 		panic(err)
@@ -153,16 +146,4 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 		log.Println("name = ", name)
 		http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+t[1:], http.StatusTemporaryRedirect)
 	}
-}
-
-func (a *App) Comapre2Players(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("dasfgh")
-	players, err := queries.GetPlayersByClanTag(a.DB, "#2000CLV")
-
-	if err != nil {
-		panic(err)
-	}
-
-	tmpl.Tmpl.ExecuteTemplate(w, "clan.html", players)
-
 }

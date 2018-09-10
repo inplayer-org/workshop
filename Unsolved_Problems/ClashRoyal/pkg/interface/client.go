@@ -7,6 +7,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"net/url"
 	"strconv"
+	"fmt"
 )
 
 type NotFound struct {
@@ -68,6 +69,7 @@ func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 		return playerTags,err
 	}
 	json.NewDecoder(resp.Body).Decode(&playerTags)
+	fmt.Println(playerTags)
 	return playerTags,nil
 
 }
@@ -79,6 +81,7 @@ func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,erro
 
 	var currentPlayer structures.PlayerStats
 
+	fmt.Println(tag)
 
 	urlStr := "https://api.clashroyale.com/v1/players/"
 
