@@ -5,8 +5,8 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"strconv"
-	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 
 
@@ -14,8 +14,7 @@ func update(DB *sql.DB,player structures.PlayerStats,locationID interface{},clan
 
 		_,err := DB.Exec("update players SET playerName=(?),wins=(?),losses=(?),trophies=(?),clanTag=(?),locationID=(?) where playerTag=(?);",
 			player.Name, player.Wins, player.Losses, player.Trophies, clanTag, locationID,player.Tag)
-		UpdateError(err)
-		return err
+		return errors.Database(err)
 
 }
 
@@ -23,8 +22,8 @@ func insert(DB *sql.DB,player structures.PlayerStats,locationID interface{},clan
 
 		_, err := DB.Exec(`INSERT INTO players(playerTag,playerName,wins,losses,trophies,clanTag,locationID) values((?),(?),(?),(?),(?),(?),(?));`,
 			player.Tag, player.Name, player.Wins, player.Losses, player.Trophies, clanTag, locationID)
-		InsertError(err)
-		return err
+
+		return errors.Database(err)
 }
 
 
@@ -32,12 +31,15 @@ func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID interface{
 
 	var clanTag interface{}
 
-
 	clanTag = nil
 
 
 	if !(player.Clan.Tag=="") && !(player.Clan.Name==""){
-		UpdateClans(DB,structures.Clan{Tag:player.Clan.Tag,Name:player.Clan.Name})
+		err:=UpdateClans(DB,structures.Clan{Tag:player.Clan.Tag,Name:player.Clan.Name})
+		 if err!=nil {
+			 return err
+		 }
+
 		clanTag = player.Clan.Tag
 	}
 
@@ -65,7 +67,7 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 	rows,err := DB.Query(expression)
 
 	if err!=nil{
-		return nil,err
+		return nil,errors.Database(err)
 	}
 
 	rank :=1
@@ -78,7 +80,7 @@ func GetSortedRankedPlayers(DB *sql.DB,orderBy string,numberOfPlayers int)([]str
 		err = rows.Scan(&currentPlayer.Tag,&currentPlayer.Name,&currentPlayer.Wins,&currentPlayer.Losses,&currentPlayer.Trophies,&currentPlayer.Clan.Name,&currentPlayer.Clan.Tag)
 
 		if err!=nil{
-			return nil,err
+			return nil,errors.Database(err)
 		}
 
 		currentPlayer.Tag = parser.ToRawTag(currentPlayer.Tag)
@@ -97,7 +99,7 @@ func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 	rows,err:=db.Query("SELECT playerName,wins,losses,trophies,clanTag from players where locationID=? order by wins desc limit 200",name)
 
 	if err!=nil {
-		return nil,err
+		return nil,errors.Database(err)
 	}
 
 	rank:=1
@@ -110,7 +112,7 @@ func GetPlayersByLocation(db *sql.DB,name int)([]structures.RankedPlayer,error){
 		err:=db.QueryRow("SELECT clanName from clans where clanTag=?",t.Player.Clan.Tag).Scan(&t.Player.Clan.Name)
 
 		if err!=nil {
-			return nil,err
+			return nil,errors.Database(err)
 		}
 
 		players=append(players,t)
@@ -142,7 +144,7 @@ func ClanNotFoundByTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 	err:=db.QueryRow("SELECT playerTag,playerName,wins,losses,trophies from players where playerTag=?",tag).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies)
 
 	if err!=nil {
-		return p,err
+		return p,errors.Database(err)
 	}
 
 	p.Tag=parser.ToRawTag(tag)
@@ -156,12 +158,11 @@ func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 	var p structures.PlayerStats
 
 	t:=parser.ToRawTag(tag)
-	fmt.Println(tag)
+
 	err:=db.QueryRow("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag,clans.clanName From players inner join clans where players.clanTag=clans.clanTag and players.playerTag=?",tag).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
 	p.Tag=t
 	if err!=nil{
-		fmt.Println(err)
-		return p,err
+		return p,errors.Database(err)
 	}
 	p.Clan.Tag = parser.ToRawTag(p.Clan.Tag)
 	return p,nil
@@ -173,7 +174,7 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 	rows,err:=db.Query("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag, clans.clanName FROM players inner join clans Where players.clanTag=clans.clanTag and playerName Like (?)","%"+name+"%")
 
 	if err !=nil {
-		return nil,err
+		return nil,errors.Database(err)
 	}
 
 	for rows.Next(){
@@ -182,7 +183,7 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 		err = rows.Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
 
 		if err !=nil {
-			return nil,err
+			return nil,errors.Database(err)
 		}
 
 		p.Tag=parser.ToRawTag(p.Tag)
@@ -193,6 +194,7 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 
 	return players,nil
 }
+
 // Geting Player Tag with enterning player Name
 func GetPlayerName(db *sql.DB,tag string)(string,error){
 
@@ -200,20 +202,22 @@ func GetPlayerName(db *sql.DB,tag string)(string,error){
 
 	err := db.QueryRow("SELECT playerName FROM players WHERE playerTag=?",tag).Scan(&name)
 
-	return name,err
+	if err!= nil{
+		return name,errors.Database(err)
+	}
+
+	return name,nil
 }
+
 //Slice of RankedPlayer returning all players from 1 clan sorted by wins
 func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,error){
-
-
-//	clanTag=parser.ToHashTag(clanTag)
 
 	var players []structures.RankedPlayer
 
 	rows,err:=db.Query("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag,clans.clanName from players join clans where clans.clanTag=players.clanTag and players.clanTag=? order by wins desc limit 50",clanTag)
 
 	if err != nil {
-		return nil,err
+		return nil,errors.Database(err)
 	}
 
 	rank:=1
@@ -226,7 +230,7 @@ func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,er
 		err=rows.Scan(&player.Player.Tag,&player.Player.Name,&player.Player.Wins,&player.Player.Losses,&player.Player.Trophies,&player.Player.Clan.Tag,&player.Player.Clan.Name)
 
 		if err != nil {
-			return nil,err
+			return nil,errors.Database(err)
 		}
 
 		player.Player.Tag=parser.ToRawTag(player.Player.Tag)

@@ -5,6 +5,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 //Cheking for clan if exist in db if not inserting if exist updating
 func UpdateClans(db *sql.DB,clan structures.Clan)error{
@@ -18,15 +19,14 @@ func UpdateClans(db *sql.DB,clan structures.Clan)error{
 		_, err := db.Exec("INSERT INTO clans(clanTag,clanName) VALUES (?,?)", clan.Tag, clan.Name)
 
 		if err != nil {
-			fmt.Println("1 ->",err)
+			return errors.Database(err)
 		}
 
 	}else{
 		_,err := db.Exec("UPDATE clans SET clanName=(?) WHERE clanTag=(?)", clan.Name,clan.Tag)
 
 		if err != nil {
-			fmt.Println("2 ->",err)
-		}
+			return errors.Database(err)		}
 
 	}
 
@@ -41,7 +41,7 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 	rows,err:=db.Query("SELECT clanName,clanTag FROM clans Where clanName Like (?)","%"+name+"%")
 
 	if err !=nil {
-		return nil,err
+		return nil,errors.Database(err)
 	}
 
 	for rows.Next(){
@@ -50,7 +50,7 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 		err = rows.Scan(&c.Name,&c.Tag)
 
 		if err !=nil {
-			return nil,err
+			return nil,errors.Database(err)
 		}
 		c.Tag = parser.ToRawTag(c.Tag)
 		clans = append(clans,c)
@@ -67,7 +67,11 @@ func GetClanName(db *sql.DB,clanTag string)(string,error){
 
 	err := db.QueryRow("SELECT clanName FROM clans WHERE clanTag=?",clanTag).Scan(&clanName)
 
-	return clanName,err
+	if err!=nil{
+		return clanName,errors.Database(err)
+	}
+
+	return clanName,nil
 
 }
 
@@ -80,14 +84,14 @@ func GetAllClans(db *sql.DB) ([]structures.Clan, error) {
 	rows, err := db.Query("SELECT clanTag,clanName FROM clans;")
 
 	if err != nil {
-		return clans, err
+		return clans, errors.Database(err)
 	}
 
 	for rows.Next() {
 		err := rows.Scan(&clan.Tag, &clan.Name)
 
 		if err != nil {
-			return clans, err
+			return clans, errors.Database(err)
 		}
 
 		clans = append(clans, clan)
