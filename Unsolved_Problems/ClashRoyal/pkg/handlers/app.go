@@ -1,25 +1,30 @@
 package handlers
 
 import (
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
 	"database/sql"
 	"log"
 	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 //App
 type App struct {
 	Router *mux.Router
 	DB     *sql.DB
+	Client _interface.ClientInterface
 }
 
 //Initialize creates var App
-func (a *App) Initialize(db *sql.DB,router *mux.Router) {
+func (a *App) Initialize(db *sql.DB, router *mux.Router) {
 
-	a.DB=db
+	a.DB = db
 
-	a.Router=router
+	a.Router = router
+
+	a.Client = _interface.NewClient()
 
 	a.initializeRoutes()
 

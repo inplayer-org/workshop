@@ -68,8 +68,8 @@
 
         <div>
             <form>
-                <input class="text" type="text">
-                <input class="text" type="text">
+                <input class="text" type="text" name="player1">
+                <input class="text" type="text" name="player2">
                 <input type="submit" value="Compare Players">
             </form>
         </div>
@@ -84,31 +84,60 @@
                         <span>Rank: 1</span>
                     </div>
                     <div class="card-body">
-                        <div class="inlineBlock"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="100" height="100"></div>
+                        <div class="inlineBlock"><img src="https://orig00.deviantart.net/d986/f/2017/129/3/b/king_dab__clash_royale__by_josael281999-db8mdhl.png" class="rounded-circle" width="100" height="100"></div>
                         <div class="inlineBlock" style="    width: 60%;">
                             <div >
                                 <h9 >Name:</h9>
-                                <h9 style="float:right;"> dino</h9>
+            
+                                <h9 style="float:right;"> {{.Player1.Name}}</h9>
                             </div>
                             <div>
                                 <h9 >Clan:</h9>
-                                <h9 style="float:right;"> asd</h9>
+                                <h9 style="float:right;"> {{.Player1.Clan.Name}}</h9>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
+                        {{if (gt .Player1.Wins .Player2.Wins)}}
                         <div    >
                             <h9>wins: </h9>
-                            <h9 style="float:right;">132</h9>
+                           
+                            <h9 style="float:right;color: green">+{{.DiffWins  }}</h9>
+                            <h9 style="float:right;color: green;padding-right: 5%;">{{.Player1.Wins}}</h9>
                         </div>
+                        {{else}}
+                        <div    >
+                                <h9>wins: </h9>
+                                <h9 style="float:right;color: red">-{{.DiffWins}}</h9>
+                                <h9 style="float:right;color:red;padding-right: 5%;">{{.Player1.Wins}}</h9>
+                            </div>
+                        {{end}}
+                        {{if (gt .Player1.Losses .Player2.Losses)}}
                         <div >
                             <h9>losses: </h9>
-                            <h9 style="float:right;">132</h9>
+                            <h9 style="float:right;color: red">+{{.DiffLosses}}</h9>
+                            <h9 style="float:right;color: red;padding-right: 5%;">{{.Player1.Losses}}</h9>
                         </div>
+                        {{else}}
+                        <div >
+                                <h9>losses: </h9>
+                                <h9 style="float:right;color: green">-{{.DiffLosses}}</h9>
+                                <h9 style="float:right;color: green;padding-right: 5%;">{{.Player1.Losses}}</h9>
+                            </div>
+                        {{end}}
+                        {{if (gt .Player1.Trophies .Player2.Trophies)}}
+                        <div>
+                                <h9>trophies: </h9>
+                                <h9 style="float:right;color: green">+{{.DiffTrophies}}</h9>
+                                <h9 style="float:right;color: green;padding-right: 5%;">{{.Player1.Trophies}}</h9>
+                            </div>
+                        {{else}}
                         <div>
                             <h9>trophies: </h9>
-                            <h9 style="float:right;">132</h9>
+                            <h9 style="float:right;color: red">-{{.DiffTrophies}}</h9>
+                            <h9 style="float:right;color: red;padding-right: 5%;">{{.Player1.Trophies}}</h9>
                         </div>
+                        {{end}}
                     </div>
                 </div>
             </div>
@@ -120,31 +149,60 @@
                         <span>Rank: 1</span>
                     </div>
                     <div class="card-body">
-                        <div class="inlineBlock"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="100" height="100"></div>
+                        <div class="inlineBlock"><img src="https://orig00.deviantart.net/d986/f/2017/129/3/b/king_dab__clash_royale__by_josael281999-db8mdhl.png" class="rounded-circle" width="100" height="100"></div>
                         <div class="inlineBlock" style="    width: 60%;">
                             <div >
                                 <h9 >Name:</h9>
-                                <h9 style="float:right;"> dino</h9>
+                                
+                                <h9 style="float:right;"> {{.Player2.Name}}</h9>
                             </div>
                             <div>
                                 <h9 >Clan:</h9>
-                                <h9 style="float:right;"> asd</h9>
+                                
+                                <h9 style="float:right;"> {{.Player2.Clan.Name}}</h9>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div    >
-                            <h9>wins: </h9>
-                            <h9 style="float:right;">132</h9>
-                        </div>
-                        <div >
-                            <h9>losses: </h9>
-                            <h9 style="float:right;">132</h9>
-                        </div>
-                        <div>
-                            <h9>trophies: </h9>
-                            <h9 style="float:right;">132</h9>
-                        </div>
+                            {{if (gt .Player2.Wins .Player1.Wins)}}
+                            <div    >
+                                <h9>wins: </h9>
+                                <h9 style="float:right;color: green">+{{.DiffWins}}</h9>
+                                <h9 style="float:right;color: green;padding-right: 5%">{{.Player2.Wins}}</h9>
+                            </div>
+                            {{else}}
+                            <div    >
+                                    <h9>wins: </h9>
+                                    <h9 style="float:right;color: red">-{{.DiffWins}}</h9>
+                                    <h9 style="float:right;color:red;padding-right: 5%">{{.Player2.Wins}}</h9>
+                                </div>
+                            {{end}}
+                            {{if (gt .Player2.Losses .Player1.Losses)}}
+                            <div >
+                                <h9>losses: </h9>
+                                <h9 style="float:right;color:red">+{{.DiffLosses}}</h9>
+                                <h9 style="float:right;color: red;padding-right: 5%">{{.Player2.Losses}}</h9>
+                            </div>
+                            {{else}}
+                            <div >
+                                    <h9>losses: </h9>
+                                    <h9 style="float:right;color: green">-{{.DiffLosses}}</h9>
+                                    <h9 style="float:right;color: green;padding-right: 5%">{{.Player2.Losses}}</h9>
+                                </div>
+                            {{end}}
+                            {{if (gt .Player2.Trophies .Player1.Trophies)}}
+                            <div>
+                                    <h9>trophies: </h9>
+                                    <h9 style="float:right;color: green">+{{.DiffTrophies}}</h9>
+                                    <h9 style="float:right;color: green;padding-right: 5%">{{.Player2.Trophies}}</h9>
+                                </div>
+                            {{else}}
+                            <div>
+                                <h9>trophies: </h9>
+                                <h9 style="float:right;color: red">-{{.DiffTrophies}}</h9>
+                                <h9 style="float:right;color: red;padding-right: 5%">{{.Player2.Trophies}}</h9>
+                            </div>
+                            {{end}}
                     </div>
                 </div>
             </div>
