@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clash Royale</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <style>
+        .card-body {
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+            padding: 1rem;
+        }
+        .header {
+            background-image: url(clash_royale_logo.png);
+            background-repeat: no-repeat;
+            background-size: 100% 88%;
+            padding-left: 6%;
+            padding-right: 5%;
+            height: 290px;
+        }
+        .t{
+            padding-top: 25px;
+        }
+        select{
+            margin-top: 12%;
+            width: 15%;
+            height: 30px;
+        }
+        .text{
+            margin-top: 12%;
+            width: 20%;
+            height: 30px;
+        }
+        .inlineBlock{
+            display: inline-block;
+
+        }
+        .a{
+            display: block;
+            font-size: 12px;
+        }
+        .inplayer {
+            height: 75%;
+            width: 42%;
+            float: right;
+            padding-right: 16%;
+        }
+        th{
+            text-align: center;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <a href="home.html"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="145" height="110"></a>
+
+
+        <div>
+            <form>
+                <input class="text" type="text" name="player1">
+                <input class="text" type="text" name="player2">
+                <input type="submit" value="Compare Players">
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <div class="row">
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <span>Rank: 1</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="inlineBlock"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="100" height="100"></div>
+                        <div class="inlineBlock" style="    width: 60%;">
+                            <div >
+                                <h9 >Name:</h9>
+                                <h9 style="float:right;"> {{.Player1.Name}}</h9>
+                            </div>
+                            <div>
+                                <h9 >Clan:</h9>
+                                <h9 style="float:right;"> {{.Player1.Clan.Name}}</h9>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        {{if (gt .Player1.Wins .Player2.Wins)}}
+                        <div    >
+                            <h9>wins: </h9>
+                            <h9 style="float:right;color: green">{{.Player1.Wins}}</h9>
+                        </div>
+                        {{else}}
+                        <div    >
+                                <h9>wins: </h9>
+                                <h9 style="float:right;color:red">{{.Player1.Wins}}</h9>
+                            </div>
+                        {{end}}
+                        {{if (gt .Player1.Losses .Player2.Losses)}}
+                        <div >
+                            <h9>losses: </h9>
+                            <h9 style="float:right;color: red">{{.Player1.Losses}}</h9>
+                        </div>
+                        {{else}}
+                        <div >
+                                <h9>losses: </h9>
+                                <h9 style="float:right;color: green">{{.Player1.Losses}}</h9>
+                            </div>
+                        {{end}}
+                        {{if (gt .Player1.Trophies .Player2.Trophies)}}
+                        <div>
+                                <h9>trophies: </h9>
+                                <h9 style="float:right;color: green;">{{.Player1.Trophies}}</h9>
+                            </div>
+                        {{else}}
+                        <div>
+                            <h9>trophies: </h9>
+                            <h9 style="float:right;color: red;">{{.Player1.Trophies}}</h9>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <span>Rank: 1</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="inlineBlock"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="100" height="100"></div>
+                        <div class="inlineBlock" style="    width: 60%;">
+                            <div >
+                                <h9 >Name:</h9>
+                                <h9 style="float:right;"> {{.Player2.Name}}</h9>
+                            </div>
+                            <div>
+                                <h9 >Clan:</h9>
+                                <h9 style="float:right;"> {{.Player2.Clan.Name}}</h9>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                            {{if (gt .Player2.Wins .Player1.Wins)}}
+                            <div    >
+                                <h9>wins: </h9>
+                                <h9 style="float:right;color: green">{{.Player2.Wins}}</h9>
+                            </div>
+                            {{else}}
+                            <div    >
+                                    <h9>wins: </h9>
+                                    <h9 style="float:right;color:red">{{.Player2.Wins}}</h9>
+                                </div>
+                            {{end}}
+                            {{if (gt .Player2.Losses .Player1.Losses)}}
+                            <div >
+                                <h9>losses: </h9>
+                                <h9 style="float:right;color: red">{{.Player2.Losses}}</h9>
+                            </div>
+                            {{else}}
+                            <div >
+                                    <h9>losses: </h9>
+                                    <h9 style="float:right;color: green">{{.Player2.Losses}}</h9>
+                                </div>
+                            {{end}}
+                            {{if (gt .Player2.Trophies .Player1.Trophies)}}
+                            <div>
+                                    <h9>trophies: </h9>
+                                    <h9 style="float:right;color: green;">{{.Player2.Trophies}}</h9>
+                                </div>
+                            {{else}}
+                            <div>
+                                <h9>trophies: </h9>
+                                <h9 style="float:right;color: red;">{{.Player2.Trophies}}</h9>
+                            </div>
+                            {{end}}
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <div class="footer">
+
+        <h3>Contact us:</h3>
+        <div>
+            <ul class="inlineBlock">
+                <li><a href="mailto:someone@example.com">someone@example.com</a></li>
+                <li><a href="mailto:someone@example.com">someone@example.com</a></li>
+                <li><a href="mailto:someone@example.com">someone@example.com</a></li>
+            </ul>
+
+            <a href="www.inplayer.com"><img class="inplayer"  src="inplayer-logo.png"></a>
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+</html>
