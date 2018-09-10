@@ -48,7 +48,7 @@ func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 
 	//fail to parse url
 	if err!= nil {
-		return playerTags,errors.Default("Fail to parse url",err)
+		return playerTags,errors.Default("URL",err)
 	}
 
 	resp,err:=c.client.Do(req)
@@ -80,7 +80,7 @@ func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,erro
 	req,err:=NewGetRequest(urlStr+tag)
 
 	if err!=nil{
-		return currentPlayer,errors.Default("Fail to parse url",err)
+		return currentPlayer,errors.Default("URL",err)
 	}
 
 	for {
@@ -154,7 +154,7 @@ func (c *MyClient)GetPlayerTagsFromLocation(id int)(structures.PlayerTags,error)
 
 	//fail to parse url
 	if err!=nil {
-		return playerTags,errors.Default("Fail to parse url",err)
+		return playerTags,errors.Default("URLerr",err)
 	}
 
 	resp,err:=c.client.Do(req)
