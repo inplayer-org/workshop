@@ -5,8 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 )
 
@@ -49,10 +49,10 @@ func main() {
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
 
-	if err!=nil{
-		fmt.Println(err)
-		fmt.Println("There was and error opening the database,")
-		os.Exit(1)
+	//Panic if there is a problem with the database since whole web app isn't functional and is dependent on a connection to the database
+	err = errors.Database(err)
+	if err != nil {
+		panic(err)
 	}
 
 	//Channel for sending Clans to the Workers

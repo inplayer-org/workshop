@@ -5,16 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
-	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/handlers"
 )
-
-
-func handleErr(err error){
-	if err!=nil{
-		log.Println(err)
-	}
-}
 
 
 //enterFlags flags for DbName UserName and Password
@@ -44,6 +37,7 @@ func main (){
 	db,err := sql.Open("mysql", connectionString)
 
 	//Panic if there is a problem with the database since whole web app isn't functional and is dependent on a connection to the database
+	err = errors.Database(err)
 	if err != nil {
 		panic(err)
 	}
