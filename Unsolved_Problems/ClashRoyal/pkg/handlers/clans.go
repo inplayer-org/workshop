@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 // Get clan by name from DB
 func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
@@ -30,8 +31,8 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	tag := vars["tag"]
-	fmt.Println(tag)
-	tag = "#"+tag
+
+	tag = parser.ToHashTag(tag)
 	log.Println("clanTag = ",tag)
 // request for range over players in 1 clan
 	err := update.GetRequestForPlayersFromClan(a.DB,tag)

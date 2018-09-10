@@ -5,6 +5,7 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
+	"fmt"
 )
 
 
@@ -13,7 +14,10 @@ func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)error{
 	client := _interface.NewClient()
 	tags,err:= client.GetTagByClans(clanTag)
 
+	fmt.Println(tags)
+
 	if err!=nil{
+
 		return err
 	}
 
@@ -39,14 +43,7 @@ func chanRequest(db *sql.DB,clientInterface _interface.ClientInterface,playerTag
 	if err!=nil{
 		done<-err
 	}else{
-		var i int
-		if players.LocationID!=nil {
-			i=players.LocationID.(int)
-		}else{
-			i=0
-		}
-
-		err:=queries.UpdatePlayer(db,players,i)
+				err:=queries.UpdatePlayer(db,players,nil)
 		done<-err
 	}
 }

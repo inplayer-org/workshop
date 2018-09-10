@@ -8,6 +8,8 @@ import (
 	"database/sql"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
@@ -31,13 +33,18 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	tag:=vars["tag"]
 
+	t := parser.ToHashTag(tag)
 
-	player,err:=queries.GetFromTag(a.DB,tag)
 
-	if err!=nil{
-		if err==sql.ErrNoRows {
-			t := "#" + tag
-			player,err:= a.Client.GetRequestForPlayer(t)
+	client := _interface.NewClient()
+
+	player,err:=queries.GetFromTag(a.DB,t)
+
+	if err != nil {
+		//fmt.Println(err)
+		if err == sql.ErrNoRows {
+
+			player, err := client.GetRequestForPlayer(t)
 
 			//player cant be updated
 			//moze da se staj od bazata so ima tova da dade ako nemoze da napraj req
@@ -61,12 +68,12 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 				log.Println(err)
 			}
 
-			player,err=queries.GetFromTag(a.DB,tag)
+			player,err=queries.GetFromTag(a.DB,t)
 
 			//nemoze da go zapisha u databaza
 			if err!=nil {
 				if err==sql.ErrNoRows{
-					player,err:=queries.ClanNotFoundByTag(a.DB,tag)
+					player,err:=queries.ClanNotFoundByTag(a.DB,t)
 
 					if err!=nil{
 						panic(err)
@@ -100,6 +107,8 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
 
+	tag = parser.ToHashTag(tag)
+
 	players,err:=queries.GetPlayersByClanTag(a.DB,tag)
 
 	if err != nil {
@@ -113,23 +122,16 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
-	t:="#"+tag
+	t:=parser.ToHashTag(tag)
 	//sending request to API For 1 player if doesent exist in DB to update it
 	player,err:=a.Client.GetRequestForPlayer(t)
 
 	if err !=nil {
 		log.Println(err)
 	}
-	var i int
-
-	if player.LocationID==nil{
-		i=0
-	}else{
-		i=player.LocationID.(int)
-	}
 
 // querry to updateplayer from API To DB
-	err=queries.UpdatePlayer(a.DB,player,i)
+	err=queries.UpdatePlayer(a.DB,player,nil)
 
 	if err!=nil{
 		panic(err)

@@ -7,17 +7,6 @@ func ToRequestTag(tag string) string{
 
 }
 
-//ToUrlTags - Removes the first character (should be #) and concatenates %25 in from for making a request from the Clash Royal api by tag for a slice of strings
-func ToRequestTags(tags []string)[]string {
-
-	var ret []string
-
-	for _,elem:=range tags{
-		ret=append(ret,ToRequestTag(elem))
-	}
-	return ret
-}
-
 func ToHashTag(tag string)string {
 
 	return "#"+tag

@@ -139,15 +139,13 @@ func ClanNotFoundByTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	var p structures.PlayerStats
 
-	t:=parser.ToHashTag(tag)
-
-	err:=db.QueryRow("SELECT playerTag,playerName,wins,losses,trophies from players where playerTag=?",t).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies)
+	err:=db.QueryRow("SELECT playerTag,playerName,wins,losses,trophies from players where playerTag=?",tag).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies)
 
 	if err!=nil {
 		return p,err
 	}
 
-	p.Tag=tag
+	p.Tag=parser.ToRawTag(tag)
 	p.Clan.Name=""
 
 	return p,nil
@@ -157,10 +155,10 @@ func GetFromTag(db *sql.DB,tag string)(structures.PlayerStats,error){
 
 	var p structures.PlayerStats
 
-	t:=parser.ToHashTag(tag)
-
-	err:=db.QueryRow("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag, clans.clanName From players inner join clans where players.clanTag=clans.clanTag and clans.clanTag=players.clanTag and players.playerTag=?",t).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
-	p.Tag=tag
+	t:=parser.ToRawTag(tag)
+	fmt.Println(tag)
+	err:=db.QueryRow("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag,clans.clanName From players inner join clans where players.clanTag=clans.clanTag and players.playerTag=?",tag).Scan(&p.Tag,&p.Name,&p.Wins,&p.Losses,&p.Trophies,&p.Clan.Tag,&p.Clan.Name)
+	p.Tag=t
 	if err!=nil{
 		fmt.Println(err)
 		return p,err
@@ -187,8 +185,8 @@ func GetPlayersLike(db *sql.DB,name string)([]structures.PlayerStats,error){
 			return nil,err
 		}
 
-		p.Tag=parser.ToRawTag(p.Tag[1:])
-		p.Clan.Tag = parser.ToRawTag(p.Clan.Tag[1:])
+		p.Tag=parser.ToRawTag(p.Tag)
+		p.Clan.Tag = parser.ToRawTag(p.Clan.Tag)
 
 		players = append(players,p)
 	}
@@ -207,7 +205,8 @@ func GetPlayerName(db *sql.DB,tag string)(string,error){
 //Slice of RankedPlayer returning all players from 1 clan sorted by wins
 func GetPlayersByClanTag(db *sql.DB,clanTag string)([]structures.RankedPlayer,error){
 
-	clanTag=parser.ToHashTag(clanTag)
+
+//	clanTag=parser.ToHashTag(clanTag)
 
 	var players []structures.RankedPlayer
 

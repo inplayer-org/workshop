@@ -7,14 +7,18 @@ import (
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	option := r.FormValue("searchby")
 	text := r.FormValue("text")
 
+//	tag:=parser.ToHashTag(text)
+
 	log.Println("text = ", text, "option = ", option)
 
+	client:=_interface.NewClient()
 
 	if option=="playerName"{
 		http.Redirect(w,r,"http://localhost:3303/players/"+text,http.StatusTemporaryRedirect)
@@ -24,9 +28,11 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 		name, err := queries.GetPlayerName(a.DB, text)
 
 		if err == sql.ErrNoRows {
-			player,err := a.Client.GetRequestForPlayer(text)
+
+			fmt.Println(text)
+			player,err := client.GetRequestForPlayer(text)
 			if err!=nil {
-				fmt.Println(http.StatusNotFound)
+				fmt.Println(err)
 			} else {
 
 				var i int
@@ -63,13 +69,14 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	if option=="clanTag" {
 		clanName,err := queries.GetClanName(a.DB,text)
 		if err==sql.ErrNoRows{
-			e:= update.GetRequestForPlayersFromClan(a.DB,text)
+			e:= update.GetRequestForPlayersFromClan(a.DB,text)     // koga kje sredis za clans so interface od client isto tuka moras da pormenis
 			if e!=nil {
 				fmt.Println(http.StatusNotFound)
 			} else {
 				clanName, err = queries.GetClanName(a.DB,text)
+				fmt.Println(clanName)
 				if err != nil {
-					panic(err)
+					log.Println(err)
 				}
 				log.Println("clanName = ", clanName)
 				http.Redirect(w, r, "http://localhost:3303/clans/"+clanName+"/"+text[1:], http.StatusTemporaryRedirect)
