@@ -2,10 +2,11 @@ package workers
 
 import (
 	"database/sql"
-	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"strconv"
 )
 
 type LocationWorker struct{
@@ -29,7 +30,8 @@ func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.C
 		players, err := client.GetPlayerTagsFromLocation(locationWorker.Loc.ID)
 
 		if err!=nil{
-			log.Println(err)
+			errors.Database(err)
+			return "Failed to get data for location " + locationWorker.Loc.Name + " with ID " + strconv.Itoa(locationWorker.Loc.ID)
 		}
 
 
@@ -42,7 +44,7 @@ func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.C
 			currentPlayer,err := client.GetRequestForPlayer(nextPlayerTag)
 
 			if err!=nil{
-				log.Println(err)
+				errors.Database(err)
 			}else{
 				queries.UpdatePlayer(db,currentPlayer,locationWorker.Loc.ID)
 			}

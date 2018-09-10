@@ -8,19 +8,9 @@ import (
 	"net/url"
 	"strconv"
 	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 
-type NotFound struct {
-	message string
-}
-func NewNotFound(message string) *NotFound {
-	return &NotFound{
-		message: message,
-	}
-}
-func (e *NotFound) Error() string {
-	return e.message
-}
 
 //ClientInterface imeto ne e dobro
 type ClientInterface interface {
@@ -58,14 +48,14 @@ func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 
 	//fail to parse url
 	if err!= nil {
-		return playerTags,err
+		return playerTags,errors.Default("URL",err)
 	}
 
 	resp,err:=c.client.Do(req)
 
 
 	//fail to parse header,timeout,no header provided
-	if err!=nil {
+	if err:=errors.CheckStatusCode(resp);err!=nil{
 		return playerTags,err
 	}
 	json.NewDecoder(resp.Body).Decode(&playerTags)
@@ -90,28 +80,28 @@ func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,erro
 	req,err:=NewGetRequest(urlStr+tag)
 
 	if err!=nil{
-		return currentPlayer,err
+		return currentPlayer,errors.Default("URL",err)
 	}
 
 	for {
 		resp, err := c.client.Do(req)
 
-		if err != nil {
+		if err:=errors.CheckStatusCode(resp);err!=nil{
 			return currentPlayer,err
 		}
 
-		if resp.StatusCode>=200 && resp.StatusCode<=300{
-
+//		if resp.StatusCode>=200 && resp.StatusCode<=300{
+ 	if err:=errors.CheckStatusCode(resp);err!=nil{
 			json.NewDecoder(resp.Body).Decode(&currentPlayer)
-			currentPlayer.Tag = "#"+currentPlayer.Tag[1:]
+			currentPlayer.Tag = tag
 		//	queries.UpdatePlayer(c.db,currentPlayer,0)  not using anymore updating players in handlres >>>
 
 			break
 		}
 		//log.Println("REQUEST PROBLEM !! -> ",resp.Status,",  Retrying ...")
-		if resp.StatusCode==http.StatusNotFound{
-			return currentPlayer,NewNotFound("Player Not Fount")
-		}
+		//if resp.StatusCode==http.StatusNotFound{
+			return currentPlayer,err
+		//}
 	}
 
 	return currentPlayer,nil
@@ -142,7 +132,7 @@ func (c *MyClient) GetLocations()(structures.Locations,error){
 	resp,err:=c.client.Do(req)
 
 	//fail to parse header,no header,timeout
-	if err!=nil {
+	if err:= errors.CheckStatusCode(resp);err!=nil {
 		return locations,err
 	}
 
@@ -164,13 +154,13 @@ func (c *MyClient)GetPlayerTagsFromLocation(id int)(structures.PlayerTags,error)
 
 	//fail to parse url
 	if err!=nil {
-		return playerTags,err
+		return playerTags,errors.Default("URLerr",err)
 	}
 
 	resp,err:=c.client.Do(req)
 
 	//fail to parse header,no header,timeout
-	if err!=nil {
+	if err:= errors.CheckStatusCode(resp);err!=nil {
 		return playerTags,err
 	}
 

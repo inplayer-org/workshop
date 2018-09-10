@@ -5,8 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 )
 
@@ -49,10 +49,10 @@ func main() {
 	fmt.Println("Connection string =",connectionString)
 	db,err := sql.Open("mysql", connectionString)
 
-	if err!=nil{
-		fmt.Println(err)
-		fmt.Println("There was and error opening the database,")
-		os.Exit(1)
+	//Panic if there is a problem with the database since whole web app isn't functional and is dependent on a connection to the database
+	err = errors.Database(err)
+	if err != nil {
+		panic(err)
 	}
 
 	//Channel for sending Clans to the Workers
@@ -71,7 +71,14 @@ func main() {
 
 	//Getting all clans present in the database
 	allClans,err := queries.GetAllClans(db)
-	handleErr(err)
+
+	//Panic if there is error with reading the clans from our database since there will be no data for processing or it will be corrupted
+	err = errors.Database(err)
+	if err!=nil{
+		log.Println("There was an error with getting clans from the database, or no clans exist in the database")
+		panic(err)
+	}
+
 	log.Println("Refreshing data for all clans present in the database")
 
 	//Sending Clans to active workers
