@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 
 //insertInto inserts location into database
@@ -13,7 +12,7 @@ func InsertIntoLocationsTable(db *sql.DB,id int,name string,isCountry bool,code 
 	_, err := db.Exec("INSERT INTO locations(id,countryName,isCountry,countryCode) VALUES ((?),(?),(?),(?));", id, name, isCountry, code)
 
 	if err != nil {
-		return errors.Database(err)
+		return err
 	}
 
 	return nil
@@ -26,7 +25,7 @@ func UpdateLocationsTable(db *sql.DB,id int,name string,isCountry bool,code stri
 	_, err := db.Exec("UPDATE locations SET countryName=(?),isCountry=(?),countryCode=(?) WHERE id=(?)", name, isCountry, code, id)
 
 	if err != nil {
-		return errors.Database(err)
+		return err
 	}
 
 	return nil
@@ -51,7 +50,7 @@ func locationrows (rows *sql.Rows)([]structures.Locationsinfo,error){
 		err:=rows.Scan(&l.ID,&l.Name,&l.IsCountry,&l.CountryCode)
 
 		if err!=nil {
-			return nil,errors.Database(err)
+			return nil,err
 		}
 
 		locations=append(locations,l)
