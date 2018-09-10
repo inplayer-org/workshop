@@ -3,6 +3,7 @@ package errors
 import (
 	"encoding/json"
 	"github.com/pkg/errors"
+	"log"
 	"net/http"
 )
 
@@ -11,6 +12,7 @@ type ResponseError struct {
 	Message string `json:"message"`
 }
 
+//Checks the status code of the response and transforms it into an error type that correlates to the messages from the clash royale api
 func CheckStatusCode(response *http.Response)error{
 
 	if response.StatusCode==200{
@@ -19,7 +21,8 @@ func CheckStatusCode(response *http.Response)error{
 
 	var respErr ResponseError
 	json.NewDecoder(response.Body).Decode(&respErr)
-
-	return errors.Errorf("reason : %s\nmessage : %s",respErr.Reason,respErr.Message)
+	err := errors.Errorf("reason : %s\nmessage : %s",respErr.Reason,respErr.Message)
+	log.Println(err)
+	return err
 
 }
