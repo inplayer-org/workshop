@@ -3,6 +3,7 @@ package errors
 import (
 	"encoding/json"
 	"github.com/pkg/errors"
+	"log"
 	"net/http"
 )
 
@@ -19,7 +20,8 @@ func CheckStatusCode(response *http.Response)error{
 
 	var respErr ResponseError
 	json.NewDecoder(response.Body).Decode(&respErr)
-
-	return errors.Errorf("reason : %s\nmessage : %s",respErr.Reason,respErr.Message)
+	err := errors.Errorf("reason : %s\nmessage : %s",respErr.Reason,respErr.Message)
+	log.Println(err)
+	return err
 
 }
