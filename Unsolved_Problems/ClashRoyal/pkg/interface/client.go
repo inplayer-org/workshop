@@ -11,17 +11,6 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 
-type NotFound struct {
-	message string
-}
-func NewNotFound(message string) *NotFound {
-	return &NotFound{
-		message: message,
-	}
-}
-func (e *NotFound) Error() string {
-	return e.message
-}
 
 //ClientInterface imeto ne e dobro
 type ClientInterface interface {
@@ -59,7 +48,7 @@ func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 
 	//fail to parse url
 	if err!= nil {
-		return playerTags,err
+		return playerTags,errors.Default("Fail to parse url",err)
 	}
 
 	resp,err:=c.client.Do(req)
@@ -91,7 +80,7 @@ func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,erro
 	req,err:=NewGetRequest(urlStr+tag)
 
 	if err!=nil{
-		return currentPlayer,err
+		return currentPlayer,errors.Default("Fail to parse url",err)
 	}
 
 	for {
@@ -165,7 +154,7 @@ func (c *MyClient)GetPlayerTagsFromLocation(id int)(structures.PlayerTags,error)
 
 	//fail to parse url
 	if err!=nil {
-		return playerTags,err
+		return playerTags,errors.Default("Fail to parse url",err)
 	}
 
 	resp,err:=c.client.Do(req)
