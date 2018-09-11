@@ -16,7 +16,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/",a.Home).Methods("GET")
 
 	a.Router.HandleFunc("/locations",a.GetLocations).Methods("GET")
-	a.Router.HandleFunc("/locations/{name:[0-9]+}", a.GetLocationByName).Methods("GET")
+	a.Router.HandleFunc("/locations/{name}", a.GetLocationByName).Methods("GET")
 
 	a.Router.HandleFunc("/search",a.Search).Methods("GET")
 }

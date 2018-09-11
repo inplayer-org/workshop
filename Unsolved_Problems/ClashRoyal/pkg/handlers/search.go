@@ -7,7 +7,6 @@ import (
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"fmt"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 func (a *App) Search(w http.ResponseWriter,r *http.Request){
@@ -33,14 +32,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 				fmt.Println(err)
 			} else {
 
-				var i int
-				if player.LocationID != nil {
-					i = player.LocationID.(int)
-				} else {
-					i = 0
-				}
-
-				err := queries.UpdatePlayer(a.DB, player, i)
+				err := queries.UpdatePlayer(a.DB, player, nil)
 
 				if err != nil {
 					panic(err)
@@ -67,7 +59,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	if option=="clanTag" {
 		clanName,err := queries.GetClanName(a.DB,text)
 		if err==sql.ErrNoRows{
-			e:= update.GetRequestForPlayersFromClan(a.DB,text)     // koga kje sredis za clans so interface od client isto tuka moras da pormenis
+			e:= update.GetRequestForPlayersFromClan(a.DB,a.Client,text)     // koga kje sredis za clans so interface od client isto tuka moras da pormenis
 			if e!=nil {
 				fmt.Println(http.StatusNotFound)
 			} else {

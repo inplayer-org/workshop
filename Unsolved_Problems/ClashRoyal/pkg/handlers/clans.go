@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
@@ -9,21 +8,21 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 // Get clan by name from DB
 func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
+
 //querry for get clans by name
 	clans,err := queries.GetClansLike(a.DB,name)
+
 	if err != nil {
-		//Needs to be reworked into error template
-		tmpl.Tmpl.ExecuteTemplate(w,"error.html",err)
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Clan Name doesn't exist","There is no clan name like "+name,404))
 		return
 	}
-
-	fmt.Println(err)
 
 	tmpl.Tmpl.ExecuteTemplate(w,"byclansname.html",clans)
 
@@ -38,16 +37,18 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 	tag = parser.ToHashTag(tag)
 	log.Println("clanTag = ",tag)
 // request for range over players in 1 clan
-	err := update.GetRequestForPlayersFromClan(a.DB,tag)
+	e := update.GetRequestForPlayersFromClan(a.DB,a.Client,tag)
 
-	if err!=nil {
-		fmt.Println(http.StatusNotFound)
+	if e!=nil {
+			tmpl.Tmpl.ExecuteTemplate(w,"error.html",e)
+			return
 	} else {
 		// querry for clan name in DB
 		clanName, err := queries.GetClanName(a.DB,tag)
 
 		if err != nil {
-			log.Println(err)
+			tmpl.Tmpl.ExecuteTemplate(w,"error.html",e)
+			return
 		}
 
 		log.Println("clanName = ", clanName)
