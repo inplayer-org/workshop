@@ -20,7 +20,7 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 	players,err := queries.GetPlayersLike(a.DB,name)
 
 	if err != nil {
-		panic(err)
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"No players with name like "+name,404))
 	}
 
 	tmpl.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
@@ -55,20 +55,23 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	player,err:=a.Client.GetRequestForPlayer(t)
 
 	if err !=nil {
-		log.Println(err)
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",err)
+		return
 	}
 
 // querry to updateplayer from API To DB
 	err=queries.UpdatePlayer(a.DB,player,nil)
 
 	if err!=nil{
-		panic(err)
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"Can't update player",503))
+		return
 	}else{
 		//querry to get PLayer name from DB
 		name, err := queries.GetPlayerName(a.DB, t)
 
 		if err != nil {
-			panic(err)
+			tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"Player name "+name+" doesn't exist",404))
+			return
 		}
 
 		log.Println("name = ", name)
