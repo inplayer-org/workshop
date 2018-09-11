@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
@@ -35,16 +34,13 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 	t := parser.ToHashTag(tag)
 
-
-	client := _interface.NewClient()
-
 	player,err:=queries.GetFromTag(a.DB,t)
 
 	if err != nil {
 		//fmt.Println(err)
 		if err == sql.ErrNoRows {
 
-			player, err := client.GetRequestForPlayer(t)
+			player, err := a.Client.GetRequestForPlayer(t)
 
 			//player cant be updated
 			//moze da se staj od bazata so ima tova da dade ako nemoze da napraj req

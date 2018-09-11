@@ -5,6 +5,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 //Cheking for clan if exist in db if not inserting if exist updating
 func UpdateClans(db *sql.DB,clan structures.Clan)error{
@@ -43,8 +44,12 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 	if err !=nil {
 		return nil,err
 	}
+	if !rows.Next(){
+		return nil,errors.Database(sql.ErrNoRows)
+	}
 
 	for rows.Next(){
+
 
 		var c structures.Clan
 		err = rows.Scan(&c.Name,&c.Tag)

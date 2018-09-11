@@ -18,8 +18,6 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 
 	log.Println("text = ", text, "option = ", option)
 
-	client:=_interface.NewClient()
-
 	if option=="playerName"{
 		http.Redirect(w,r,"http://localhost:3303/players/"+text,http.StatusTemporaryRedirect)
 	}
@@ -30,7 +28,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 		if err == sql.ErrNoRows {
 
 			fmt.Println(text)
-			player,err := client.GetRequestForPlayer(text)
+			player,err := a.Client.GetRequestForPlayer(text)
 			if err!=nil {
 				fmt.Println(err)
 			} else {
