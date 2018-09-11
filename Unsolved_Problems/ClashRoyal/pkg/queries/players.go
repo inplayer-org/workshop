@@ -174,26 +174,31 @@ func GetFromTag(db *sql.DB, tag string) (structures.PlayerStats, error) {
 func GetPlayersLike(db *sql.DB, name string) ([]structures.PlayerStats, error) {
 
 	var players []structures.PlayerStats
-	rows, err := db.Query("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag, clans.clanName FROM players inner join clans Where players.clanTag=clans.clanTag and playerName Like (?)", "%"+name+"%")
 
-	if err != nil {
-		return nil, err
-	}
-
-	for rows.Next() {
-
-		var p structures.PlayerStats
-		err = rows.Scan(&p.Tag, &p.Name, &p.Wins, &p.Losses, &p.Trophies, &p.Clan.Tag, &p.Clan.Name)
-
-		if err != nil {
-			return nil, err
+		rows, err := db.Query("SELECT playerTag,playerName,wins,losses,trophies,clanTag FROM players WHERE playerName Like (?)", "%"+name+"%")
+		if err!=nil{
+			return nil,err
 		}
+		for rows.Next() {
+			var temp interface{}
+			var p structures.PlayerStats
+			err = rows.Scan(&p.Tag, &p.Name, &p.Wins, &p.Losses, &p.Trophies,&temp)
+			if err != nil {
+				return nil, err
+			}
 
-		p.Tag = parser.ToRawTag(p.Tag)
-		p.Clan.Tag = parser.ToRawTag(p.Clan.Tag)
+			if temp!=nil{
+				var s []uint8
+				s = temp.([]uint8)
+				p.Clan.Tag = string(s)
+				p.Clan.Name,err = GetClanName(db,p.Clan.Tag)
+				p.Clan.Tag = parser.ToRawTag(p.Clan.Tag)
+			}
 
-		players = append(players, p)
-	}
+
+			p.Tag = parser.ToRawTag(p.Tag)
+			players = append(players, p)
+		}
 
 	return players, nil
 }
