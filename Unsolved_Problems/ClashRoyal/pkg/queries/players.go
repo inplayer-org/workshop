@@ -46,7 +46,7 @@ func UpdatePlayer(DB *sql.DB,player structures.PlayerStats,locationID interface{
 		clanTag = player.Clan.Tag
 	}
 
-	if locationID!=0{
+	if locationID!=nil{
 		if Exists(DB,PlayersTable,PlayerTag,player.Tag){
 			return update(DB,player,locationID,clanTag)
 		}else {

@@ -67,17 +67,15 @@ func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 //GetRequestForPlayer makes request and gets players tag name wins losses trophies clanTag and locationID
 func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,error) {
 
-	tag=parser.ToRequestTag(tag)
+	rtag:=parser.ToRequestTag(tag)
 
 	var currentPlayer structures.PlayerStats
 
-	fmt.Println(tag)
-
 	urlStr := "https://api.clashroyale.com/v1/players/"
 
-	url.Parse(urlStr+tag)
+	url.Parse(urlStr+rtag)
 
-	req,err:=NewGetRequest(urlStr+tag)
+	req,err:=NewGetRequest(urlStr+rtag)
 
 	if err!=nil{
 		return currentPlayer,errors.Default("URL",err)
@@ -91,7 +89,7 @@ func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,erro
 		}
 
 //		if resp.StatusCode>=200 && resp.StatusCode<=300{
- 	if err:=errors.CheckStatusCode(resp);err!=nil{
+ 		if err:=errors.CheckStatusCode(resp);err==nil{
 			json.NewDecoder(resp.Body).Decode(&currentPlayer)
 			currentPlayer.Tag = tag
 		//	queries.UpdatePlayer(c.db,currentPlayer,0)  not using anymore updating players in handlres >>>
