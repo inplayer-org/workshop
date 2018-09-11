@@ -66,6 +66,8 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 
 			player,err=queries.GetFromTag(a.DB,t)
 
+			fmt.Println(player)
+
 			//nemoze da go zapisha u databaza
 			if err!=nil {
 				if err==sql.ErrNoRows{
@@ -116,6 +118,7 @@ func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
 }
 // Sending RequestTag response hashtag .. cheking for player in db if not exist req to API and updating db
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
+
 	vars:=mux.Vars(r)
 	tag:=vars["tag"]
 	t:=parser.ToHashTag(tag)
@@ -140,6 +143,6 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 		}
 
 		log.Println("name = ", name)
-		http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+t[1:], http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+tag, http.StatusTemporaryRedirect)
 	}
 }

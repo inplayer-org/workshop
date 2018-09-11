@@ -5,16 +5,12 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"fmt"
 )
 
 
 //GetRequestForPlayersFromClan - Refresh Button - Refreshing all information for players in a clan and updating that information into a database
-func GetRequestForPlayersFromClan(db *sql.DB,clanTag string)error{
-	client := _interface.NewClient()
+func GetRequestForPlayersFromClan(db *sql.DB,client _interface.ClientInterface,clanTag string)error{
 	tags,err:= client.GetTagByClans(clanTag)
-
-	fmt.Println(tags)
 
 	if err!=nil{
 
