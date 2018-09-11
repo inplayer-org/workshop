@@ -16,7 +16,6 @@ type ResponseError struct {
 func (err ResponseError) Error()string{
 	return "API response error -> reason : "+err.Reason+" message : "+err.Message+" statusCode : "+strconv.Itoa(err.StatusCode)
 }
-Unsolved_Problems/ClashRoyal/pkg/handlers/players.go
 
 func NewResponseError(reason string, message string,code int)error{
 	return &ResponseError{reason,message,code}
