@@ -13,10 +13,12 @@ type ResponseError struct {
 	StatusCode int
 }
 
+//String message of the error (implementing of the error interface)
 func (err ResponseError) Error()string{
 	return "API response error -> reason : "+err.Reason+" message : "+err.Message+" statusCode : "+strconv.Itoa(err.StatusCode)
 }
 
+//Constructor for ResponseError
 func NewResponseError(reason string, message string,code int)error{
 	return &ResponseError{reason,message,code}
 }
@@ -29,9 +31,12 @@ func CheckStatusCode(response *http.Response)error{
 	}
 
 	var respErr ResponseError
+
 	json.NewDecoder(response.Body).Decode(&respErr)
 	respErr.StatusCode = response.StatusCode
+
 	log.Println(respErr.Error())
+
 	return respErr
 
 }
