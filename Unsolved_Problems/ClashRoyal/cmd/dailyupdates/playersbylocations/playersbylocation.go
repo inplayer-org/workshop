@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
@@ -47,6 +48,12 @@ func main() {
 	fmt.Println("Connection string =", connectionString)
 	db, err := sql.Open("mysql", connectionString)
 
+	//Panic if there is a problem with the database since whole web app isn't functional and is dependent on a connection to the database
+	err = errors.Database(err)
+	if err != nil {
+		panic(err)
+	}
+
 	//Channel for sending Clans to the Workers
 	locationInfoChan := make(chan workers.Worker)
 	defer close(locationInfoChan)
@@ -63,8 +70,14 @@ func main() {
 	// return structure that has all locations into an array
 	allLocations, err := update.DailyUpdate(db)
 
+	//Panic if there is error with reading the locations from our database since there will be no data for processing or it will be corrupted
+	err = errors.Database(err)
+	if err!=nil{
+		log.Println("There was an error with getting clans from the database, or no clans exist in the database")
+		panic(err)
+	}
+
 	log.Println("Finished updating locations data")
-	handleErr(err)
 
 	//Section 2 - Update players from locations table
 

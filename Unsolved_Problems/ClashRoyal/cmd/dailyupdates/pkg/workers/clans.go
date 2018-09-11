@@ -2,7 +2,7 @@ package workers
 
 import (
 	"database/sql"
-	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
@@ -26,7 +26,8 @@ func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB,client _interface.ClientIn
 	players,err := client.GetTagByClans(clanWorker.Clan.Tag)
 
 	if err!=nil{
-		log.Println(err)
+		errors.Database(err)
+		return "Failed to get data for clan " + clanWorker.Clan.Name + " with Tag " + clanWorker.Clan.Tag
 	}
 
 	//Converting PlayerTags structure into string[]
@@ -38,7 +39,7 @@ func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB,client _interface.ClientIn
 		currentPlayer,err := client.GetRequestForPlayer(nextPlayerTag)
 
 		if err!=nil{
-			log.Println(err)
+			errors.Database(err)
 		}else{
 			queries.UpdatePlayer(db,currentPlayer,0)
 		}

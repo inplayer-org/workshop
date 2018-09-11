@@ -5,6 +5,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 //Cheking for clan if exist in db if not inserting if exist updating
 func UpdateClans(db *sql.DB,clan structures.Clan)error{
@@ -18,14 +19,14 @@ func UpdateClans(db *sql.DB,clan structures.Clan)error{
 		_, err := db.Exec("INSERT INTO clans(clanTag,clanName) VALUES (?,?)", clan.Tag, clan.Name)
 
 		if err != nil {
-			fmt.Println("1 ->",err)
+			return err
 		}
 
 	}else{
 		_,err := db.Exec("UPDATE clans SET clanName=(?) WHERE clanTag=(?)", clan.Name,clan.Tag)
 
 		if err != nil {
-			fmt.Println("2 ->",err)
+			return err
 		}
 
 	}
@@ -43,8 +44,12 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 	if err !=nil {
 		return nil,err
 	}
+	if !rows.Next(){
+		return nil,errors.Database(sql.ErrNoRows)
+	}
 
 	for rows.Next(){
+
 
 		var c structures.Clan
 		err = rows.Scan(&c.Name,&c.Tag)
@@ -67,7 +72,11 @@ func GetClanName(db *sql.DB,clanTag string)(string,error){
 
 	err := db.QueryRow("SELECT clanName FROM clans WHERE clanTag=?",clanTag).Scan(&clanName)
 
-	return clanName,err
+	if err!=nil{
+		return clanName,err
+	}
+
+	return clanName,nil
 
 }
 

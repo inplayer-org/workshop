@@ -71,7 +71,14 @@ func main() {
 
 	//Getting all clans present in the database
 	allClans,err := queries.GetAllClans(db)
-	handleErr(err)
+
+	//Panic if there is error with reading the clans from our database since there will be no data for processing or it will be corrupted
+	err = errors.Database(err)
+	if err!=nil{
+		log.Println("There was an error with getting clans from the database, or no clans exist in the database")
+		panic(err)
+	}
+
 	log.Println("Refreshing data for all clans present in the database")
 
 	//Sending Clans to active workers
