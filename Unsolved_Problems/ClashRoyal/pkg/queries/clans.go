@@ -44,9 +44,6 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 	if err !=nil {
 		return nil,err
 	}
-	if !rows.Next(){
-		return nil,errors.Database(sql.ErrNoRows)
-	}
 
 	for rows.Next(){
 
@@ -60,6 +57,11 @@ func GetClansLike(db *sql.DB,name string)([]structures.Clan,error){
 		c.Tag = parser.ToRawTag(c.Tag)
 		clans = append(clans,c)
 	}
+
+	if len(clans)==0{
+		return nil,errors.Database(sql.ErrNoRows)
+	}
+
 
 	return clans,nil
 }
