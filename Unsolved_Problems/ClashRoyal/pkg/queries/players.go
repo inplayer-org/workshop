@@ -10,11 +10,15 @@ import (
 
 
 func update(DB *sql.DB,player structures.PlayerStats,locationID interface{},clanTag interface{})error{
-
-		_,err := DB.Exec("update players SET playerName=(?),wins=(?),losses=(?),trophies=(?),clanTag=(?),locationID=(?) where playerTag=(?);",
-			player.Name, player.Wins, player.Losses, player.Trophies, clanTag, locationID,player.Tag)
-		return err
-
+		if locationID!=nil {
+			_, err := DB.Exec("update players SET playerName=(?),wins=(?),losses=(?),trophies=(?),clanTag=(?),locationID=(?) where playerTag=(?);",
+				player.Name, player.Wins, player.Losses, player.Trophies, clanTag, locationID, player.Tag)
+			return err
+		}else{
+			_, err := DB.Exec("update players SET playerName=(?),wins=(?),losses=(?),trophies=(?),clanTag=(?) where playerTag=(?);",
+				player.Name, player.Wins, player.Losses, player.Trophies, clanTag, player.Tag)
+			return err
+		}
 }
 
 func insert(DB *sql.DB,player structures.PlayerStats,locationID interface{},clanTag interface{}) error{

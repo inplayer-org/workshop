@@ -1,82 +1,42 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"database/sql"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
-	"fmt"
 )
 
 func (a *App) Search(w http.ResponseWriter,r *http.Request){
+
 	option := r.FormValue("searchby")
 	text := r.FormValue("text")
 
-//	tag:=parser.ToHashTag(text)
-
-	log.Println("text = ", text, "option = ", option)
+	//log.Println("text = ", text, "option = ", option)
 
 	if option=="playerName"{
 		http.Redirect(w,r,"http://localhost:3303/players/"+text,http.StatusTemporaryRedirect)
 	}
 	if option=="playerTag" {
-		var name string
+
 		name, err := queries.GetPlayerName(a.DB, text)
 
-		if err == sql.ErrNoRows {
-
-			fmt.Println(text)
-			player,err := a.Client.GetRequestForPlayer(text)
-			if err!=nil {
-				fmt.Println(err)
-			} else {
-
-				err := queries.UpdatePlayer(a.DB, player, nil)
-
-				if err != nil {
-					panic(err)
-				} else {
-					name, err = queries.GetPlayerName(a.DB, text)
-					if err != nil {
-						panic(err)
-					}
-					log.Println("name = ", name)
-					http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+text[1:], http.StatusTemporaryRedirect)
-				}
-			}
-		} else if err != nil {
-			log.Println("Error = ", err)
-			//Error
-		} else {
-			log.Println("name = ", name)
-			http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+text[1:], http.StatusTemporaryRedirect)
+		if err == nil {
+			http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
+		}else{
+			http.Redirect(w, r, "http://localhost:3303/players/new/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
 		}
 	}
 	if option=="clanName"{
 		http.Redirect(w,r,"http://localhost:3303/clans/"+text,http.StatusTemporaryRedirect)
 	}
 	if option=="clanTag" {
+
 		clanName,err := queries.GetClanName(a.DB,text)
-		if err==sql.ErrNoRows{
-			e:= update.GetRequestForPlayersFromClan(a.DB,a.Client,text)     // koga kje sredis za clans so interface od client isto tuka moras da pormenis
-			if e!=nil {
-				fmt.Println(http.StatusNotFound)
-			} else {
-				clanName, err = queries.GetClanName(a.DB,text)
-				fmt.Println(clanName)
-				if err != nil {
-					log.Println(err)
-				}
-				log.Println("clanName = ", clanName)
-				http.Redirect(w, r, "http://localhost:3303/clans/"+clanName+"/"+text[1:], http.StatusTemporaryRedirect)
-			}
-		} else if err != nil {
-			log.Println("Error = ", err)
-			//Error
-		}else {
-			log.Println("clanName = ", clanName)
-			http.Redirect(w, r, "http://localhost:3303/clans/"+clanName+"/"+text[1:], http.StatusTemporaryRedirect)
+
+		if err!=nil{
+				http.Redirect(w, r, "http://localhost:3303/clans/"+clanName+"/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
+		}else{
+			http.Redirect(w, r, "http://localhost:3303/clans/new/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
 		}
 	}
 }
