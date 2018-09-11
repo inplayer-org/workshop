@@ -19,8 +19,11 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 	clans,err := queries.GetClansLike(a.DB,name)
 	if err != nil {
 		//Needs to be reworked into error template
-		panic(err)
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",err)
+		return
 	}
+
+	fmt.Println(err)
 
 	tmpl.Tmpl.ExecuteTemplate(w,"byclansname.html",clans)
 
