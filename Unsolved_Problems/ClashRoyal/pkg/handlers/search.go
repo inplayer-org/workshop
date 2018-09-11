@@ -31,9 +31,9 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	}
 	if option=="clanTag" {
 
-		clanName,err := queries.GetClanName(a.DB,text)
+		clanName,_ := queries.GetClanName(a.DB,text)
 
-		if err!=nil{
+		if len(clanName)!=0{
 				http.Redirect(w, r, "http://localhost:3303/clans/"+clanName+"/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
 		}else{
 			http.Redirect(w, r, "http://localhost:3303/clans/new/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)

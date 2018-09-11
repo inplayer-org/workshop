@@ -9,6 +9,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 )
 // Get clan by name from DB
 func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
@@ -35,13 +36,45 @@ func (a *App)GetClanByTag(w http.ResponseWriter, r *http.Request){
 
 	tag = parser.ToHashTag(tag)
 
-	players,err:=queries.GetPlayersByClanTag(a.DB,tag)
+	players,err:=findClan(a,tag)
 
-	if err != nil {
-		panic(err)
+	if len(players)==0 {
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",err)
+		return
 	}
 
 	tmpl.Tmpl.ExecuteTemplate(w,"clan.html",players)
+
+}
+func findClan(a *App,tag string) ([]structures.RankedPlayer, error) {
+
+	players,_:=queries.GetPlayersByClanTag(a.DB,tag)
+
+	if len(players)==0{
+
+		clan,err:=a.Client.GetClan(tag)
+
+		if err!=nil{
+			return nil,err
+		}
+
+		err=queries.UpdateClans(a.DB,clan)
+
+		if err!=nil{
+			return nil,errors.NewResponseError(err.Error(), "Failed to insert/update the clan into database, please try again later", 500)
+		}
+
+		err=update.GetRequestForPlayersFromClan(a.DB,a.Client,clan.Tag)
+
+		if err!=nil{
+			return nil,errors.NewResponseError(err.Error(), "Can't find the clan", 404)
+		}
+
+		players,_=queries.GetPlayersByClanTag(a.DB,tag)
+
+	}
+
+	return players,nil
 
 }
 //Request tag to API to refres clan informations with members
