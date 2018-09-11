@@ -17,6 +17,10 @@ func (err ResponseError) Error()string{
 	return "API response error -> reason : "+err.Reason+" message : "+err.Message+" statusCode : "+strconv.Itoa(err.StatusCode)
 }
 
+func NewResponseError(reason string, message string,code int)error{
+	return &ResponseError{reason,message,code}
+}
+
 //Checks the status code of the response and transforms it into an error type that correlates to the messages from the clash royale api
 func CheckStatusCode(response *http.Response)error{
 
