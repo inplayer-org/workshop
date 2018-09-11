@@ -17,7 +17,7 @@
             padding: 1rem;
         }
         .header {
-            background-image: url(clash_royale_logo.png);
+            background-image: url(https://vignette.wikia.nocookie.net/clashofclans/images/6/6c/Clash_Royale_Logo.png/revision/latest?cb=20180217045351);
             background-repeat: no-repeat;
             background-size: 100% 88%;
             padding-left: 6%;
@@ -63,13 +63,12 @@
 
     <div class="header">
 
-        <a href="home.html"><img src="bW0VY0MHsWhlD7T5gO7IbB8e-9NSqVIpL6xoEElqFQ4.png" class="rounded-circle" width="145" height="110"></a>
-
+        <a href="/"><img src="https://orig00.deviantart.net/d986/f/2017/129/3/b/king_dab__clash_royale__by_josael281999-db8mdhl.png" class="rounded-circle" width="145" height="110"></a>
 
         <div>
-            <form>
-                <input class="text" type="text" name="player1">
-                <input class="text" type="text" name="player2">
+            <form action="/compare">
+                <input class="text" type="text" name="player1" value="#{{.Player1.Tag}}">
+                <input class="text" type="text" name="player2" value=#{{.Player2.Tag}}>
                 <input type="submit" value="Compare Players">
             </form>
         </div>
@@ -81,7 +80,7 @@
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <span>Rank: 1</span>
+                        <span>#{{.Player1.Tag}}</span>
                     </div>
                     <div class="card-body">
                         <div class="inlineBlock"><img src="https://orig00.deviantart.net/d986/f/2017/129/3/b/king_dab__clash_royale__by_josael281999-db8mdhl.png" class="rounded-circle" width="100" height="100"></div>
@@ -146,7 +145,7 @@
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <span>Rank: 1</span>
+                        <span>#{{.Player2.Tag}}</span>
                     </div>
                     <div class="card-body">
                         <div class="inlineBlock"><img src="https://orig00.deviantart.net/d986/f/2017/129/3/b/king_dab__clash_royale__by_josael281999-db8mdhl.png" class="rounded-circle" width="100" height="100"></div>
@@ -223,7 +222,7 @@
                 <li><a href="mailto:someone@example.com">someone@example.com</a></li>
             </ul>
 
-            <a href="www.inplayer.com"><img class="inplayer"  src="inplayer-logo.png"></a>
+            <a href="www.inplayer.com"><img class="inplayer"  src="http://www.marathonartists.com/wp-content/uploads/2017/09/inplayer-logo.png"></a>
         </div>
 
     </div>

@@ -24,7 +24,7 @@ func enterFlags() (string,string,string) {
 
 	UserName := flag.String("username", "root", "the username to make a connection to the database")
 
-	Password := flag.String("password", "12345", "the password for your username to make a conection to the database")
+	Password := flag.String("password", "darko123", "the password for your username to make a conection to the database")
 
 	flag.Parse()
 
@@ -45,7 +45,8 @@ func main (){
 
 	//Panic if there is a problem with the database since whole web app isn't functional and is dependent on a connection to the database
 	if err != nil {
-		panic(err)    }
+		panic(err)
+	}
 
 	//Creating a router
 	router := mux.NewRouter()

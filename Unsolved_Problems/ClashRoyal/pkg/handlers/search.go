@@ -29,9 +29,11 @@ func (a *App) Search(w http.ResponseWriter, r *http.Request) {
 		name, err := queries.GetPlayerName(a.DB, text)
 
 		if err == sql.ErrNoRows {
+
+			fmt.Println(text, "blaaaaaaa")
 			player, err := client.GetRequestForPlayer(text)
 			if err != nil {
-				fmt.Println(http.StatusNotFound)
+				fmt.Println(err, "hhhhh")
 			} else {
 
 				var i int
@@ -73,8 +75,9 @@ func (a *App) Search(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(http.StatusNotFound)
 			} else {
 				clanName, err = queries.GetClanName(a.DB, text)
+				fmt.Println(clanName)
 				if err != nil {
-					panic(err)
+					log.Println(err)
 				}
 				log.Println("clanName = ", clanName)
 				http.Redirect(w, r, "http://localhost:3303/clans/"+clanName+"/"+text[1:], http.StatusTemporaryRedirect)
