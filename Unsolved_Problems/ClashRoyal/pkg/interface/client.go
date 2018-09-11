@@ -126,7 +126,7 @@ func (c *MyClient) GetLocations()(structures.Locations,error){
 
 	//cant parse url
 	if err != nil {
-		return locations,err
+		return locations,errors.Default("URL",err)
 	}
 
 	resp,err:=c.client.Do(req)
