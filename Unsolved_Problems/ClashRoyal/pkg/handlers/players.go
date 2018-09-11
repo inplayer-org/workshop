@@ -99,23 +99,6 @@ func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
 		return
 	}
 }
-// Sending string clan tag and response from DB clan informations
-func (a *App)GetPlayersByClanTag(w http.ResponseWriter, r *http.Request){
-
-	vars:=mux.Vars(r)
-	tag:=vars["tag"]
-
-	tag = parser.ToHashTag(tag)
-
-	players,err:=queries.GetPlayersByClanTag(a.DB,tag)
-
-	if err != nil {
-		panic(err)
-	}
-
-	tmpl.Tmpl.ExecuteTemplate(w,"clan.html",players)
-
-}
 // Sending RequestTag response hashtag .. cheking for player in db if not exist req to API and updating db
 func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 

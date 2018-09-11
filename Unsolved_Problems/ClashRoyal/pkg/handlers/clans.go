@@ -27,7 +27,23 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 	tmpl.Tmpl.ExecuteTemplate(w,"byclansname.html",clans)
 
 }
+// Sending string clan tag and response from DB clan informations
+func (a *App)GetClanByTag(w http.ResponseWriter, r *http.Request){
 
+	vars:=mux.Vars(r)
+	tag:=vars["tag"]
+
+	tag = parser.ToHashTag(tag)
+
+	players,err:=queries.GetPlayersByClanTag(a.DB,tag)
+
+	if err != nil {
+		panic(err)
+	}
+
+	tmpl.Tmpl.ExecuteTemplate(w,"clan.html",players)
+
+}
 //Request tag to API to refres clan informations with members
 func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 
