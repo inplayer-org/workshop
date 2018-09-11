@@ -79,49 +79,63 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+//Tries to find player in multiple steps, first in local database, then through clash royale api and returns error if it doesn't exist
 func findPlayer(a *App,tag string)(structures.PlayerStats,error) {
 
+	//Search for the player in local database
 	player, err := queries.GetFromTag(a.DB, tag)
 
 	if err != nil {
-		//fmt.Println(err)
+
+		//In case it doesn't exists in the database
 		if err == sql.ErrNoRows {
 
+			//Search for the player through the clash royale api
 			player, err := a.Client.GetRequestForPlayer(tag)
 
-			//poposle da sesredi
+			//Returns error if there was an error with the request to the api
 			if err != nil {
 				return player, err
 			}
 
+			//Updates the player in the local database
 			err = queries.UpdatePlayer(a.DB, player, nil)
 
-			//nemoze da napraj insert ili update
+			//Error during the updating of the player in the local database
 			if err != nil {
 				return player, errors.NewResponseError(err.Error(), "Failed to insert/update the player into database, please try again later", 500)
 			}
 
+			//Reads the newly inserted player from the local database
 			player, err = queries.GetFromTag(a.DB, tag)
 
-			//nemoze da go zapisha u databaza
+			//Error during reading the newly inserted player from the database
 			if err != nil {
 				if err == sql.ErrNoRows {
+					//Tries to read the same player without a clan
 					player, err := queries.ClanNotFoundByTag(a.DB, tag)
+
+					//In case the backup read without clan fails, player doesn't exists or isn't reachable at the moment
 					if err != nil {
 						return player, errors.NewResponseError(err.Error(), "Can't find the player", 404)
 					}
-					return player, err
+					//Returns the structure of the player and a nil error
+					return player, nil
 				} else {
+					//In case the database error isn't ErrNoRows, returns unexpected error
 					return player, errors.NewResponseError(err.Error(), "Unexpected error with the database", 500)
 				}
 			}
 
-			return player, err
+			return player, nil
 
 		} else {
+			//In case the database error isn't ErrNoRows, returns unexpected error
 			return player, errors.NewResponseError(err.Error(), "Unexpected error with the database", 500)
 		}
-	} else {
-		return player, err
 	}
+
+	//Returns the player struct and nil error if the player is present in our local database
+		return player, nil
+
 }
