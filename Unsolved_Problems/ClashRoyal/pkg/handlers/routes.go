@@ -15,6 +15,11 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/players/{name}/{tag}/update",a.UpdatePlayer).Methods("GET")
 	a.Router.HandleFunc("/",a.Home).Methods("GET")
 
+	a.Router.HandleFunc("/compare/{entry:[0-9A-Z#]+}", a.ComaprePlayer).Methods("GET")
+	a.Router.HandleFunc("/compare/{tag1}/{tag2}", a.Compare2Players).Methods("GET")
+	a.Router.HandleFunc("/compare", a.Compare).Methods("GET")
+
+
 	a.Router.HandleFunc("/locations",a.GetLocations).Methods("GET")
 	a.Router.HandleFunc("/locations/{name}", a.GetLocationByName).Methods("GET")
 

@@ -11,12 +11,13 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
+
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
 func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
-//get players by name from DB
+	//get players by name from DB
 	players,err := queries.GetPlayersLike(a.DB,name)
 
 	if err != nil {
@@ -58,7 +59,7 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 		log.Println(err)
 	}
 
-// querry to updateplayer from API To DB
+	// querry to updateplayer from API To DB
 	err=queries.UpdatePlayer(a.DB,player,nil)
 
 	if err!=nil{
@@ -133,6 +134,7 @@ func findPlayer(a *App,tag string)(structures.PlayerStats,error) {
 	}
 
 	//Returns the player struct and nil error if the player is present in our local database
-		return player, nil
+	return player, nil
 
 }
+

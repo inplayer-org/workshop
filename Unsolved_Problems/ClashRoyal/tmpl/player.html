@@ -17,7 +17,7 @@
             padding: 1rem;
         }
         .header {
-            background-image: url(https://vignette.wikia.nocookie.net/clashofclans/images/6/6c/Clash_Royale_Logo.png/revision/latest?cb=20180217045351);
+            background-image: url("https://vignette.wikia.nocookie.net/clashofclans/images/6/6c/Clash_Royale_Logo.png/revision/latest?cb=20180217045351");
             background-repeat: no-repeat;
             background-size: 100% 88%;
             padding-left: 6%;
@@ -71,16 +71,17 @@
 
 
         <div style="    padding-top: 5%;">
-            <form style="display: inline-block; width: 60%">
+            <form action="/compare/{{.Tag}}" style="display: inline-block; width: 60%">
                 <select id="searchby" name="searchby">
                     <option value="player">Player Tag</option>
-                    <option value="clan">Player Name</option>
+                    
                 </select>
                 <span>-></span>
 
-                <input class="text" type="text">
+                <input class="text" type="text" name="player">
                 <input type="submit" value="Compare Players">
             </form>
+            
 
             <a href="http://localhost:3303/players/{{.Name}}/{{.Tag}}/update"><button>Update</button></a>
 
