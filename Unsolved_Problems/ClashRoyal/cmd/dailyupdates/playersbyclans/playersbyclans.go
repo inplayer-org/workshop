@@ -7,7 +7,7 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
 )
 
 func handleErr(err error){
@@ -70,7 +70,7 @@ func main() {
 	}
 
 	//Getting all clans present in the database
-	allClans,err := queries.GetAllClans(db)
+	allClans,err := clans.GetAllClans(db)
 
 	//Panic if there is error with reading the clans from our database since there will be no data for processing or it will be corrupted
 	err = errors.Database(err)

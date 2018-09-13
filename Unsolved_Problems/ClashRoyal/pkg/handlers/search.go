@@ -3,7 +3,10 @@ package handlers
 import (
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
+
+
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
 )
 
 func (a *App) Search(w http.ResponseWriter,r *http.Request){
@@ -18,7 +21,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	}
 	if option=="playerTag" {
 
-		name, err := queries.GetPlayerName(a.DB, text)
+		name, err := players.GetPlayerName(a.DB, text)
 
 		if err == nil {
 			http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
@@ -31,7 +34,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	}
 	if option=="clanTag" {
 
-		clanName,_ := queries.GetClanName(a.DB,text)
+		clanName,_ := clans.GetClanName(a.DB,text)
 
 		if len(clanName)!=0{
 				http.Redirect(w, r, "http://localhost:3303/clans/"+clanName+"/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)

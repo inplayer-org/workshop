@@ -1,7 +1,6 @@
 package _interface
 
 import (
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
 	"encoding/json"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
@@ -9,16 +8,19 @@ import (
 	"strconv"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 )
 
 
 //ClientInterface imeto ne e dobro
 type ClientInterface interface {
-	GetLocations() (structures.Locations,error)
-	GetPlayerTagsFromLocation(int) (structures.PlayerTags,error)
-	GetRequestForPlayer(string) (structures.PlayerStats,error)
-	GetTagByClans(string) (structures.PlayerTags,error)
-	GetClan(string)(structures.Clan,error)
+	GetLocations() (locations.Locations,error)
+	GetPlayerTagsFromLocation(int) (players.PlayerTags,error)
+	GetRequestForPlayer(string) (players.PlayerStats,error)
+	GetTagByClans(string) (players.PlayerTags,error)
+	GetClan(string)(clans.Clan,error)
 }
 
 //MyClient structure have client that Do rquests
@@ -39,10 +41,10 @@ func SetHeaders(req *http.Request){
 	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
 }
 
-func (c *MyClient)GetClan(tag string)(structures.Clan,error){
+func (c *MyClient)GetClan(tag string)(clans.Clan,error){
 	clanTag:=parser.ToRequestTag(tag)
 
-	var clan structures.Clan
+	var clan clans.Clan
 	urlStr:="https://api.clashroyale.com/v1/clans/"+clanTag
 	req,err:=NewGetRequest(urlStr)
 
@@ -64,10 +66,10 @@ func (c *MyClient)GetClan(tag string)(structures.Clan,error){
 }
 
 //Get request for Clans with clanTag as string returning all Tagsmembers of 1 clan
-func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
+func (c *MyClient) GetTagByClans(clanTag string) (players.PlayerTags,error) {
 	tag:=parser.ToRequestTag(clanTag)
 
-	var  playerTags structures.PlayerTags
+	var  playerTags players.PlayerTags
 	urlStr :="https://api.clashroyale.com/v1/clans/"+tag+"/members"
 	req,err:=NewGetRequest(urlStr)
 
@@ -90,11 +92,11 @@ func (c *MyClient) GetTagByClans(clanTag string) (structures.PlayerTags,error) {
 }
 
 //GetRequestForPlayer makes request and gets players tag name wins losses trophies clanTag and locationID
-func (c *MyClient) GetRequestForPlayer (tag string) (structures.PlayerStats,error) {
+func (c *MyClient) GetRequestForPlayer (tag string) (players.PlayerStats,error) {
 
 	rtag:=parser.ToRequestTag(tag)
 
-	var currentPlayer structures.PlayerStats
+	var currentPlayer players.PlayerStats
 
 	urlStr := "https://api.clashroyale.com/v1/players/"
 
@@ -141,9 +143,9 @@ func NewGetRequest(url string)(*http.Request,error){
 }
 
 
-func (c *MyClient) GetLocations()(structures.Locations,error){
+func (c *MyClient) GetLocations()(locations.Locations,error){
 
-	var locations structures.Locations
+	var locations locations.Locations
 
 	req,err:=NewGetRequest("https://api.clashroyale.com/v1/locations")
 
@@ -166,9 +168,9 @@ func (c *MyClient) GetLocations()(structures.Locations,error){
 	return locations,nil
 }
 
-func (c *MyClient)GetPlayerTagsFromLocation(id int)(structures.PlayerTags,error)  {
+func (c *MyClient)GetPlayerTagsFromLocation(id int)(players.PlayerTags,error)  {
 
-	var playerTags structures.PlayerTags
+	var playerTags players.PlayerTags
 
 	urlStr:="https://api.clashroyale.com/v1/locations/" + strconv.Itoa(id) + "/rankings/players"
 

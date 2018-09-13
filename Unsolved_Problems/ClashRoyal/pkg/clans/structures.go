@@ -1,4 +1,4 @@
-package structures
+package clans
 
 //Structure with information for the Clans
 type Clan struct {

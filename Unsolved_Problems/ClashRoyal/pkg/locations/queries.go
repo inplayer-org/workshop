@@ -1,9 +1,10 @@
-package queries
+package locations
 
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+
+
 )
 
 //insertInto inserts location into database
@@ -32,7 +33,7 @@ func UpdateLocationsTable(db *sql.DB,id int,name string,isCountry bool,code stri
 
 }
 // Returning slice of Locations Info from DB Table locations ALLInfo about Location
-func GetAllLocations(db *sql.DB)([]structures.Locationsinfo,error){
+func GetAllLocations(db *sql.DB)([]Locationsinfo,error){
 
 	rows, _ := db.Query("SELECT id,countryName,isCountry,countryCode from locations")
 
@@ -42,19 +43,19 @@ func GetAllLocations(db *sql.DB)([]structures.Locationsinfo,error){
 	return locationrows(rows)
 }
 
-func locationrows (rows *sql.Rows)([]structures.Locationsinfo,error){
-	var locations  []structures.Locationsinfo
+func locationrows (rows *sql.Rows)([]Locationsinfo,error){
+	var location  []Locationsinfo
 
 	for rows.Next() {
-		var l structures.Locationsinfo
+		var l Locationsinfo
 		err:=rows.Scan(&l.ID,&l.Name,&l.IsCountry,&l.CountryCode)
 
 		if err!=nil {
 			return nil,err
 		}
 
-		locations=append(locations,l)
+		location=append(location,l)
 	}
 
-	return locations,nil
+	return location,nil
 }

@@ -1,4 +1,4 @@
-package structures
+package locations
 
 //Locationsinfo - structure for handling location info from Clash Royale api
 type Locationsinfo struct {
