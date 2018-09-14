@@ -5,12 +5,14 @@ package handlers
 import (
 	"net/http"
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
+
 	"strconv"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/rankedPlayer"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 )
-// Get location by name and return top250 players in that location by wins
+// Get location by name and return top250 rankedPlayer in that location by wins
 func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
@@ -21,8 +23,8 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Location ID not number","ID should contain only numbers",404))
 		return
 	}
-// querry from DB to list and sort 250 players from 1 location
-	player,_ := queries.GetPlayersByLocation(a.DB,id)
+// querry from DB to list and sort 250 rankedPlayer from 1 location
+	player,_ := rankedPlayer.GetPlayersByLocation(a.DB,id)
 
 		if len(player)==0 {
 			tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Location not found","Location with "+strconv.Itoa(id)+" doesnot exist",404))
@@ -35,13 +37,13 @@ func (a *App) GetLocationByName (w http.ResponseWriter, r *http.Request){
 // Returning all locations from DB
 func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
 // listing(returning) all locations from DB
-	locations, err := queries.GetAllLocations(a.DB)
+	locs, err := locations.GetAllLocations(a.DB)
 
 	if err != nil {
 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Server error","Can't load locations something went wrong",503))
 		return
 	}
 
-	tmpl.Tmpl.ExecuteTemplate(w,"locs.html",locations)
+	tmpl.Tmpl.ExecuteTemplate(w,"locs.html",locs)
 
 }

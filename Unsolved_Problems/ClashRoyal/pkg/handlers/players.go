@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
+
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerTags"
 )
 
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
@@ -17,8 +19,8 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
-	//get players by name from DB
-	players,err := queries.GetPlayersLike(a.DB,name)
+	//get rankedPlayer by name from DB
+	players,err := playerStats.GetPlayersLike(a.DB,name)
 
 	if err != nil {
 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"No players with name like "+name,404))
@@ -61,14 +63,14 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 	}
 
 	// querry to updateplayer from API To DB
-	err=queries.UpdatePlayer(a.DB,player,nil)
+	err= playerStats.UpdatePlayer(a.DB,player,nil)
 
 	if err!=nil{
 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"Can't update player",503))
 		return
 	}else{
 		//querry to get PLayer name from DB
-		name, err := queries.GetPlayerName(a.DB, t)
+		name, err := playerTags.GetPlayerName(a.DB, t)
 
 		if err != nil {
 			tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"Player name "+name+" doesn't exist",404))
@@ -81,10 +83,10 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 }
 
 //Tries to find player in multiple steps, first in local database, then through clash royale api and returns error if it doesn't exist
-func findPlayer(a *App,tag string)(structures.PlayerStats,error) {
+func findPlayer(a *App,tag string)(playerStats.PlayerStats,error) {
 
 	//Search for the player in local database
-	player, err := queries.GetFromTag(a.DB, tag)
+	player, err := playerStats.GetFromTag(a.DB, tag)
 
 	if err != nil {
 
@@ -100,7 +102,7 @@ func findPlayer(a *App,tag string)(structures.PlayerStats,error) {
 			}
 
 			//Updates the player in the local database
-			err = queries.UpdatePlayer(a.DB, player, nil)
+			err = playerStats.UpdatePlayer(a.DB, player, nil)
 
 			//Error during the updating of the player in the local database
 			if err != nil {
@@ -108,13 +110,13 @@ func findPlayer(a *App,tag string)(structures.PlayerStats,error) {
 			}
 
 			//Reads the newly inserted player from the local database
-			player, err = queries.GetFromTag(a.DB, tag)
+			player, err = playerStats.GetFromTag(a.DB, tag)
 
 			//Error during reading the newly inserted player from the database
 			if err != nil {
 				if err == sql.ErrNoRows {
 					//Tries to read the same player without a clan
-					player, err := queries.ClanNotFoundByTag(a.DB, tag)
+					player, err := playerStats.ClanNotFoundByTag(a.DB, tag)
 
 					//In case the backup read without clan fails, player doesn't exists or isn't reachable at the moment
 					if err != nil {

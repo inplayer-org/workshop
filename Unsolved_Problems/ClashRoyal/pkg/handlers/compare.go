@@ -1,13 +1,15 @@
 package handlers
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/twoPlayers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
 
@@ -22,7 +24,7 @@ func (a *App) ComparePlayer(w http.ResponseWriter, r *http.Request) {
 
 //Compare the player with another player
 func (a *App) Compare2Players(w http.ResponseWriter, r *http.Request) {
-	var p structures.TwoPlayers
+	var p twoPlayers.TwoPlayers
 
 	vars := mux.Vars(r)
 	player1 := parser.ToHashTag(vars["tag1"])
@@ -44,18 +46,17 @@ func (a *App) Compare2Players(w http.ResponseWriter, r *http.Request) {
 
 //Compare 2 Players
 func (a *App) Compare(w http.ResponseWriter, r *http.Request) {
-	var p structures.TwoPlayers
-
+	var p twoPlayers.TwoPlayers
 	player1 := r.FormValue("player1")
 	player2 := r.FormValue("player2")
-	/*Tries to find tle two players in multiple steps, first in local database, then through clash royale api
-	and returns error if it doesn't exist*/
-	p1, err1 := findPlayer(a, player1)
-	p2, err2 := findPlayer(a, player2)
-	//If the 2 Players does not exist returns that the PLayers does not exis
-	if err1 != nil && err2 != nil {
-		tmpl.Tmpl.ExecuteTemplate(w, "playerNotExist.html", errors.NewResponseError("Incorrect player tags", "Players NOT FOUND", 404))
-	} else if err1 != nil {
+	//log.Println("+++++++++++", player1, player2)
+	p1, err1 := playerStats.GetFromTag(a.DB, player1)
+
+	p2, err2 := playerStats.GetFromTag(a.DB, player2)
+	if err1 == sql.ErrNoRows && err2 == sql.ErrNoRows {
+		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError("Incorrect player tags", "Players NOT FOUND", 404))
+	} else if err1 == sql.ErrNoRows {
+		log.Println("err1")
 		http.Redirect(w, r, "http://localhost:3303/players/"+p2.Name+"/"+p2.Tag, http.StatusTemporaryRedirect)
 	} else if err2 != nil {
 		http.Redirect(w, r, "http://localhost:3303/players/"+p1.Name+"/"+p1.Tag, http.StatusTemporaryRedirect)

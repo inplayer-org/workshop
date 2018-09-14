@@ -7,7 +7,7 @@ import (
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
 )
 
 func handleErr(err error){
@@ -32,10 +32,10 @@ func enterFlags() (string,string,string) {
 
 /*Daily update using clans present in our database
 
-It updates all of the players from all of clans that are already present in our database that have been registered
+It updates all of the rankedPlayer from all of clans that are already present in our database that have been registered
 either though the web app or the the location daily update
 
--Should be started after finishing the Daily update using the locations since the players gotten from
+-Should be started after finishing the Daily update using the locations since the rankedPlayer gotten from
 location api might have new clans that aren't already present in our database.
 
 */
@@ -70,7 +70,7 @@ func main() {
 	}
 
 	//Getting all clans present in the database
-	allClans,err := queries.GetAllClans(db)
+	allClans,err := clans.GetAllClans(db)
 
 	//Panic if there is error with reading the clans from our database since there will be no data for processing or it will be corrupted
 	err = errors.Database(err)

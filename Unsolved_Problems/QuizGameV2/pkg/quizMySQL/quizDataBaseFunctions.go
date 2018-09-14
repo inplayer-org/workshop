@@ -39,7 +39,7 @@ func InsertIntoHighScores(db *sql.DB, name string, score int) {
 	errorHandler(err)
 }
 
-//PrintTop10 - Print the top 10 players present in the database in a sorted order
+//PrintTop10 - Print the top 10 rankedPlayer present in the database in a sorted order
 func PrintTop10(db *sql.DB) {
 	players := GetTop10(db)
 	fmt.Println("\nTOP 10 PLAYERS :")
