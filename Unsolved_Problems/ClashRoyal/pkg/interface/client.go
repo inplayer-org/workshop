@@ -12,6 +12,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerTags"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/cards"
 )
 
 
@@ -22,6 +23,7 @@ type ClientInterface interface {
 	GetRequestForPlayer(string) (playerStats.PlayerStats,error)
 	GetTagByClans(string) (playerTags.PlayerTags,error)
 	GetClan(string)(clans.Clan,error)
+	GetCards() (cards.Cards,error)
 }
 
 //MyClient structure have client that Do rquests
@@ -40,6 +42,28 @@ func NewClient() ClientInterface {
 func SetHeaders(req *http.Request){
 	req.Header.Add("Content-Type","application/json")
 	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
+}
+//Returning all cards from API and error check
+func (c *MyClient)GetCards() (cards.Cards,error) {
+	var card cards.Cards
+
+	req,err:=NewGetRequest("https://api.clashroyale.com/v1/cards")
+
+	//cant parse url
+	if err != nil {
+		return card,errors.Default("URL",err)
+	}
+
+	resp,err:=c.client.Do(req)
+
+	//fail to parse header,no header,timeout
+	if err:= errors.CheckStatusCode(resp);err!=nil {
+		return card,err
+	}
+
+	json.NewDecoder(resp.Body).Decode(&card)
+
+	return card,nil
 }
 
 func (c *MyClient)GetClan(tag string)(clans.Clan,error){
