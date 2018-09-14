@@ -8,7 +8,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 )
 
 var wg sync.WaitGroup
@@ -41,7 +41,7 @@ func CurrentLocation(db *sql.DB, elem locations.Locationsinfo, done chan<- error
 	defer wg.Done()
 
 	for {
-		if !players.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
+		if !parser.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
 			err = locations.InsertIntoLocationsTable(db, elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
 		} else {
 			err = locations.UpdateLocationsTable(db, elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
@@ -63,18 +63,18 @@ func CurrentLocation(db *sql.DB, elem locations.Locationsinfo, done chan<- error
 //DailyUpdateLocation makes request and updates the location table
 func DailyUpdate(db *sql.DB) (locations.Locations, error) {
 	client := _interface.NewClient()
-	locations, err := client.GetLocations()
+	locs, err := client.GetLocations()
 
 	if err != nil {
-		return locations, err
+		return locs, err
 	}
 
-	err = Locations(db, locations)
+	err = Locations(db, locs)
 
 	if err != nil {
-		return locations, err
+		return locs, err
 	}
 
-	return locations, nil
+	return locs, nil
 
 }

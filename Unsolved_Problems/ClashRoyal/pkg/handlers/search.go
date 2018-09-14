@@ -5,8 +5,8 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 
 
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerTags"
 )
 
 func (a *App) Search(w http.ResponseWriter,r *http.Request){
@@ -21,7 +21,7 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	}
 	if option=="playerTag" {
 
-		name, err := players.GetPlayerName(a.DB, text)
+		name, err := playerTags.GetPlayerName(a.DB, text)
 
 		if err == nil {
 			http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)

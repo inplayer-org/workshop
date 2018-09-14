@@ -9,7 +9,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/rankedPlayer"
 )
 // Get clan by name from DB
 func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
@@ -18,14 +18,14 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 	name := vars["name"]
 
 //querry for get clans by name
-	clans,err := clans.GetClansLike(a.DB,name)
+	clansLike,err := clans.GetClansLike(a.DB,name)
 
 	if err != nil {
 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Clan Name doesn't exist","There is no clan name like "+name,404))
 		return
 	}
 
-	tmpl.Tmpl.ExecuteTemplate(w,"byclansname.html",clans)
+	tmpl.Tmpl.ExecuteTemplate(w,"byclansname.html",clansLike)
 
 }
 // Sending string clan tag and response from DB clan informations
@@ -46,9 +46,9 @@ func (a *App)GetClanByTag(w http.ResponseWriter, r *http.Request){
 	tmpl.Tmpl.ExecuteTemplate(w,"clan.html",players)
 
 }
-func findClan(a *App,tag string) ([]players.RankedPlayer, error) {
+func findClan(a *App,tag string) ([]rankedPlayer.RankedPlayer, error) {
 
-	player,_:=players.GetPlayersByClanTag(a.DB,tag)
+	player,_:= rankedPlayer.GetPlayersByClanTag(a.DB,tag)
 
 	if len(player)==0{
 
@@ -70,7 +70,7 @@ func findClan(a *App,tag string) ([]players.RankedPlayer, error) {
 			return nil,errors.NewResponseError(err.Error(), "Can't find the clan", 404)
 		}
 
-		player,_=players.GetPlayersByClanTag(a.DB,tag)
+		player,_= rankedPlayer.GetPlayersByClanTag(a.DB,tag)
 
 	}
 
@@ -85,7 +85,7 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 
 	tag = parser.ToHashTag(tag)
 	log.Println("clanTag = ",tag)
-// request for range over players in 1 clan
+// request for range over rankedPlayer in 1 clan
 	e := update.GetRequestForPlayersFromClan(a.DB,a.Client,tag)
 
 	if e!=nil {

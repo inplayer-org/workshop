@@ -33,7 +33,7 @@ func enterFlags() (string, string, string) {
 /*Daily update using all locations present in clash royale api
 
 It updates information in our database about all locations available through the clash royale api and after that
-updates information in our database about all top players from every location that is a country and has ranking present for it
+updates information in our database about all top rankedPlayer from every location that is a country and has ranking present for it
 
 -Should be started first and finish before update playersbyclans is started (ideally)
 
@@ -79,7 +79,7 @@ func main() {
 
 	log.Println("Finished updating locations data")
 
-	//Section 2 - Update players from locations table
+	//Section 2 - Update rankedPlayer from locations table
 
 	//Starting Workers
 	for i := 0; i < 40; i++ {

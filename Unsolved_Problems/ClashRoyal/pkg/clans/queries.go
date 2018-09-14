@@ -8,8 +8,8 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"fmt"
 
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
 )
+
 //Cheking for clan if exist in db if not inserting if exist updating
 func UpdateClans(db *sql.DB,clan Clan)error{
 
@@ -17,7 +17,7 @@ func UpdateClans(db *sql.DB,clan Clan)error{
 		return nil
 	}
 
-	if !players.Exists(db,"clans","clanTag", clan.Tag) {
+	if !parser.Exists(db,"clans","clanTag", clan.Tag) {
 
 		_, err := db.Exec("INSERT INTO clans(clanTag,clanName) VALUES (?,?)", clan.Tag, clan.Name)
 
@@ -86,10 +86,10 @@ func GetClanName(db *sql.DB,clanTag string)(string,error){
 }
 
 //GetAllClans - Returns slice of all Clans present in the database
-func GetAllClans(db *sql.DB) ([]clans.Clan, error) {
+func GetAllClans(db *sql.DB) ([]Clan, error) {
 
-	var clanss []clans.Clan
-	var clan clans.Clan
+	var clanss []Clan
+	var clan Clan
 
 	rows, err := db.Query("SELECT clanTag,clanName FROM clans;")
 
