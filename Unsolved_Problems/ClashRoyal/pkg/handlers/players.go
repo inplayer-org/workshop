@@ -23,7 +23,7 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 	players,err := playerStats.GetPlayersLike(a.DB,name)
 
 	if err != nil {
-		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"No rankedPlayer with name like "+name,404))
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"No players with name like "+name,404))
 	}
 
 	tmpl.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
@@ -78,7 +78,7 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 		}
 
 		log.Println("name = ", name)
-		http.Redirect(w, r, "http://localhost:3303/rankedPlayer/"+name+"/"+tag, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+tag, http.StatusTemporaryRedirect)
 	}
 }
 

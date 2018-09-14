@@ -33,7 +33,7 @@ func (a *App) Compare2Players(w http.ResponseWriter, r *http.Request) {
 	p2, err := playerStats.GetFromTag(a.DB, player2)
 	if err == sql.ErrNoRows {
 		fmt.Println("ne postoi")
-		http.Redirect(w, r, "http://localhost:3303/rankedPlayer/"+p1.Name+"/"+p1.Tag, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "http://localhost:3303/players/"+p1.Name+"/"+p1.Tag, http.StatusTemporaryRedirect)
 
 	} else {
 		p.Player2 = p2
@@ -56,10 +56,10 @@ func (a *App) Compare(w http.ResponseWriter, r *http.Request) {
 		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError("Incorrect player tags","Players NOT FOUND",404))
 	} else if err1 == sql.ErrNoRows {
 		log.Println("err1")
-		http.Redirect(w, r, "http://localhost:3303/rankedPlayer/"+p2.Name+"/"+p2.Tag, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "http://localhost:3303/players/"+p2.Name+"/"+p2.Tag, http.StatusTemporaryRedirect)
 	} else if err2 == sql.ErrNoRows {
 		log.Println("err2")
-		http.Redirect(w, r, "http://localhost:3303/rankedPlayer/"+p1.Name+"/"+p1.Tag, http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "http://localhost:3303/players/"+p1.Name+"/"+p1.Tag, http.StatusTemporaryRedirect)
 	} else {
 		log.Println("ok e")
 		p.Player1 = p1

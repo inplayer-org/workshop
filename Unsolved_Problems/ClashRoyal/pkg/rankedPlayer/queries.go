@@ -3,11 +3,11 @@ package rankedPlayer
 
 import (
 "database/sql"
-"fmt"
 	"strconv"
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
+	"fmt"
 )
 
 
@@ -15,10 +15,11 @@ import (
 func GetSortedRankedPlayers(DB *sql.DB, orderBy string, numberOfPlayers int) ([]RankedPlayer, error) {
 
 	var Players []RankedPlayer
-	expression := "SELECT playerTag,playerName,wins,losses,trophies,clans.clanName,rankedPlayer.clanTag from rankedPlayer JOIN clans where rankedPlayer.clanTag=clans.clanTag order by " + orderBy + " desc limit " + strconv.Itoa(numberOfPlayers)
+	expression := "SELECT playerTag,playerName,wins,losses,trophies,clans.clanName,players.clanTag from players JOIN clans where players.clanTag=clans.clanTag order by " + orderBy + " desc limit " + strconv.Itoa(numberOfPlayers)
 	rows, err := DB.Query(expression)
 
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 
@@ -49,7 +50,7 @@ func GetSortedRankedPlayers(DB *sql.DB, orderBy string, numberOfPlayers int) ([]
 func GetPlayersByLocation(db *sql.DB, name int) ([]RankedPlayer, error) {
 
 	var player []RankedPlayer
-	rows, err := db.Query("SELECT playerName,wins,losses,trophies,clanTag from rankedPlayer where locationID=? order by wins desc limit 200", name)
+	rows, err := db.Query("SELECT playerName,wins,losses,trophies,clanTag from players where locationID=? order by wins desc limit 200", name)
 
 	if err != nil {
 		return nil, err
@@ -96,7 +97,7 @@ func GetPlayersByClanTag(db *sql.DB, clanTag string) ([]RankedPlayer, error) {
 
 	var playerss []RankedPlayer
 
-	rows, err := db.Query("SELECT rankedPlayer.playerTag,rankedPlayer.playerName,rankedPlayer.wins,rankedPlayer.losses,rankedPlayer.trophies,rankedPlayer.clanTag,clans.clanName from rankedPlayer join clans where clans.clanTag=rankedPlayer.clanTag and rankedPlayer.clanTag=? order by wins desc limit 50", clanTag)
+	rows, err := db.Query("SELECT players.playerTag,players.playerName,players.wins,players.losses,players.trophies,players.clanTag,clans.clanName from players join clans where clans.clanTag=players.clanTag and players.clanTag=? order by wins desc limit 50", clanTag)
 
 	if err != nil {
 		return nil, err

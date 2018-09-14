@@ -99,7 +99,7 @@ func (c *MyClient) GetRequestForPlayer (tag string) (playerStats.PlayerStats,err
 
 	var currentPlayer playerStats.PlayerStats
 
-	urlStr := "https://api.clashroyale.com/v1/rankedPlayer/"
+	urlStr := "https://api.clashroyale.com/v1/players/"
 
 	url.Parse(urlStr+rtag)
 
@@ -173,7 +173,7 @@ func (c *MyClient)GetPlayerTagsFromLocation(id int)(playerTags.PlayerTags,error)
 
 	var tags playerTags.PlayerTags
 
-	urlStr:="https://api.clashroyale.com/v1/locations/" + strconv.Itoa(id) + "/rankings/rankedPlayer"
+	urlStr:="https://api.clashroyale.com/v1/locations/" + strconv.Itoa(id) + "/rankings/players"
 
 
 	req,err:=NewGetRequest(urlStr)
