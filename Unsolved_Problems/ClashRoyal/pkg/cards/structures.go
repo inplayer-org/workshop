@@ -1,6 +1,5 @@
 package cards
 
-
 type Cards struct {
 	Items []struct {
 		Name     string `json:"name"`
@@ -11,6 +10,11 @@ type Cards struct {
 		} `json:"iconUrls"`
 	} `json:"items"`
 }
-
-
-
+type CardsInfo struct {
+	Name     string `json:"name"`
+	ID       int    `json:"id"`
+	MaxLevel int    `json:"maxLevel"`
+	IconUrls struct {
+		Medium string `json:"medium"`
+	} `json:"iconUrls"`
+}
