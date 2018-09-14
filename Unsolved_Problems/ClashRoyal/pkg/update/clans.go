@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"log"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
 )
 
 
-//GetRequestForPlayersFromClan - Refresh Button - Refreshing all information for players in a clan and updating that information into a database
+//GetRequestForPlayersFromClan - Refresh Button - Refreshing all information for rankedPlayer in a clan and updating that information into a database
 func GetRequestForPlayersFromClan(db *sql.DB,client _interface.ClientInterface,clanTag string)error{
 	tags,err:= client.GetTagByClans(clanTag)
 
@@ -39,7 +39,7 @@ func chanRequest(db *sql.DB,clientInterface _interface.ClientInterface,playerTag
 	if err!=nil{
 		done<-err
 	}else{
-				err:=players.UpdatePlayer(db,player,nil)
+				err:= playerStats.UpdatePlayer(db,player,nil)
 		done<-err
 	}
 }

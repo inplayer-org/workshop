@@ -1,6 +1,10 @@
 package parser
 
-import "errors"
+import (
+	"errors"
+	"database/sql"
+	"fmt"
+)
 
 //ToUrlTag - Removes the first character (should be #) and concatenates %25 in from for making a request from the Clash Royal api by tag for a single string entry
 func ToRequestTag(tag string) string{
@@ -47,4 +51,21 @@ func FromAnyToHashTag(tag string)(string,error){
 			return "#"+tag,nil
 		}
 	}
+}
+
+
+func Exists(DB *sql.DB,table string,column string,value string) bool{
+
+	var result int
+
+	query:=fmt.Sprintf(`SELECT COUNT(%s) FROM %s WHERE %s="%s"`,column,table,column,value)
+
+	DB.QueryRow(query).Scan(&result)
+
+	if result==0{
+		return false
+	}
+
+	return true
+
 }

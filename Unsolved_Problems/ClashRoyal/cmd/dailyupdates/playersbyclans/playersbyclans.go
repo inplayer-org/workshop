@@ -32,10 +32,10 @@ func enterFlags() (string,string,string) {
 
 /*Daily update using clans present in our database
 
-It updates all of the players from all of clans that are already present in our database that have been registered
+It updates all of the rankedPlayer from all of clans that are already present in our database that have been registered
 either though the web app or the the location daily update
 
--Should be started after finishing the Daily update using the locations since the players gotten from
+-Should be started after finishing the Daily update using the locations since the rankedPlayer gotten from
 location api might have new clans that aren't already present in our database.
 
 */

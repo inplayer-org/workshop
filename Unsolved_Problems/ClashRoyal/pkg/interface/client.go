@@ -9,17 +9,18 @@ import (
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerTags"
 )
 
 
 //ClientInterface imeto ne e dobro
 type ClientInterface interface {
 	GetLocations() (locations.Locations,error)
-	GetPlayerTagsFromLocation(int) (players.PlayerTags,error)
-	GetRequestForPlayer(string) (players.PlayerStats,error)
-	GetTagByClans(string) (players.PlayerTags,error)
+	GetPlayerTagsFromLocation(int) (playerTags.PlayerTags,error)
+	GetRequestForPlayer(string) (playerStats.PlayerStats,error)
+	GetTagByClans(string) (playerTags.PlayerTags,error)
 	GetClan(string)(clans.Clan,error)
 }
 
@@ -66,16 +67,16 @@ func (c *MyClient)GetClan(tag string)(clans.Clan,error){
 }
 
 //Get request for Clans with clanTag as string returning all Tagsmembers of 1 clan
-func (c *MyClient) GetTagByClans(clanTag string) (players.PlayerTags,error) {
+func (c *MyClient) GetTagByClans(clanTag string) (playerTags.PlayerTags,error) {
 	tag:=parser.ToRequestTag(clanTag)
 
-	var  playerTags players.PlayerTags
+	var  tags playerTags.PlayerTags
 	urlStr :="https://api.clashroyale.com/v1/clans/"+tag+"/members"
 	req,err:=NewGetRequest(urlStr)
 
 	//fail to parse url
 	if err!= nil {
-		return playerTags,errors.Default("URL",err)
+		return tags,errors.Default("URL",err)
 	}
 
 	resp,err:=c.client.Do(req)
@@ -83,22 +84,22 @@ func (c *MyClient) GetTagByClans(clanTag string) (players.PlayerTags,error) {
 
 	//fail to parse header,timeout,no header provided
 	if err:=errors.CheckStatusCode(resp);err!=nil{
-		return playerTags,err
+		return tags,err
 	}
-	json.NewDecoder(resp.Body).Decode(&playerTags)
-	fmt.Println(playerTags)
-	return playerTags,nil
+	json.NewDecoder(resp.Body).Decode(&tags)
+	fmt.Println(tags)
+	return tags,nil
 
 }
 
-//GetRequestForPlayer makes request and gets players tag name wins losses trophies clanTag and locationID
-func (c *MyClient) GetRequestForPlayer (tag string) (players.PlayerStats,error) {
+//GetRequestForPlayer makes request and gets rankedPlayer tag name wins losses trophies clanTag and locationID
+func (c *MyClient) GetRequestForPlayer (tag string) (playerStats.PlayerStats,error) {
 
 	rtag:=parser.ToRequestTag(tag)
 
-	var currentPlayer players.PlayerStats
+	var currentPlayer playerStats.PlayerStats
 
-	urlStr := "https://api.clashroyale.com/v1/players/"
+	urlStr := "https://api.clashroyale.com/v1/rankedPlayer/"
 
 	url.Parse(urlStr+rtag)
 
@@ -119,7 +120,7 @@ func (c *MyClient) GetRequestForPlayer (tag string) (players.PlayerStats,error) 
  		if err:=errors.CheckStatusCode(resp);err==nil{
 			json.NewDecoder(resp.Body).Decode(&currentPlayer)
 			currentPlayer.Tag = tag
-		//	queries.UpdatePlayer(c.db,currentPlayer,0)  not using anymore updating players in handlres >>>
+		//	queries.UpdatePlayer(c.db,currentPlayer,0)  not using anymore updating rankedPlayer in handlres >>>
 
 			break
 		}
@@ -145,52 +146,52 @@ func NewGetRequest(url string)(*http.Request,error){
 
 func (c *MyClient) GetLocations()(locations.Locations,error){
 
-	var locations locations.Locations
+	var locs locations.Locations
 
 	req,err:=NewGetRequest("https://api.clashroyale.com/v1/locations")
 
 	//cant parse url
 	if err != nil {
-		return locations,errors.Default("URL",err)
+		return locs,errors.Default("URL",err)
 	}
 
 	resp,err:=c.client.Do(req)
 
 	//fail to parse header,no header,timeout
 	if err:= errors.CheckStatusCode(resp);err!=nil {
-		return locations,err
+		return locs,err
 	}
 
-	json.NewDecoder(resp.Body).Decode(&locations)
+	json.NewDecoder(resp.Body).Decode(&locs)
 
 //	Locs(c.db,locations) updating locations db in handlers not here anymore
 
-	return locations,nil
+	return locs,nil
 }
 
-func (c *MyClient)GetPlayerTagsFromLocation(id int)(players.PlayerTags,error)  {
+func (c *MyClient)GetPlayerTagsFromLocation(id int)(playerTags.PlayerTags,error)  {
 
-	var playerTags players.PlayerTags
+	var tags playerTags.PlayerTags
 
-	urlStr:="https://api.clashroyale.com/v1/locations/" + strconv.Itoa(id) + "/rankings/players"
+	urlStr:="https://api.clashroyale.com/v1/locations/" + strconv.Itoa(id) + "/rankings/rankedPlayer"
 
 
 	req,err:=NewGetRequest(urlStr)
 
 	//fail to parse url
 	if err!=nil {
-		return playerTags,errors.Default("URLerr",err)
+		return tags,errors.Default("URLerr",err)
 	}
 
 	resp,err:=c.client.Do(req)
 
 	//fail to parse header,no header,timeout
 	if err:= errors.CheckStatusCode(resp);err!=nil {
-		return playerTags,err
+		return tags,err
 	}
 
-	json.NewDecoder(resp.Body).Decode(&playerTags)
+	json.NewDecoder(resp.Body).Decode(&tags)
 
-	return playerTags,nil
+	return tags,nil
 
 }

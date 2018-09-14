@@ -6,7 +6,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"strconv"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
 )
 
 type LocationWorker struct{
@@ -26,7 +26,7 @@ func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.C
 	// (there aren't player rankings available for locations that aren't a country in the clash royale api)
 	if locationWorker.Loc.IsCountry {
 
-		//Get PlayerTags structure of all players from the location
+		//Get playerTags structure of all rankedPlayer from the location
 		player, err := client.GetPlayerTagsFromLocation(locationWorker.Loc.ID)
 
 		if err!=nil{
@@ -35,7 +35,7 @@ func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.C
 		}
 
 
-		//Converting PlayerTags structure into string[]
+		//Converting playerTags structure into string[]
 		playerTags := player.GetTags()
 
 		//Requesting and updating information for every player
@@ -46,7 +46,7 @@ func(locationWorker *LocationWorker) FinishUpdate(db *sql.DB,client _interface.C
 			if err!=nil{
 				errors.Database(err)
 			}else{
-				players.UpdatePlayer(db,currentPlayer,locationWorker.Loc.ID)
+				playerStats.UpdatePlayer(db,currentPlayer,locationWorker.Loc.ID)
 			}
 		}
 

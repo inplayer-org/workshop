@@ -5,7 +5,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
 )
 
 
@@ -22,7 +22,7 @@ func NewClanWorker(c clans.Clan) Worker {
 //Worker for sending request for all player tags in a clan (present in the database) to the clash royale api and writing the response to database
 func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB,client _interface.ClientInterface)string{
 
-	//Get PlayerTags structure of all players in the clan
+	//Get playerTags structure of all rankedPlayer in the clan
 	player,err := client.GetTagByClans(clanWorker.Clan.Tag)
 
 	if err!=nil{
@@ -30,7 +30,7 @@ func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB,client _interface.ClientIn
 		return "Failed to get data for clan " + clanWorker.Clan.Name + " with Tag " + clanWorker.Clan.Tag
 	}
 
-	//Converting PlayerTags structure into string[]
+	//Converting playerTags structure into string[]
 	playerTags := player.GetTags()
 
 	//Requesting and updating information for every player
@@ -41,7 +41,7 @@ func (clanWorker *ClanWorker) FinishUpdate(db *sql.DB,client _interface.ClientIn
 		if err!=nil{
 			errors.Database(err)
 		}else{
-			players.UpdatePlayer(db,currentPlayer,0)
+			playerStats.UpdatePlayer(db,currentPlayer,0)
 		}
 	}
 

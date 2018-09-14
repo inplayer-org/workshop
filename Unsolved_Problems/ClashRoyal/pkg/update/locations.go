@@ -8,7 +8,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/locations"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/rankedPlayer"
 )
 
 var wg sync.WaitGroup
@@ -41,7 +41,7 @@ func CurrentLocation(db *sql.DB, elem locations.Locationsinfo, done chan<- error
 	defer wg.Done()
 
 	for {
-		if !players.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
+		if !rankedPlayer.Exists(db, "locations", "id", strconv.Itoa(elem.ID)) {
 			err = locations.InsertIntoLocationsTable(db, elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)
 		} else {
 			err = locations.UpdateLocationsTable(db, elem.ID, elem.Name, elem.IsCountry, elem.CountryCode)

@@ -5,8 +5,8 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 
 
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/players"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerTags"
 )
 
 func (a *App) Search(w http.ResponseWriter,r *http.Request){
@@ -17,16 +17,16 @@ func (a *App) Search(w http.ResponseWriter,r *http.Request){
 	//log.Println("text = ", text, "option = ", option)
 
 	if option=="playerName"{
-		http.Redirect(w,r,"http://localhost:3303/players/"+text,http.StatusTemporaryRedirect)
+		http.Redirect(w,r,"http://localhost:3303/rankedPlayer/"+text,http.StatusTemporaryRedirect)
 	}
 	if option=="playerTag" {
 
-		name, err := players.GetPlayerName(a.DB, text)
+		name, err := playerTags.GetPlayerName(a.DB, text)
 
 		if err == nil {
-			http.Redirect(w, r, "http://localhost:3303/players/"+name+"/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
+			http.Redirect(w, r, "http://localhost:3303/rankedPlayer/"+name+"/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
 		}else{
-			http.Redirect(w, r, "http://localhost:3303/players/new/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
+			http.Redirect(w, r, "http://localhost:3303/rankedPlayer/new/"+parser.ToRawTag(text), http.StatusTemporaryRedirect)
 		}
 	}
 	if option=="clanName"{
