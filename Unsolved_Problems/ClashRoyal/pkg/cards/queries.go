@@ -3,9 +3,9 @@ package cards
 import "database/sql"
 
 //insertInto inserts location into database
-func InsertIntoCardsTable(db *sql.DB,name string,id int,maxlevel int,iconurl string)error{
+func InsertIntoCardsTable(db *sql.DB, name string, id int, maxlevel int, iconurl string) error {
 
-	_, err := db.Exec("INSERT INTO cards(name,id,maxlevel,iconurl) VALUES ((?),(?),(?),(?));",name,id,maxlevel,iconurl)
+	_, err := db.Exec("INSERT INTO cards(name,id,maxlevel,iconurl) VALUES ((?),(?),(?),(?));", name, id, maxlevel, iconurl)
 
 	if err != nil {
 		return err
@@ -16,9 +16,9 @@ func InsertIntoCardsTable(db *sql.DB,name string,id int,maxlevel int,iconurl str
 }
 
 //update for an id updates a location
-func UpdateCardsTable(db *sql.DB,name string,id int,maxlevel int,iconurl string)error{
+func UpdateCardsTable(db *sql.DB, name string, id int, maxlevel int, iconurl string) error {
 
-	_, err := db.Exec("UPDATE cards SET name=(?),id=(?),maxlevel=(?) WHERE iconurl=(?)", name,id,maxlevel,iconurl)
+	_, err := db.Exec("UPDATE cards SET name=(?),id=(?),maxlevel=(?) WHERE iconurl=(?)", name, id, maxlevel, iconurl)
 
 	if err != nil {
 		return err
@@ -27,30 +27,53 @@ func UpdateCardsTable(db *sql.DB,name string,id int,maxlevel int,iconurl string)
 	return nil
 
 }
-// Returning slice of Locations Info from DB Table locations ALLInfo about Location
-func GetAllCards(db *sql.DB)([]Cards,error){
 
-	rows, _ := db.Query("SELECT name,id,maxlevel,iconurl from cards")
+// // Returning slice of Locations Info from DB Table locations ALLInfo about Location
+// func GetAllCards(db *sql.DB)([]Cards,error){
 
+// 	rows, _ := db.Query("SELECT name,id,maxlevel,iconurl from cards")
 
-	defer rows.Close()
+// 	defer rows.Close()
 
-	return cardsrows(rows)
-}
+// 	return cardsrows(rows)
+// }
 
-func cardsrows (rows *sql.Rows)([]Cards,error){
-	var card  []Cards
+// func cardsrows (rows *sql.Rows)([]Cards,error){
+// 	var card  []Cards
 
-	for rows.Next() {
-		var c Cards
-		err:=rows.Scan(&c.Items)
-		if err!=nil {
-			return nil,err
-		}
+// 	for rows.Next() {
+// 		var c Cards
+// 		err:=rows.Scan(&c.Items)
+// 		if err!=nil {
+// 			return nil,err
+// 		}
 
-		card=append(card,c)
+// 		card=append(card,c)
+// 	}
+
+// 	return card,nil
+// }
+
+func GetAllCards(db *sql.DB) ([]CardsInfo, error) {
+
+	var cards []CardsInfo
+	var card CardsInfo
+
+	rows, err := db.Query("SELECT name,id,maxlevel,iconurl FROM cards")
+
+	if err != nil {
+		return cards, err
 	}
 
-	return card,nil
-}
+	for rows.Next() {
+		err := rows.Scan(&card.Name, &card.ID, &card.MaxLevel, &card.IconUrls.Medium)
 
+		if err != nil {
+			return cards, err
+		}
+
+		cards = append(cards, card)
+	}
+
+	return cards, nil
+}

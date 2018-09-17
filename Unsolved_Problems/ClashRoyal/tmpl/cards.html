@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.first{
+    background-color: #122023;
+    padding: 0px 16px;
+    display: table;
+
+}
+
+.topnav {
+  overflow: hidden;
+  background-color:#488bf4;
+  margin-bottom: 50px;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #e5a035;
+  color:#122023;
+}
+
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+.logo .img{
+    /* max-width: 100%; */
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    
+  
+}
+.first .logo{
+  vertical-align:middle;
+    display:table-cell;
+    padding-right:5px;
+    width:50px;
+}
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #122023;
+}
+
+/* Float four columns side by side */
+.column {
+  float: left;
+  width: 20%;
+  padding: 5px 0px;
+}
+
+/* Remove extra left and right margins, due to padding */
+.row {margin: 0 17px;}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 50px;
+  }
+}
+
+/* Style the counter cards */
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  display: table;
+  padding: 14px;
+  width: 190px;
+  background-color: #122023;
+  border:2px solid #488bf4;
+  margin:5px 0;
+}
+div.text{ 
+    vertical-align:text-top;
+    display:table-cell;
+    text-align:justify;
+    color: #488bf4;
+   padding-left: 10px;
+  letter-spacing: 1px;
+  margin-left: 10px;
+}
+div.text.level{
+  vertical-align:middle;
+}
+div.card .img{
+    vertical-align:middle;
+    display:table-cell;
+    padding-right:5px;
+    width:50px; /* you can change width */
+    
+}
+div.img img{ 
+    vertical-align:middle;
+    max-width: 150%;
+    
+  
+}
+.p1{
+  margin: 0px;
+  margin-left: 10px;
+  text-shadow: 0px 0px 2px #488bf4;
+  font-size: 20px;
+  width: 135px;
+  word-wrap: break-word;
+  height: 2.2em;
+ 
+}
+.p2{
+  margin-top: 10px;
+  margin-left: 10px;
+}
+div .search{
+  vertical-align:middle;
+    display:table-cell;
+    text-align:justify;
+   
+}
+div.inlineblock{
+  display: inline-block;
+  padding-left: 50px;
+    padding-top: 40px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="first">
+  <div class="logo"><img src="https://vignette.wikia.nocookie.net/clashofclans/images/6/6c/Clash_Royale_Logo.png/revision/latest?cb=20180217045351" alt=""></div>
+  <div class="search">
+     <div class="inlineblock">
+        <form style="display: inline-block; width: 1000%">
+          <select id="searchby" name="searchby" style="margin-right:18px">
+              <option value="player">Player Tag</option>
+              <option value="clan">Clan Name</option>
+              <option value="location">Location ID</option>
+          </select>
+          <input class="text" type="text" style="margin-right:30px">
+                <input type="submit">
+      </form>
+      </div>
+      
+  </div>
+</div>
+<div class="topnav">
+  <a  href="#home">Home</a>
+  <a href="#cards">Cards</a>
+  <a href="#cards">Locations</a>
+ 
+</div>
+
+<!-- <div style="padding-left:16px">
+  <h2>Top Navigation Example</h2>
+  <p>Some content..</p>
+</div> -->
+<div class="row">
+{{range .}}
+        <div class="column">
+          <div class="card">
+              <div class="img"><img src={{.IconUrls.Medium}} /></div>
+               <div class="text">
+               <p class="p1">{{.Name}}</p>
+               <p class="p2">Max Level: {{.MaxLevel}}</p>
+                </div>
+          </div>
+        </div>
+       {{end}}
+      </div>  
+</body>
+</html>
