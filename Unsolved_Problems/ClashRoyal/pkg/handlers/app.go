@@ -26,8 +26,6 @@ func (a *App) Initialize(db *sql.DB, router *mux.Router) {
 
 	a.Client = _interface.NewClient()
 
-	a.Client = _interface.NewClient()
-
 	a.initializeRoutes()
 
 	a.Run(":3303")
