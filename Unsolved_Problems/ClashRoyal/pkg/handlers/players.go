@@ -12,6 +12,7 @@ import (
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerTags"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
@@ -27,6 +28,27 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 	}
 
 	tmpl.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
+
+
+
+}
+//FUNCTION TO TEST CLIENT REQUEST FOR CHESTS
+func (a *App) GetChestsByPlayer (w http.ResponseWriter, r *http.Request){
+
+	vars := mux.Vars(r)
+	tag := vars["tag"]
+	//get rankedPlayer by name from DB
+	client := _interface.MyClient{}
+	players,err := client.GetChestsForPlayer("#PYJV8290")
+	log.Println(err)
+	log.Println(players)
+	if err != nil {
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"No players with name like "+tag,404))
+	}
+
+	tmpl.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
+
+
 
 }
 //RequestTag -> sending to API response generated Player with playerstats struct and updating in DB

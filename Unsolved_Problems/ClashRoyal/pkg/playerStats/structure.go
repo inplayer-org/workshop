@@ -10,4 +10,14 @@ type PlayerStats struct {
 	Trophies   int         `json:"trophies"`
 	Clan       clans.Clan        `json:"clan"`
 	LocationID interface{} `json:"location_id"`
+	Chests []Chest `json:"items"`
+}
+
+
+
+type Chest struct {
+	items []struct {
+		Name  string `json:"name"`
+		Index int    `json:"index"`
+	}`json:"items"`
 }

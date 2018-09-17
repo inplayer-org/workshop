@@ -8,6 +8,7 @@ func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/players/{name}", a.GetPlayerByName).Methods("GET")
 	a.Router.HandleFunc("/players/{name}/{tag}", a.GetPlayerByTag).Methods("GET")
+	a.Router.HandleFunc("/players/{tag}/upcomingchests", a.GetChestsByPlayer).Methods("GET")
 
 	a.Router.HandleFunc("/players/{name}/{tag}/update", a.UpdatePlayer).Methods("GET")
 	a.Router.HandleFunc("/", a.Home).Methods("GET")
