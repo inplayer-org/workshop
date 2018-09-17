@@ -1,80 +1,11 @@
+
 <!DOCTYPE html>
 <html>
-<head>
+
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-.first{
-    background-color: #122023;
-    padding: 0px 16px;
 
-}
-
-.topnav {
-  overflow: hidden;
-  background-color:#488bf4;
-  margin-bottom: 50px;
-}
-
-.topnav a {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #e5a035;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #4CAF50;
-  color: white;
-}
-img{
-    max-width: 30%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  
-}
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #122023;
-}
-
-/* Float four columns side by side */
-.column {
-  float: left;
-  width: 20%;
-  padding: 5px 0px;
-}
-
-/* Remove extra left and right margins, due to padding */
-.row {margin: 0 17px;}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* Responsive columns */
-@media screen and (max-width: 600px) {
-  .column {
-    width: 100%;
-    display: block;
-    margin-bottom: 50px;
-  }
-}
 
 ol
 {
@@ -135,14 +66,8 @@ margin-top: -18px;
 }
 
 </style>
-</head>
-<body>
-<div class="first"><img src="https://vignette.wikia.nocookie.net/clashofclans/images/6/6c/Clash_Royale_Logo.png/revision/latest?cb=20180217045351" alt=""></div>
-<div class="topnav">
-  <a  href="#home">Home</a>
-  <a href="#cards">Cards</a>
- 
-</div>
+
+{{template "Header"}}
 {{ range $k, $v := . }}
 <div class="separator"><h3 style="color:#488bf4">{{$k}}</h3></div>
 
@@ -157,5 +82,4 @@ margin-top: -18px;
 
   {{ end }}
 
-</body>
-</html>
+{{template "Footer"}}
