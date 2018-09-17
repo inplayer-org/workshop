@@ -6,7 +6,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 )
 
-//insertInto inserts location into database
+//insertInto inserts cards into database
 func InsertIntoCardsTable(db *sql.DB, name string, id int, maxlevel int, iconurl string) error {
 
 	_, err := db.Exec("INSERT INTO cards(name,id,maxlevel,iconurl) VALUES ((?),(?),(?),(?));", name, id, maxlevel, iconurl)
@@ -19,7 +19,7 @@ func InsertIntoCardsTable(db *sql.DB, name string, id int, maxlevel int, iconurl
 
 }
 
-//update for an id updates a location
+//update for an id updates a cards
 func UpdateCardsTable(db *sql.DB, name string, id int, maxlevel int, iconurl string) error {
 
 	_, err := db.Exec("UPDATE cards SET name=(?),id=(?),maxlevel=(?) WHERE iconurl=(?)", name, id, maxlevel, iconurl)
@@ -32,7 +32,7 @@ func UpdateCardsTable(db *sql.DB, name string, id int, maxlevel int, iconurl str
 
 }
 
-// // Returning slice of Locations Info from DB Table locations ALLInfo about Location
+// // Returning slice of Cards Info from DB Table cards ALLInfo about cards
 // func GetAllCards(db *sql.DB)([]Cards,error){
 
 // 	rows, _ := db.Query("SELECT name,id,maxlevel,iconurl from cards")
