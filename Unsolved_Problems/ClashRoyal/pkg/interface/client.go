@@ -24,6 +24,7 @@ type ClientInterface interface {
 	GetTagByClans(string) (playerTags.PlayerTags, error)
 	GetClan(string) (clans.Clan, error)
 	GetCards() (cards.Cards, error)
+	GetChestsForPlayer(string) (playerStats.Chest,error)
 }
 
 //MyClient structure have client that Do rquests
@@ -51,6 +52,31 @@ func NewGetRequest(url string) (*http.Request, error) {
 	return req, nil
 }
 
+func (c *MyClient) GetChestsForPlayer(playerTag string) (playerStats.Chest,error) {
+	tag := parser.ToRequestTag(playerTag)
+
+	var chests playerStats.Chest
+	urlStr := "https://api.clashroyale.com/v1/clans/" + tag + "/upcomingchests"
+	req, err := NewGetRequest(urlStr)
+
+
+	//fail to parse url
+	if err != nil {
+		return chests, errors.Default("URL", err)
+	}
+
+	resp, err := c.client.Do(req)
+
+	//fail to parse header,timeout,no header provided
+	if err := errors.CheckStatusCode(resp); err != nil {
+		return chests, err
+
+	}
+	json.NewDecoder(resp.Body).Decode(&chests)
+	fmt.Println(chests)
+	return chests, nil
+
+}
 
 //Returning all cards from API and error check
 func (c *MyClient) GetCards() (cards.Cards, error) {
