@@ -36,20 +36,21 @@ func (a *App) GetLocationByName(w http.ResponseWriter, r *http.Request) {
 	tmpl.Tmpl.ExecuteTemplate(w, "tableranking.html", player)
 
 }
+/*
+// Returning all locations from DB
+ func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
+ // listing(returning) all locations from DB
+ 	locs, err := locations.GetAllLocations(a.DB)
 
-// // Returning all locations from DB
-// func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
-// // listing(returning) all locations from DB
-// 	locs, err := locations.GetAllLocations(a.DB)
+ 	if err != nil {
+ 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Server error","Can't load locations something went wrong",503))
+ 		return
+ 	}
 
-// 	if err != nil {
-// 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Server error","Can't load locations something went wrong",503))
-// 		return
-// 	}
+ 	tmpl.Tmpl.ExecuteTemplate(w,"locs.html",locs)
 
-// 	tmpl.Tmpl.ExecuteTemplate(w,"locs.html",locs)
 
-// }
+ } */
 
 // Returning all locations from DB
 func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
