@@ -1,65 +1,11 @@
+
 <!DOCTYPE html>
 <html>
-<head>
+
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-.first{
-    background-color: #122023;
-    padding: 0px 16px;
-    display: table;
-
-}
-
-.topnav {
-  overflow: hidden;
-  background-color:#488bf4;
-  margin-bottom: 2%;
-}
-
-.topnav a {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #e5a035;
-  color:#122023;
-}
-
-.topnav a.active {
-  background-color: #4CAF50;
-  color: white;
-}
-.logo .img{
-    /* max-width: 100%; */
-    display: block;
-    padding-top: 10px;
-    padding-bottom: 10px;
-
-    
-  
-}
-.first .logo{
-  vertical-align:middle;
-    display:table-cell;
-    padding-right:5px;
-    width:50px;
-}
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #122023;
-}
-
-/* Float four columns side by side */
+  /* Float four columns side by side */
 .column {
   float: left;
   width: 20%;
@@ -67,8 +13,8 @@ body {
     margin:auto;
 }
 
-/* Remove extra left and right margins, due to padding */
-.row {margin: 0 17px;}
+  Remove extra left and right margins, due to padding
+.row {width:98%;margin: auto;}
 
 /* Clear floats after the columns */
 .row:after {
@@ -117,9 +63,7 @@ div.card .img{
     
 }
 div.img img{ 
-    vertical-align:middle;
-    max-width: 150%;
-    
+   
   
 }
 .p1{
@@ -136,55 +80,17 @@ div.img img{
   margin-top: 10px;
   margin-left: 10px;
 }
-div .search{
-  vertical-align:middle;
-    display:table-cell;
-    text-align:justify;
-   
-}
-div.inlineblock{
-  display: inline-block;
-  padding-left: 50px;
-    padding-top: 40px;
-}
+
+
 
 </style>
-</head>
-<body>
 
-<div class="first">
-  <div class="logo"><img src="https://vignette.wikia.nocookie.net/clashofclans/images/6/6c/Clash_Royale_Logo.png/revision/latest?cb=20180217045351" alt=""></div>
-  <div class="search">
-     <div class="inlineblock">
-        <form style="display: inline-block; width: auto">
-          <select id="searchby" name="searchby" style="margin-right:18px">
-              <option value="player">Player Tag</option>
-              <option value="clan">Clan Name</option>
-              <option value="location">Location ID</option>
-          </select>
-          <input class="text" type="text" style="margin-right:30px">
-                <input type="submit">
-      </form>
-      </div>
-      
-  </div>
-</div>
-<div class="topnav">
-  <a  href="#home">Home</a>
-  <a href="#cards">Cards</a>
-  <a href="#cards">Locations</a>
- 
-</div>
-
-<!-- <div style="padding-left:16px">
-  <h2>Top Navigation Example</h2>
-  <p>Some content..</p>
-</div> -->
+{{template "Header"}}
 <div class="row">
 {{range .}}
         <div class="column">
           <div class="card">
-              <div class="img"><img src={{.IconUrls.Medium}} /></div>
+              <div class="img"><img style=" vertical-align:middle;max-width: 150%;"src={{.IconUrls.Medium}} /></div>
                <div class="text">
                <p class="p1">{{.Name}}</p>
                <p class="p2">Max Level: {{.MaxLevel}}</p>
@@ -193,5 +99,6 @@ div.inlineblock{
         </div>
        {{end}}
       </div>  
-</body>
-</html>
+  {{template "Footer"}}
+
+
