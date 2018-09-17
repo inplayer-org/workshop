@@ -1,6 +1,10 @@
 package cards
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
+)
 
 //insertInto inserts location into database
 func InsertIntoCardsTable(db *sql.DB, name string, id int, maxlevel int, iconurl string) error {
@@ -76,4 +80,32 @@ func GetAllCards(db *sql.DB) ([]CardsInfo, error) {
 	}
 
 	return cards, nil
+}
+
+// Returning slice of card structure with cardname u get cardname,id,maxlevel,iconurl
+func GetCardLike(db *sql.DB, name string) ([]Cards, error) {
+
+	var card []Cards
+	rows, err := db.Query("SELECT name,id,maxlevel,iconurl FROM cards Where name Like (?)", "%"+name+"%")
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+
+		var c Cards
+		err = rows.Scan(&c.Items)
+
+		if err != nil {
+			return nil, err
+		}
+		card = append(card, c)
+	}
+
+	if len(card) == 0 {
+		return nil, errors.Database(sql.ErrNoRows)
+	}
+
+	return card, nil
 }
