@@ -1,16 +1,14 @@
 package rankedPlayer
 
-
 import (
-"database/sql"
-	"strconv"
+	"database/sql"
+	"fmt"
 	"log"
+	"strconv"
+
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
-	"fmt"
 )
-
-
 
 func GetSortedRankedPlayers(DB *sql.DB, orderBy string, numberOfPlayers int) ([]RankedPlayer, error) {
 
@@ -66,7 +64,10 @@ func GetPlayersByLocation(db *sql.DB, name int) ([]RankedPlayer, error) {
 		err := db.QueryRow("SELECT clanName from clans where clanTag=?", t.Player.Clan.Tag).Scan(&t.Player.Clan.Name)
 
 		if err != nil {
-			return nil, err
+			t.Player.Clan.Name = "no clan"
+			player = append(player, t)
+			break
+			//return nil, err
 		}
 
 		player = append(player, t)
@@ -90,7 +91,6 @@ func GetPlayersByLocation(db *sql.DB, name int) ([]RankedPlayer, error) {
 
 	return p,nil
 }*/
-
 
 //Slice of RankedPlayer returning all rankedPlayer from 1 clan sorted by wins
 func GetPlayersByClanTag(db *sql.DB, clanTag string) ([]RankedPlayer, error) {

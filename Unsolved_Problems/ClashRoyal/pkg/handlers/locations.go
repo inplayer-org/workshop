@@ -25,9 +25,9 @@ func (a *App) GetLocationByName(w http.ResponseWriter, r *http.Request) {
 		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError("Location ID not number", "ID should contain only numbers", 404))
 		return
 	}
+
 	// querry from DB to list and sort 250 rankedPlayer from 1 location
 	player, _ := rankedPlayer.GetPlayersByLocation(a.DB, id)
-
 	if len(player) == 0 {
 		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError("Location not found", "Location with "+strconv.Itoa(id)+" doesnot exist", 404))
 		return
@@ -36,6 +36,7 @@ func (a *App) GetLocationByName(w http.ResponseWriter, r *http.Request) {
 	tmpl.Tmpl.ExecuteTemplate(w, "tableranking.html", player)
 
 }
+
 /*
 // Returning all locations from DB
  func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
@@ -61,11 +62,11 @@ func (a *App) GetLocations(w http.ResponseWriter, r *http.Request) {
 		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError("Server error", "Can't load locations something went wrong", 503))
 		return
 	}
-	m := make(map[string][]string)
+	m := make(map[string][]locations.Locationsinfo)
 	for _, j := range locs {
 		if j.IsCountry {
 			key, _ := parser.FirstCharFrom(j.Name)
-			m[key] = append(m[key], j.Name)
+			m[key] = append(m[key], j)
 		}
 	}
 	tmpl.Tmpl.ExecuteTemplate(w, "locationsNew.html", m)
