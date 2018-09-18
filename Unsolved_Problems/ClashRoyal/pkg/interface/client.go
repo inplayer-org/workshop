@@ -53,10 +53,10 @@ func NewGetRequest(url string) (*http.Request, error) {
 }
 
 func (c *MyClient) GetChestsForPlayer(playerTag string) (playerStats.Chest,error) {
-	tag := parser.ToRequestTag(playerTag)
+	//tag := parser.ToRequestTag(playerTag)
 
 	var chests playerStats.Chest
-	urlStr := "https://api.clashroyale.com/v1/clans/" + tag + "/upcomingchests"
+	urlStr := "https://api.clashroyale.com/v1/players/%25PYJV8290/upcomingchests"
 	req, err := NewGetRequest(urlStr)
 
 
@@ -64,6 +64,7 @@ func (c *MyClient) GetChestsForPlayer(playerTag string) (playerStats.Chest,error
 	if err != nil {
 		return chests, errors.Default("URL", err)
 	}
+
 
 	resp, err := c.client.Do(req)
 
