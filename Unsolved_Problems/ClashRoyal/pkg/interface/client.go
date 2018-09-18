@@ -53,12 +53,11 @@ func NewGetRequest(url string) (*http.Request, error) {
 }
 
 func (c *MyClient) GetChestsForPlayer(playerTag string) (playerStats.Chest,error) {
-	//tag := parser.ToRequestTag(playerTag)
+	tag := parser.ToRequestTag(playerTag)
 
 	var chests playerStats.Chest
-	urlStr := "https://api.clashroyale.com/v1/players/%25PYJV8290/upcomingchests"
+	urlStr := "https://api.clashroyale.com/v1/players/"+tag+"/upcomingchests"
 	req, err := NewGetRequest(urlStr)
-
 
 	//fail to parse url
 	if err != nil {

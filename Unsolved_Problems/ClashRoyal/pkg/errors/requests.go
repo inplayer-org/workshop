@@ -26,7 +26,7 @@ func NewResponseError(reason string, message string,code int)error{
 //Checks the status code of the response and transforms it into an error type that correlates to the messages from the clash royale api
 func CheckStatusCode(response *http.Response)error{
 
-	if response.StatusCode==200{
+	if response.StatusCode==http.StatusOK{
 		return nil
 	}
 

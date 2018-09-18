@@ -34,13 +34,11 @@ func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
 //FUNCTION TO TEST CLIENT REQUEST FOR CHESTS
 func (a *App) GetChestsByPlayer (w http.ResponseWriter, r *http.Request){
 
-	//vars := mux.Vars(r)
-	//tag := vars["tag"]
-	//get rankedPlayer by name from DB
+	vars := mux.Vars(r)
+	tag := vars["tag"]
 
-	players,err := a.Client.GetChestsForPlayer("#PYJV8290")
-	log.Println(err)
-	log.Println(players)
+	players,err := a.Client.GetChestsForPlayer(tag)
+
 	if err != nil {
 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",err)
 	}

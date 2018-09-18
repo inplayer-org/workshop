@@ -16,8 +16,8 @@ type PlayerStats struct {
 
 
 type Chest struct {
-	items []struct {
-		Name  string `json:"name"`
-		Index int    `json:"index"`
-	}`json:"items"`
+	Items []struct {
+		Index int `json:"index"`
+		Name string `json:"name"`
+} `json:"items"`
 }
