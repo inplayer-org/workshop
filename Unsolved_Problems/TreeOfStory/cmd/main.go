@@ -6,14 +6,14 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/PrevozMk/pkg/errors"
-	"repo.inplayer.com/workshop/Unsolved_Problems/PrevozMk/pkg/handlers"
+	"repo.inplayer.com/workshop/Unsolved_Problems/TreeOfStory/pkg/errors"
+	"repo.inplayer.com/workshop/Unsolved_Problems/TreeOfStory/pkg/handlers"
 )
 
 //enterFlags flags for DbName UserName and Password
 func enterFlags() (string,string,string) {
 
-	DbName := flag.String("database", "Prevoz_Mk", "the name of you database")
+	DbName := flag.String("database", "TreeOfStory", "the name of you database")
 
 	UserName := flag.String("username", "root", "the username to make a connection to the database")
 
