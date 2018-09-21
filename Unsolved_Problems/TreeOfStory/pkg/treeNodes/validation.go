@@ -2,19 +2,20 @@ package treeNodes
 
 import "database/sql"
 
-func nodeExistsForUser(db *sql.DB,userID int,nodeName string)error{
-
-	Row := db.QueryRow("SELECT Exists (SELECT * FROM TreeNodes WHERE userID=? && nodeName=?);",userID,nodeName)
+func nodeExistsForUser(db *sql.DB,userID int,nodeName string)(bool,error){
 
 	var exists int
 
-	err := Row.Scan(exists)
+	err := db.QueryRow("SELECT Exists (SELECT * FROM TreeNodes WHERE userID=? && nodeName=?);",userID,nodeName).Scan(&exists)
 
 	if err!=nil{
-		return err
+		return false,err
 	}
 
-	
+	if exists == 1{
+		return true,nil
+	}
 
+	return false,nil
 
 }
