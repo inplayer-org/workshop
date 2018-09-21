@@ -51,6 +51,4 @@ func main (){
 	//Open the routes and perform listen and serve
 	app.Initialize(db,router)
 
-
-
 }

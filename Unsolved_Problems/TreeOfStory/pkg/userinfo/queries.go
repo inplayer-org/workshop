@@ -6,28 +6,28 @@ import (
 )
 
 //insertInto inserts userinfo into database
-func InsertIntoUserInfoTable(db *sql.DB,id int,username string,fullname string)error{
+func InsertIntoUserInfoTable(db *sql.DB,id int,username string,fullname string)(int,error) {
 
-	_, err := db.Exec("INSERT INTO UserInfo(ID,UserName,FullName) VALUES ((?),(?),(?));", id, username, fullname)
+	_, err := db.Exec("INSERT INTO UserInfo(UserName,FullName) VALUES ((?),(?));", username, fullname)
 
 	if err != nil {
-		return err
+		return id,err
 	}
 
-	return nil
+	return id,nil
 
 }
 
 //update for an id updates a userinfo
-func UpdateUserInfoTable(db *sql.DB,id int,username string,fullname string)error {
+func UpdateUserInfoTable(db *sql.DB,id int,username string,fullname string)(int,error) {
 
-	_, err := db.Exec("UPDATE UserInfo SET ID=(?),UserName=(?),FullName=(?) WHERE ID=(?)", username, fullname, id)
+	_, err := db.Exec("UPDATE UserInfo SET UserName=(?),FullName=(?) WHERE ID=(?)", username, fullname, id)
 
 	if err != nil {
-		return err
+		return id,err
 	}
 
-	return nil
+	return id,nil
 }
 
 
