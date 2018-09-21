@@ -39,10 +39,10 @@ func GetAllUsers(db *sql.DB)([]Userinfo,error){
 
 	defer rows.Close()
 
-	return locationrows(rows)
+	return userrows(rows)
 }
 
-func locationrows (rows *sql.Rows)([]Userinfo,error){
+func userrows (rows *sql.Rows)([]Userinfo,error){
 	var users  []Userinfo
 
 	for rows.Next() {

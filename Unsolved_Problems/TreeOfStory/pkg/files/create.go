@@ -6,6 +6,8 @@ import (
 	"io"
 )
 
+var path = "/home/darko/go/src/repo.inplayer.com/workshop/Unsolved_Problems/TreeOfStory/user"
+
 
 //creating directory in given path(string) if not exist
 func CreateDirectory(path string) {
@@ -16,8 +18,6 @@ func CreateDirectory(path string) {
 		}
 	}
 }
-
-
 
 func CreateFile(path string) {
 	// detect if file exists
