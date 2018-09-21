@@ -21,7 +21,7 @@ func (a *App) Initialize(db *sql.DB, router *mux.Router) {
 
 	a.initializeRoutes()
 
-	a.Run(":3303")
+	 a.Run(":3303")
 
 }
 
