@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/TreeOfStory/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/TreeOfStory/pkg/handlers"
+	"repo.inplayer.com/workshop/Unsolved_Problems/TreeOfStory/pkg/files"
 )
 
 //enterFlags flags for DbName UserName and Password
@@ -41,6 +42,9 @@ func main (){
 	if err != nil {
 		panic(err)
 	}
+p,_:=files.Path("asd")
+	fmt.Println(p)
+
 
 	//Creating a router
 	router := mux.NewRouter()
