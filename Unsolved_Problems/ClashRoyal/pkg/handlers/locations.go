@@ -33,7 +33,7 @@ func (a *App) GetLocationByName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.Tmpl.ExecuteTemplate(w, "tableranking.html", player)
+	tmpl.Tmpl.ExecuteTemplate(w, "tablerankingsNew.html", player)
 
 }
 

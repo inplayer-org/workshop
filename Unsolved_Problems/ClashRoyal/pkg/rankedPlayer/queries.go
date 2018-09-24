@@ -64,7 +64,7 @@ func GetPlayersByLocation(db *sql.DB, name int) ([]RankedPlayer, error) {
 		err := db.QueryRow("SELECT clanName from clans where clanTag=?", t.Player.Clan.Tag).Scan(&t.Player.Clan.Name)
 
 		if err != nil {
-			t.Player.Clan.Name = "no clan"
+			t.Player.Clan.Name = ""
 			player = append(player, t)
 			break
 			//return nil, err

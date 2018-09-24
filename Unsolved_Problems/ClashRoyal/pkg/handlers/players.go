@@ -2,100 +2,99 @@ package handlers
 
 import (
 	"database/sql"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerStats"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/playerTags"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/interface"
 )
 
 // Sending Name as string to DB response Player by Name with all stats from PlayerStats
-func (a *App) GetPlayerByName (w http.ResponseWriter, r *http.Request){
-
+func (a *App) GetPlayerByName(w http.ResponseWriter, r *http.Request) {
+	log.Println("okkkkk")
 	vars := mux.Vars(r)
 	name := vars["name"]
 	//get rankedPlayer by name from DB
-	players,err := playerStats.GetPlayersLike(a.DB,name)
+	players, err := playerStats.GetPlayersLike(a.DB, name)
 
 	if err != nil {
-		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"No players with name like "+name,404))
+		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError(err.Error(), "No players with name like "+name, 404))
 	}
 
-	tmpl.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
-
-
+	tmpl.Tmpl.ExecuteTemplate(w, "byplayersname.html", players)
 
 }
+
 //FUNCTION TO TEST CLIENT REQUEST FOR CHESTS
-func (a *App) GetChestsByPlayer (w http.ResponseWriter, r *http.Request){
+func (a *App) GetChestsByPlayer(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	tag := vars["tag"]
 	//get rankedPlayer by name from DB
 	client := _interface.MyClient{}
-	players,err := client.GetChestsForPlayer("#PYJV8290")
+	players, err := client.GetChestsForPlayer("#PYJV8290")
 	log.Println(err)
 	log.Println(players)
 	if err != nil {
-		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"No players with name like "+tag,404))
+		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError(err.Error(), "No players with name like "+tag, 404))
 	}
 
-	tmpl.Tmpl.ExecuteTemplate(w,"byplayersname.html",players)
-
-
+	tmpl.Tmpl.ExecuteTemplate(w, "byplayersname.html", players)
 
 }
+
 //RequestTag -> sending to API response generated Player with playerstats struct and updating in DB
-func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request){
+func (a *App) GetPlayerByTag(w http.ResponseWriter, r *http.Request) {
 
-	vars:=mux.Vars(r)
+	vars := mux.Vars(r)
 
-	tag:=vars["tag"]
+	tag := vars["tag"]
 
 	t := parser.ToHashTag(tag)
 
-	player,err:=findPlayer(a,t)
+	player, err := findPlayer(a, t)
 
 	if err != nil {
-		tmpl.Tmpl.ExecuteTemplate(w,"error.html",err)
+		tmpl.Tmpl.ExecuteTemplate(w, "error.html", err)
 		return
 	}
-
-	tmpl.Tmpl.ExecuteTemplate(w, "player.html", player)
+	tmpl.Tmpl.ExecuteTemplate(w, "playerNew.html", player)
 
 }
+
 // Sending RequestTag response hashtag .. cheking for player in db if not exist req to API and updating db
-func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
+func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request) {
 
-	vars:=mux.Vars(r)
-	tag:=vars["tag"]
-	t:=parser.ToHashTag(tag)
+	vars := mux.Vars(r)
+	tag := vars["tag"]
+	t := parser.ToHashTag(tag)
 	//sending request to API For 1 player if doesent exist in DB to update it
-	player,err:=a.Client.GetRequestForPlayer(t)
+	player, err := a.Client.GetRequestForPlayer(t)
 
-	if err !=nil {
-		tmpl.Tmpl.ExecuteTemplate(w,"error.html",err)
+	if err != nil {
+		tmpl.Tmpl.ExecuteTemplate(w, "error.html", err)
 		return
 	}
 
 	// querry to updateplayer from API To DB
-	err= playerStats.UpdatePlayer(a.DB,player,nil)
+	err = playerStats.UpdatePlayer(a.DB, player, nil)
 
-	if err!=nil{
-		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"Can't update player",503))
+	if err != nil {
+		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError(err.Error(), "Can't update player", 503))
 		return
-	}else{
+	} else {
 		//querry to get PLayer name from DB
 		name, err := playerTags.GetPlayerName(a.DB, t)
 
 		if err != nil {
-			tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError(err.Error(),"Player name "+name+" doesn't exist",404))
+			tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError(err.Error(), "Player name "+name+" doesn't exist", 404))
 			return
 		}
 
@@ -105,7 +104,7 @@ func (a *App) UpdatePlayer(w http.ResponseWriter, r *http.Request){
 }
 
 //Tries to find player in multiple steps, first in local database, then through clash royale api and returns error if it doesn't exist
-func findPlayer(a *App,tag string)(playerStats.PlayerStats,error) {
+func findPlayer(a *App, tag string) (playerStats.PlayerStats, error) {
 
 	//Search for the player in local database
 	player, err := playerStats.GetFromTag(a.DB, tag)
@@ -164,4 +163,3 @@ func findPlayer(a *App,tag string)(playerStats.PlayerStats,error) {
 	return player, nil
 
 }
-

@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+#rankingTable {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    color: #122023;
+    border-collapse: collapse;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#rankingTable td, #rankingTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#rankingTable tr:nth-child(even){background-color: #f2f2f2;}
+#rankingTable tr:nth-child(odd){background-color: #ddd;}
+
+#rankingTable tr:hover {background-color: #e5a035;}
+
+#rankingTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #488bf4;
+    color: white;
+}
+</style>
+
+{{template "Header"}}
+
+<table id="rankingTable">
+    <tr>
+      <th style="text-align: center">Rank</th>
+      <th style="text-align: center">Player Name</th>
+      <th style="text-align: center">Wins</th>
+      <th style="text-align: center">Losses</th>
+      <th style="text-align: center">Trophies</th>
+      <th style="text-align: center">Clan Name</th>
+    </tr>
+    {{range .}}
+    <tr>
+      <td>{{.Rank}}</td>
+      <td>{{ .Player.Name}}</td>
+      <td style="text-align: center">{{ .Player.Wins}}</td>
+      <td style="text-align: center">{{ .Player.Losses}}</td>
+      <td style="text-align: center">{{ .Player.Trophies}}</td>
+      <td style="text-align: center">{{ .Player.Clan.Name}}</td>
+    </tr>
+    {{end}}
+    
+    
+  </table>
+{{template "Footer"}}
+
+
