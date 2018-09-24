@@ -21,25 +21,26 @@ func CreateDirectory(path string) error{
 	return nil
 }
 
-func CreateFile(path string) {
+func CreateFile(path string) error{
 	// detect if file exists
 	var _, err = os.Stat(path)
 
 	// create file if not exists
 	if os.IsNotExist(err) {
 		var file, err = os.Create(path)
-		if isError(err) { return }
+		if isError(err) { return err}
 		defer file.Close()
 	}
 
 	fmt.Println("==> done creating file", path)
+	return nil
 }
 
 
-func ReadFile(path string) {
+func ReadFile(path string) error{
 	// re-open file
 	var file, err = os.OpenFile(path, os.O_RDWR, 0644)
-	if isError(err) { return }
+	if isError(err) { return err}
 	defer file.Close()
 
 	// read file, line by line
@@ -55,20 +56,22 @@ func ReadFile(path string) {
 		// break if error occured
 		if err != nil && err != io.EOF {
 			isError(err)
-			break
+			return err
 		}
 	}
 
 	fmt.Println("==> done reading from file")
 	fmt.Println(string(text))
+	return nil
 }
 
-func DeleteFile(path string) {
+func DeleteFile(path string) error{
 	// delete file
 	var err = os.Remove(path)
-	if isError(err) { return }
+	if isError(err) { return err}
 
 	fmt.Println("==> done deleting file")
+	return nil
 }
 
 func isError(err error) bool {
@@ -76,7 +79,7 @@ func isError(err error) bool {
 		fmt.Println(err.Error())
 	}
 
-	return (err != nil)
+	return err != nil
 }
 
 func Path(inFile string)(string,error){
