@@ -37,6 +37,7 @@ func (a *App) GetChestsByPlayer(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	tag := vars["tag"]
+<<<<<<< HEAD
 	//get rankedPlayer by name from DB
 	client := _interface.MyClient{}
 	players, err := client.GetChestsForPlayer("#PYJV8290")
@@ -44,6 +45,13 @@ func (a *App) GetChestsByPlayer(w http.ResponseWriter, r *http.Request) {
 	log.Println(players)
 	if err != nil {
 		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError(err.Error(), "No players with name like "+tag, 404))
+=======
+
+	players,err := a.Client.GetChestsForPlayer(tag)
+
+	if err != nil {
+		tmpl.Tmpl.ExecuteTemplate(w,"error.html",err)
+>>>>>>> a4020068ad7eb2e269de556a567c4ce491e36058
 	}
 
 	tmpl.Tmpl.ExecuteTemplate(w, "byplayersname.html", players)
