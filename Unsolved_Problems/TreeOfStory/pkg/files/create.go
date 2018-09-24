@@ -33,7 +33,6 @@ func CreateFile(path string) error {
 		defer file.Close()
 	}
 
-
 	fmt.Println("==> done creating file", path)
 return nil
 }
@@ -58,7 +57,7 @@ func ReadFile(path string) error{
 		// break if error occured
 		if err != nil && err != io.EOF {
 			isError(err)
-			errors.NewMyError("Can't read file")
+			return errors.NewMyError("Can't read file")
 		}
 	}
 
@@ -81,7 +80,7 @@ func isError(err error) bool {
 		fmt.Println(err.Error())
 	}
 
-	return (err != nil)
+	return err != nil
 }
 
 func Path(inFile string)(string,error){

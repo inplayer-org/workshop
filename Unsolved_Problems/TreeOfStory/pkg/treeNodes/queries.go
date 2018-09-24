@@ -8,7 +8,7 @@ import (
 //Inserts the first node when a user is created (Only should be used when creating new User)
 func InsertAbout(DB *sql.DB,userID int)error{
 
-	exist,err := nodeExistsForUser(DB,userID,"about")
+	exist,err := nodeExistsForUser(DB,Node{UserID:userID,ParentNode:"/",NodeName:"about"})
 
 	if err!=nil{
 		return err
@@ -28,39 +28,15 @@ func InsertAbout(DB *sql.DB,userID int)error{
 }
 
 //Unchecked, needs to be tested
-func Insert(DB *sql.DB,userID int,nodeName string,parentNode string,nodeWeight int,fileName string)error{
+func Insert(DB *sql.DB,newNode Node)error{
 
-	exist,err := nodeExistsForUser(DB,userID,nodeName)
-
-	if err!=nil{
-		return err
-	}
-
-	if exist{
-		return errors.Errorf("Error in inserting node %s into our database, nodeName for this userID(%d) already exists",nodeName,userID)
-	}
-
-	exist,err = nodeExistsForUser(DB,userID,parentNode)
-
-	if err!=nil {
-		return err
-	}
-
-	if !exist{
-		return errors.Errorf("Error in inserting node %s into our database, nodeParent for this userID(%d) doesn't exist",parentNode)
-	}
-
-	weightCheck,err := GetWeightForNode(DB,userID,parentNode)
+	err := validateTreeNodeForInsert(DB,newNode)
 
 	if err!=nil{
 		return err
 	}
 
-	if weightCheck>nodeWeight{
-		return errors.Errorf("Error in inserting node %s into our database, nodeWeight(%d) for this node can't be lower than the weight of it's parentNode(%d)",parentNode,nodeWeight,weightCheck)
-	}
-
-	_,err = DB.Exec(`Insert into TreeNodes(userID,nodeName,parentNode,nodeWeight,fileName) Values (?,?,?,?,?);`,userID,nodeName,parentNode,nodeWeight,fileName)
+	_,err = DB.Exec(`Insert into TreeNodes(userID,nodeName,parentNode,nodeWeight,fileName) Values (?,?,?,?,?);`,newNode.UserID,newNode.NodeName,newNode.ParentNode,newNode.NodeWeight,newNode.FileName)
 
 	if err!=nil{
 		return err
@@ -71,11 +47,12 @@ func Insert(DB *sql.DB,userID int,nodeName string,parentNode string,nodeWeight i
 
 }
 
-func GetWeightForNode(DB *sql.DB,userID int,nodeName string)(int,error){
+//Returns the weight for a node
+func GetWeightForNode(DB *sql.DB,Node Node)(int,error){
 
 	var weight int
 
-	err := DB.QueryRow("SELECT nodeWeight FROM TreeNodes WHERE userID=? && nodeName=?",userID,nodeName).Scan(&weight)
+	err := DB.QueryRow("SELECT nodeWeight FROM TreeNodes WHERE userID=? && nodeName=?",Node.UserID,Node.NodeName).Scan(&weight)
 
 	if err!=nil{
 		return weight,err
