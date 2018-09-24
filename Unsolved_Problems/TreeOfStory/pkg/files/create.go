@@ -4,19 +4,21 @@ import (
 	"os"
 	"fmt"
 	"io"
+	"os/user"
 )
 
 var path = "/home/darko/go/src/repo.inplayer.com/workshop/Unsolved_Problems/TreeOfStory/user"
 
 
 //creating directory in given path(string) if not exist
-func CreateDirectory(path string) {
+func CreateDirectory(path string) error{
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		err = os.MkdirAll(path, 0755)
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
+	return nil
 }
 
 func CreateFile(path string) {
@@ -75,4 +77,14 @@ func isError(err error) bool {
 	}
 
 	return (err != nil)
+}
+
+func Path(inFile string)(string,error){
+	user,err:=user.Current()
+
+	if err!=nil {
+		return "",err
+	}
+
+	return user.HomeDir+"/code/go/src/repo.inplayer.com/workshop/Unsolved_Problems/TreeOfStory/"+inFile,nil
 }
