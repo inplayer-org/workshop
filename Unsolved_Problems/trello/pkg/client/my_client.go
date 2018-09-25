@@ -1,9 +1,13 @@
 package client
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/members"
+)
 
 type ClientInterface interface {
-
+	GetMember(string)(members.Member,error)
 }
 
 //MyClient structure have client that Do rquests
@@ -21,14 +25,13 @@ func NewClient() ClientInterface {
 //SetHeaders sets the headers to make the request
 func SetHeaders(req *http.Request){
 
-
-
-	//IMPORTANT change the headers
-
+	q := req.URL.Query()
+	q.Add("key","9ecdc5f04a4ccb643b83d4fd2b920416")
+	q.Add("token","125a712b04063b34d2c22392704bb38a5fc88bb48f665c0f6bdf2d516f473c9d")
 
 
 	req.Header.Add("Content-Type","application/json")
-	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
+	req.URL.RawQuery = q.Encode()
 }
 
 //NewGetRequest makes the request with the headers
@@ -39,5 +42,32 @@ func NewGetRequest(url string)(*http.Request,error){
 	}
 	SetHeaders(req)
 	return req,nil
+}
+
+func (c *MyClient)GetMember(memberID string)(members.Member,error){
+
+	var member members.Member
+
+	urlStr:="https://api.trello.com/1/members/"+memberID
+	req,err:=NewGetRequest(urlStr)
+
+	if err!=nil{
+		return member,err
+	}
+	resp,err:=c.client.Do(req)
+
+	if err!=nil{
+		return member,err
+	}
+
+	//fail to parse header,timeout,no header provided
+	//if err:=errors.CheckStatusCode(resp);err!=nil{
+	//	return clan,err
+	//}
+	json.NewDecoder(resp.Body).Decode(&member)
+
+	return member,nil
+
+
 }
 
