@@ -66,7 +66,7 @@ func (c *MyClient)GetMember(memberID string)(interfaces.DataStructure,error){
 }
 
 
-func (c *MyClient)GetCard(cardID string)(cards.Card,error){
+func (c *MyClient)GetCard(cardID string)(interfaces.DataStructure,error){
 
 	var card cards.Card
 
@@ -74,20 +74,20 @@ func (c *MyClient)GetCard(cardID string)(cards.Card,error){
 	req,err:=NewGetRequest(urlStr)
 
 	if err!=nil{
-		return card,err
+		return card.NewDataStructure(),err
 	}
 	resp,err:=c.client.Do(req)
 
 	if err!=nil{
-		return card,err
+		return card.NewDataStructure(),err
 	}
 
 	//fail to parse header,timeout,no header provided
 	if err:=errors.CheckStatusCode(resp);err!=nil{
-	    return card,err
+	    return card.NewDataStructure(),err
 	}
 	json.NewDecoder(resp.Body).Decode(&card)
 
-	return card,nil
+	return card.NewDataStructure(),nil
 
 }
