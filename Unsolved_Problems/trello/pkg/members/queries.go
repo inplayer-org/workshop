@@ -15,6 +15,7 @@ func Update(DB *sql.DB,member Member){
 
 
 
+
 }
 
 func updateByID(DB *sql.DB,member Member)error{
