@@ -2,14 +2,8 @@ package client
 
 import (
 	"net/http"
-	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/members"
-	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/cards"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 )
-
-type ClientInterface interface {
-	GetMember(string)(members.Member,error)
-	GetCard(string)(cards.Card,error)
-}
 
 //MyClient structure have client that Do rquests
 type MyClient struct {
@@ -17,7 +11,7 @@ type MyClient struct {
 }
 
 //NewClient constructs MyClient
-func NewClient() ClientInterface {
+func NewClient() interfaces.ClientInterface {
 	return &MyClient{&http.Client{},
 
 	}
@@ -44,5 +38,3 @@ func NewGetRequest(url string)(*http.Request,error){
 	SetHeaders(req)
 	return req,nil
 }
-
-

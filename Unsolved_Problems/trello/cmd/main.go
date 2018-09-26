@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"database/sql"
-	"github.com/gorilla/mux"
 	"flag"
+	"fmt"
+	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/app"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
 )
@@ -12,7 +12,7 @@ import (
 //enterFlags flags for DbName UserName and Password
 func enterFlags() (string,string,string) {
 
-	DbName := flag.String("database", "Prevoz_Mk", "the name of you database")
+	DbName := flag.String("database", "Trello", "the name of you database")
 
 	UserName := flag.String("username", "root", "the username to make a connection to the database")
 
