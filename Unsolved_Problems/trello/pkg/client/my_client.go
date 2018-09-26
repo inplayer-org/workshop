@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/members"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
 )
 
 type ClientInterface interface {
 	GetMember(string)(members.Member,error)
+	GetLabel(string)(labels.Label,error)
 }
 
 //MyClient structure have client that Do rquests
@@ -44,6 +47,33 @@ func NewGetRequest(url string)(*http.Request,error){
 	return req,nil
 }
 
+func (c *MyClient)GetLabel(labelID string)(labels.Label,error){
+	var label labels.Label
+
+	urlStr:="https://api.trello.com/1/labels/"+labelID
+	req,err:=NewGetRequest(urlStr)
+
+	if err!=nil {
+		return label,err
+
+	}
+	resp,err:=c.client.Do(req)
+
+	if err!=nil{
+		return label,err
+
+}
+	if err:=errors.CheckStatusCode(resp);err!=nil{
+		return label,err
+	}
+
+	json.NewDecoder(resp.Body).Decode(&label)
+
+	return label,nil
+
+
+}
+
 func (c *MyClient)GetMember(memberID string)(members.Member,error){
 
 	var member members.Member
@@ -60,10 +90,12 @@ func (c *MyClient)GetMember(memberID string)(members.Member,error){
 		return member,err
 	}
 
+
 	//fail to parse header,timeout,no header provided
-	//if err:=errors.CheckStatusCode(resp);err!=nil{
-	//	return clan,err
-	//}
+	if err:=errors.CheckStatusCode(resp);err!=nil{
+	return member,err
+	}
+
 	json.NewDecoder(resp.Body).Decode(&member)
 
 	return member,nil
