@@ -97,6 +97,5 @@ func (c *MyClient)GetMember(memberID string)(interfaces.DataStructure,error){
 
 	return member.NewDataStructure(),nil
 
-
 }
 
