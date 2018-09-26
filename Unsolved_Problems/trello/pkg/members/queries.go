@@ -1,6 +1,9 @@
 package members
 
-import "database/sql"
+import (
+	"database/sql"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/validators"
+)
 
 func Insert(DB *sql.DB,member Member)error{
 
@@ -11,10 +14,29 @@ func Insert(DB *sql.DB,member Member)error{
 
 }
 
-func Update(DB *sql.DB,member Member){
+func Update(DB *sql.DB,member Member)error{
 
+	exists,err := validators.ExistsElementInColumn(DB,"Members",member.ID,"ID")
 
+	if err!= nil{
+		return err
+	}
 
+	if exists{
+		return updateByID(DB,member)
+	}
+
+	exists,err = validators.ExistsElementInColumn(DB,"Members",member.Username,"username")
+
+	if err!= nil{
+		return err
+	}
+
+	if exists{
+		return updateByUsername(DB,member)
+	}
+
+	return Insert(DB,member)
 
 }
 
