@@ -13,3 +13,9 @@ func InsertLabel(DB *sql.DB,label Label)error{
 
 
 
+func UpdateLabel(DB *sql.DB,label Label)error{
+
+	_,err := DB.Exec("UPDATE Trello.Labels SET IDboard=?,nameLabel=?,color=? WHERE ID=?",label.IDboard,label.nameLabel,label.color,label.ID)
+
+	return err
+}

@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/members"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
 )
 
 type ClientInterface interface {
 	GetMember(string)(members.Member,error)
+	GetLabel(string)(labels.Label,error)
 }
 
 //MyClient structure have client that Do rquests
@@ -42,6 +44,32 @@ func NewGetRequest(url string)(*http.Request,error){
 	}
 	SetHeaders(req)
 	return req,nil
+}
+
+func (c *MyClient)GetLabel(labelID string)(labels.Label,error){
+	var label labels.Label
+
+	urlStr:="https://api.trello.com/1/labels/"+labelID
+	req,err:=NewGetRequest(urlStr)
+
+	if err!=nil {
+		return label,err
+
+	}
+	resp,err:=c.client.Do(req)
+
+	if err!=nil{
+		return label,err
+
+}
+//need to implement checkstatuscode error from request
+// ---here
+
+	json.NewDecoder(resp.Body).Decode(&label)
+
+	return label,nil
+
+
 }
 
 func (c *MyClient)GetMember(memberID string)(members.Member,error){
