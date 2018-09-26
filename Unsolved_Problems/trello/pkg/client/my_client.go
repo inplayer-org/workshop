@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/boards"
@@ -42,33 +43,33 @@ func NewGetRequest(url string) (*http.Request, error) {
 	return req, nil
 }
 
-func (c *MyClient) GetLabel(labelID string) (labels.Label, error) {
+func (c *MyClient) GetLabel(labelID string) (interfaces.DataStructure, error) {
 	var label labels.Label
 
 	urlStr := "https://api.trello.com/1/labels/" + labelID
 	req, err := NewGetRequest(urlStr)
 
 	if err != nil {
-		return label, err
+		return label.NewDataStructure(), err
 
 	}
 	resp, err := c.client.Do(req)
 
 	if err != nil {
-		return label, err
+		return label.NewDataStructure(), err
 
 	}
 	if err := errors.CheckStatusCode(resp); err != nil {
-		return label, err
+		return label.NewDataStructure(), err
 	}
 
 	json.NewDecoder(resp.Body).Decode(&label)
 
-	return label, nil
+	return label.NewDataStructure(), nil
 
 }
 
-func (c *MyClient) GetMember(memberID string) (members.Member, error) {
+func (c *MyClient) GetMember(memberID string) (interfaces.DataStructure, error) {
 
 	var member members.Member
 
@@ -76,46 +77,45 @@ func (c *MyClient) GetMember(memberID string) (members.Member, error) {
 	req, err := NewGetRequest(urlStr)
 
 	if err != nil {
-		return member, err
+		return member.NewDataStructure(), err
 	}
 	resp, err := c.client.Do(req)
 
 	if err != nil {
-		return member, err
+		return member.NewDataStructure(), err
 	}
 
 	//fail to parse header,timeout,no header provided
 	if err := errors.CheckStatusCode(resp); err != nil {
-		return member, err
+		return member.NewDataStructure(), err
 	}
 
 	json.NewDecoder(resp.Body).Decode(&member)
 
-	return member, nil
+	return member.NewDataStructure(), nil
 
 }
 
-func (c *MyClient) GetBoardInfo(boardID string) (boards.Board, error) {
-
+func (c *MyClient) GetBoardInfo(boardID string) (interfaces.DataStructure, error) {
+	log.Println("ok")
 	var board boards.Board
-
 	urlStr := "https://api.trello.com/1/boards/" + boardID
 	req, err := NewGetRequest(urlStr)
 
 	if err != nil {
-		return board, err
+		return board.NewDataStructure(), err
 	}
 	resp, err := c.client.Do(req)
 
 	if err != nil {
-		return board, err
+		return board.NewDataStructure(), err
 	}
 
 	if err := errors.CheckStatusCode(resp); err != nil {
-		return board, err
+		return board.NewDataStructure(), err
 	}
 
 	json.NewDecoder(resp.Body).Decode(&board)
 
-	return board, nil
+	return board.NewDataStructure(), nil
 }

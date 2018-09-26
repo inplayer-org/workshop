@@ -5,7 +5,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/validators"
 )
 
-func (label *Label) InsertLabel(DB *sql.DB)error{
+func (label *Label) Insert(DB *sql.DB)error{
 
 	_,err := DB.Exec("INSERT INTO Trello.Labels (ID,IDboard,nameLabel,color) VALUES (?,?,?,?);",label.ID,label.IDboard,label.nameLabel,label.color)
 
@@ -29,7 +29,7 @@ func(label *Label) Update(DB *sql.DB)error{
 	}
 
 
-	return label.InsertLabel(DB)
+	return label.Insert(DB)
 
 }
 
