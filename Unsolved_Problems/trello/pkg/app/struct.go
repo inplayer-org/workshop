@@ -4,8 +4,9 @@ import (
 "database/sql"
 "log"
 "net/http"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 
-_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 "github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/client"
 )
@@ -14,7 +15,7 @@ _ "github.com/go-sql-driver/mysql"
 type App struct {
 	Router *mux.Router
 	DB     *sql.DB
-	Client client.ClientInterface
+	Client interfaces.ClientInterface
 }
 
 //Initialize creates var App
