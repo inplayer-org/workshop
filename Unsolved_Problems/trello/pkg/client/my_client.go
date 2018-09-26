@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/members"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
 )
 
 type ClientInterface interface {
@@ -62,8 +63,9 @@ func (c *MyClient)GetLabel(labelID string)(labels.Label,error){
 		return label,err
 
 }
-//need to implement checkstatuscode error from request
-// ---here
+	if err:=errors.CheckStatusCode(resp);err!=nil{
+		return label,err
+	}
 
 	json.NewDecoder(resp.Body).Decode(&label)
 
@@ -88,10 +90,12 @@ func (c *MyClient)GetMember(memberID string)(members.Member,error){
 		return member,err
 	}
 
+
 	//fail to parse header,timeout,no header provided
-	//if err:=errors.CheckStatusCode(resp);err!=nil{
-	//	return clan,err
-	//}
+	if err:=errors.CheckStatusCode(resp);err!=nil{
+	return member,err
+	}
+
 	json.NewDecoder(resp.Body).Decode(&member)
 
 	return member,nil
