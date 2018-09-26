@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/lists"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/members"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
@@ -99,3 +100,29 @@ func (c *MyClient)GetMember(memberID string)(interfaces.DataStructure,error){
 
 }
 
+func (c *MyClient)GetList(listID string)(interfaces.DataStructure,error){
+
+	var list lists.List
+
+	urlStr:="https://api.trello.com/1/lists/"+listID
+	req,err:=NewGetRequest(urlStr)
+
+	if err!=nil {
+		return list.NewDataStructure(),err
+
+	}
+	resp,err:=c.client.Do(req)
+
+	if err!=nil{
+		return list.NewDataStructure(),err
+
+	}
+	if err:=errors.CheckStatusCode(resp);err!=nil{
+		return list.NewDataStructure(),err
+	}
+
+	json.NewDecoder(resp.Body).Decode(&list)
+
+	return list.NewDataStructure(),nil
+
+}
