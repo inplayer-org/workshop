@@ -5,6 +5,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 )
 
+
 //MyClient structure have client that Do rquests
 type MyClient struct {
 	client *http.Client
@@ -12,9 +13,7 @@ type MyClient struct {
 
 //NewClient constructs MyClient
 func NewClient() interfaces.ClientInterface {
-	return &MyClient{&http.Client{},
-
-	}
+	return &MyClient{&http.Client{}}
 }
 
 //SetHeaders sets the headers to make the request

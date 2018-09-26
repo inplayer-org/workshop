@@ -7,6 +7,8 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/boards"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/lists"
 )
 
 func (c *MyClient)GetLabel(labelID string)(interfaces.DataStructure,error){
@@ -65,6 +67,31 @@ func (c *MyClient)GetMember(memberID string)(interfaces.DataStructure,error){
 
 }
 
+func (c *MyClient) GetBoard(boardID string) (interfaces.DataStructure, error) {
+
+	var board boards.Board
+
+	urlStr := "https://api.trello.com/1/boards/" + boardID
+	req, err := NewGetRequest(urlStr)
+
+	if err != nil {
+		return board.NewDataStructure(), err
+	}
+	resp, err := c.client.Do(req)
+
+	if err != nil {
+		return board.NewDataStructure(), err
+	}
+
+	if err := errors.CheckStatusCode(resp); err != nil {
+		return board.NewDataStructure(), err
+	}
+
+	json.NewDecoder(resp.Body).Decode(&board)
+
+	return board.NewDataStructure(), nil
+}
+
 
 func (c *MyClient)GetCard(cardID string)(interfaces.DataStructure,error){
 
@@ -89,5 +116,32 @@ func (c *MyClient)GetCard(cardID string)(interfaces.DataStructure,error){
 	json.NewDecoder(resp.Body).Decode(&card)
 
 	return card.NewDataStructure(),nil
+
+}
+
+func (c *MyClient)GetList(listID string)(interfaces.DataStructure,error){
+
+	var list lists.List
+
+	urlStr:="https://api.trello.com/1/lists/"+listID
+	req,err:=NewGetRequest(urlStr)
+
+	if err!=nil {
+		return list.NewDataStructure(),err
+
+	}
+	resp,err:=c.client.Do(req)
+
+	if err!=nil{
+		return list.NewDataStructure(),err
+
+	}
+	if err:=errors.CheckStatusCode(resp);err!=nil{
+		return list.NewDataStructure(),err
+	}
+
+	json.NewDecoder(resp.Body).Decode(&list)
+
+	return list.NewDataStructure(),nil
 
 }
