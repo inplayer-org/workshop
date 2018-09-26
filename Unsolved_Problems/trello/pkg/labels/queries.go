@@ -5,7 +5,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/validators"
 )
 
-func InsertLabel(DB *sql.DB,label Label)error{
+func (label *Label) InsertLabel(DB *sql.DB)error{
 
 	_,err := DB.Exec("INSERT INTO Trello.Labels (ID,IDboard,nameLabel,color) VALUES (?,?,?,?);",label.ID,label.IDboard,label.nameLabel,label.color)
 
@@ -16,7 +16,7 @@ func InsertLabel(DB *sql.DB,label Label)error{
 
 
 
-func Update(DB *sql.DB,label Label)error{
+func(label *Label) Update(DB *sql.DB)error{
 
 	exists,err := validators.ExistsElementInColumn(DB,"Labels",label.ID,"ID")
 
@@ -25,16 +25,16 @@ func Update(DB *sql.DB,label Label)error{
 	}
 
 	if exists{
-		return updatelabel(DB,label)
+		return label.updatelabel(DB)
 	}
 
 
-	return InsertLabel(DB,label)
+	return label.InsertLabel(DB)
 
 }
 
 
-func updatelabel(DB *sql.DB,label Label)error{
+func (label *Label) updatelabel(DB *sql.DB)error{
 
 	_,err := DB.Exec("UPDATE Trello.Labels SET IDboard=?,nameLabel=?,color=? WHERE ID=?",label.IDboard,label.nameLabel,label.color,label.ID)
 
