@@ -10,6 +10,6 @@ type Member struct{
 	Email string `json:"email"`
 }
 
-func (member *Member)NewDataStructure() interfaces.DataStructure{
+func (member *Member) NewDataStructure() interfaces.DataStructure{
 	return member
 }
