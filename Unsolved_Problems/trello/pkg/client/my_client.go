@@ -1,13 +1,14 @@
 package client
 
 import (
-	"encoding/json"
 	"net/http"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/members"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/cards"
 )
 
 type ClientInterface interface {
 	GetMember(string)(members.Member,error)
+	GetCard(string)(cards.Card,error)
 }
 
 //MyClient structure have client that Do rquests
@@ -44,30 +45,4 @@ func NewGetRequest(url string)(*http.Request,error){
 	return req,nil
 }
 
-func (c *MyClient)GetMember(memberID string)(members.Member,error){
-
-	var member members.Member
-
-	urlStr:="https://api.trello.com/1/members/"+memberID
-	req,err:=NewGetRequest(urlStr)
-
-	if err!=nil{
-		return member,err
-	}
-	resp,err:=c.client.Do(req)
-
-	if err!=nil{
-		return member,err
-	}
-
-	//fail to parse header,timeout,no header provided
-	//if err:=errors.CheckStatusCode(resp);err!=nil{
-	//	return clan,err
-	//}
-	json.NewDecoder(resp.Body).Decode(&member)
-
-	return member,nil
-
-
-}
 
