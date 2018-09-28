@@ -9,7 +9,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/boards"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/lists"
-	"net/url"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/bigBoard"
 )
 
 func (c *MyClient)GetLabel(labelID string)(interfaces.DataStructure,error){
@@ -93,12 +93,12 @@ func (c *MyClient) GetBoard(boardID string) (interfaces.DataStructure, error) {
 	return board.NewDataStructure(), nil
 }
 
-func (c *MyClient)GetCard(cardID string,values url.Values)(interfaces.DataStructure,error){
+func (c *MyClient)GetCard(cardID string)(interfaces.DataStructure,error){
 
 	var card cards.Card
 
 	urlStr:="https://api.trello.com/1/cards/"+cardID
-	req,err:=NewGetRequest(urlStr,values)
+	req,err:=NewGetRequest(urlStr,nil)
 
 	if err!=nil{
 		return card.NewDataStructure(),err
@@ -145,3 +145,30 @@ func (c *MyClient)GetList(listID string)(interfaces.DataStructure,error){
 	return list.NewDataStructure(),nil
 
 }
+
+func(c *MyClient)BigBoardRequest(boardID string)(interfaces.DataStructure,error){
+
+	var bb bigBoard.BigBoard
+
+	urlStr:="https://api.trello.com/1/boards/"+boardID
+
+	req,err:=NewGetRequest(urlStr,BigBoardQuery())
+
+	if err!=nil{
+		return bb.NewDataStructure(),err
+	}
+
+	resp,err:=c.client.Do(req)
+
+	if err!=nil{
+		return bb.NewDataStructure(),err
+	}
+	if err:=errors.CheckStatusCode(resp);err!=nil{
+		return bb.NewDataStructure(),err
+	}
+
+	json.NewDecoder(resp.Body).Decode(&bb)
+
+	return bb.NewDataStructure(),nil
+
+	}
