@@ -3,13 +3,13 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/update"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/parser"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/structures"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/clans"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/rankedPlayer"
 )
 // Get clan by name from DB
 func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
@@ -18,14 +18,14 @@ func (a *App) GetClanByName (w http.ResponseWriter, r *http.Request){
 	name := vars["name"]
 
 //querry for get clans by name
-	clans,err := queries.GetClansLike(a.DB,name)
+	clansLike,err := clans.GetClansLike(a.DB,name)
 
 	if err != nil {
 		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Clan Name doesn't exist","There is no clan name like "+name,404))
 		return
 	}
 
-	tmpl.Tmpl.ExecuteTemplate(w,"byclansname.html",clans)
+	tmpl.Tmpl.ExecuteTemplate(w,"byclansname.html",clansLike)
 
 }
 // Sending string clan tag and response from DB clan informations
@@ -46,11 +46,11 @@ func (a *App)GetClanByTag(w http.ResponseWriter, r *http.Request){
 	tmpl.Tmpl.ExecuteTemplate(w,"clan.html",players)
 
 }
-func findClan(a *App,tag string) ([]structures.RankedPlayer, error) {
+func findClan(a *App,tag string) ([]rankedPlayer.RankedPlayer, error) {
 
-	players,_:=queries.GetPlayersByClanTag(a.DB,tag)
+	player,_:= rankedPlayer.GetPlayersByClanTag(a.DB,tag)
 
-	if len(players)==0{
+	if len(player)==0{
 
 		clan,err:=a.Client.GetClan(tag)
 
@@ -58,7 +58,7 @@ func findClan(a *App,tag string) ([]structures.RankedPlayer, error) {
 			return nil,err
 		}
 
-		err=queries.UpdateClans(a.DB,clan)
+		err=clans.UpdateClans(a.DB,clan)
 
 		if err!=nil{
 			return nil,errors.NewResponseError(err.Error(), "Failed to insert/update the clan into database, please try again later", 500)
@@ -70,11 +70,11 @@ func findClan(a *App,tag string) ([]structures.RankedPlayer, error) {
 			return nil,errors.NewResponseError(err.Error(), "Can't find the clan", 404)
 		}
 
-		players,_=queries.GetPlayersByClanTag(a.DB,tag)
+		player,_= rankedPlayer.GetPlayersByClanTag(a.DB,tag)
 
 	}
 
-	return players,nil
+	return player,nil
 
 }
 //Request tag to API to refres clan informations with members
@@ -85,7 +85,7 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 
 	tag = parser.ToHashTag(tag)
 	log.Println("clanTag = ",tag)
-// request for range over players in 1 clan
+// request for range over rankedPlayer in 1 clan
 	e := update.GetRequestForPlayersFromClan(a.DB,a.Client,tag)
 
 	if e!=nil {
@@ -93,7 +93,7 @@ func (a *App) UpdateClan(w http.ResponseWriter, r *http.Request){
 			return
 	} else {
 		// querry for clan name in DB
-		clanName, err := queries.GetClanName(a.DB,tag)
+		clanName, err := clans.GetClanName(a.DB,tag)
 
 		if err != nil {
 			tmpl.Tmpl.ExecuteTemplate(w,"error.html",e)

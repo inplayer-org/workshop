@@ -36,3 +36,47 @@ func (board *Board) updateByID(DB *sql.DB) error {
 
 	return err
 }
+
+
+
+
+// Returning string(board name from DB table boards)
+func GetBoardName(db *sql.DB,boardID string)(string,error){
+
+
+	var boardName string
+
+	err := db.QueryRow("SELECT nameBoard FROM Boards WHERE ID=?",boardID).Scan(&boardName)
+
+	if err!=nil{
+		return boardName,err
+	}
+
+	return boardName,nil
+
+}
+
+// Returns slice of all boards present in the database
+func GetAllBoards(db *sql.DB) ([]Board, error) {
+
+	var boards []Board
+	var board Board
+
+	rows, err := db.Query("SELECT ID,nameBoard,descrip,shortUrl FROM Boards;")
+
+	if err != nil {
+		return boards, err
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&board.ID, &board.Name,&board.Desc,&board.ShortUrl)
+
+		if err != nil {
+			return boards, err
+		}
+
+		boards = append(boards, board)
+	}
+
+	return boards, nil
+}
