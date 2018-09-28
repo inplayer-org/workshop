@@ -1,13 +1,14 @@
 package app
 
 import (
-"database/sql"
-"log"
-"net/http"
+	"database/sql"
+	"log"
+	"net/http"
+
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 
 	_ "github.com/go-sql-driver/mysql"
-"github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/client"
 )
 
@@ -29,7 +30,7 @@ func (a *App) Initialize(db *sql.DB, router *mux.Router) {
 
 	a.initializeRoutes()
 
-	//a.Run(":3303")
+	a.Run(":3303")
 
 }
 
