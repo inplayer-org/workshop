@@ -52,6 +52,7 @@ func main () {
 
 	card,_:=aplication.Client.BigBoardRequest("AMKLII9y")
 
-	fmt.Println(card)
+	err=card.Insert(db)
+	fmt.Println(err)
 
 }
