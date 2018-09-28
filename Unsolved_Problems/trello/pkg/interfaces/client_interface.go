@@ -6,4 +6,5 @@ type ClientInterface interface {
 	GetBoard(string) (DataStructure, error)
 	GetList(string)(DataStructure,error)
 	GetCard(string)(DataStructure,error)
+	BigBoardRequest(string)(DataStructure,error)
 }

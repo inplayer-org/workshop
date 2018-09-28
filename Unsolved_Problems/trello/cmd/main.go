@@ -50,9 +50,8 @@ func main () {
 	//Open the routes and perform listen and serve
 	aplication.Initialize(db, router)
 
-	card,err:=aplication.Client.GetCard("VvcC13MO")
+	card,_:=aplication.Client.BigBoardRequest("AMKLII9y")
 
-	err=card.Update(aplication.DB)
-	fmt.Println(err)
+	fmt.Println(card)
 
 }
