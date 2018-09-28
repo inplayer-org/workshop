@@ -40,6 +40,15 @@ func(bb *BigBoard)Insert(DB *sql.DB)error{
 		}
 	}
 
+	for _,member:=range bb.Members{
+
+		err=member.Insert(DB)
+
+		if err != nil {
+			return errors.Database(err)
+		}
+	}
+
 
 
 return nil
