@@ -1,0 +1,70 @@
+.cardBox {
+  background-color: black;
+  padding: 1%;
+  display: block;
+  margin: 4% 2%;
+  text-align: center;
+  max-height: 60%;
+}
+
+.cardName {
+  max-width: 98%;
+  padding: 0% 0%;
+  background-color: silver;
+  border-radius: 5px 5px 0px 0px;
+  border-bottom: 0px;
+  display: inline-block;
+  height: auto;
+  width: auto;
+}
+
+.card {
+  overflow: auto;
+  padding-bottom: 3%;
+  padding-top: 3%;
+  height: auto;
+  max-height: 90%;
+  background-color: #a8ffd5;
+}
+
+.labelBox {
+  text-align: left;
+  display: block;
+  height: auto;
+  padding: 3%;
+  margin: 3% 0%;
+}
+
+.labelElem {
+  display: inline-flex;
+  height: auto;
+  width: auto;
+  padding: 1% 2%;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  background-color: blue;
+}
+
+.descriptionBox {
+  width: 96%;
+  padding: 2% 2%;
+  margin: 3% 2% 3% 2%;
+  text-align: left;
+  height: auto;
+  background-color: orange;
+}
+
+.memberBox {
+  text-align: left;
+  width: 96%;
+  padding: 2% 2%;
+  margin: 3% 2% 3% 2%;
+  height: auto;
+  background-color: purple;
+}
+
+.memberElem {
+  padding: 2% 2%;
+}
