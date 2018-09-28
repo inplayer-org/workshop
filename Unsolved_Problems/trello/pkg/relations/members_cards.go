@@ -19,7 +19,7 @@ func deleteMembersCardsRel(DB *sql.DB,idCard string,idMember ...string)error{
 	query := "DELETE FROM Cards_Members_REL WHERE IDcard=" + strconv.Quote(idCard)
 
 	for _,elem := range idMember{
-		query+=  " && IDlabel!=" + strconv.Quote(elem)
+		query+=  " && IDmember!=" + strconv.Quote(elem)
 	}
 	query+=";"
 

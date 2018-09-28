@@ -3,6 +3,7 @@ package cards
 import (
 	"time"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
 )
 
 type Card struct {
@@ -16,9 +17,11 @@ type Card struct {
 	Descrip string `json:"desc"`
 	IDBoard string `json:"idBoard"`
 	IDList string `json:"idList"`
+	IDmembers []string `json:"idMembers"`
+	Labels []labels.Label `json:"labels"`
 	ShortLink string `json:"shortLink"`//POSSIBLE CHANGE
 	ShortURL string `json:"shortUrl"`//POSSIBLE CHANGE
-	IDmembers []string `json:"idMembers"`
+
 
 }
 

@@ -7,6 +7,9 @@ import (
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/app"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/lists"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/cards"
 )
 
 //enterFlags flags for DbName UserName and Password
@@ -50,8 +53,17 @@ func main () {
 	//Open the routes and perform listen and serve
 	aplication.Initialize(db, router)
 
-	card,_:=aplication.Client.BigBoardRequest("AMKLII9y")
+	//card,_:=aplication.Client.BigBoardRequest("AMKLII9y")
 
+//	err=card.Insert(db)
+//	fmt.Println(err)
+
+label,_:= labels.GetLabelsFromBoard(db,"5baa38aa23f19c64f6d655f1")
+	list,_:= lists.GetListFromBoard(db,"5baa38aa23f19c64f6d655f1")
+		card,_:= cards.GetCardsFromBoard(db,"5baa38aa23f19c64f6d655f1")
+
+	fmt.Println(label)
+	fmt.Println(list)
 	fmt.Println(card)
 
 }
