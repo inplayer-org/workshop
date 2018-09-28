@@ -18,6 +18,8 @@ type Card struct {
 	IDList string `json:"idList"`
 	ShortLink string `json:"shortLink"`//POSSIBLE CHANGE
 	ShortURL string `json:"shortUrl"`//POSSIBLE CHANGE
+	IDmembers []string `json:"idMembers"`
+
 }
 
 func (c *Card) NewDataStructure() interfaces.DataStructure{
