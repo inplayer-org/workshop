@@ -5,6 +5,7 @@ import (
 "database/sql"
 "fmt"
 "log"
+	"strconv"
 )
 
 func InsertIntoMembersCardsRel(DB *sql.DB,idCard string,idMember string)error{
@@ -16,17 +17,15 @@ func InsertIntoMembersCardsRel(DB *sql.DB,idCard string,idMember string)error{
 
 func deleteMembersCardsRel(DB *sql.DB,idCard string,idMember ...string)error{
 
-	query := fmt.Sprintf(`DELETE FROM Cards_Members_REL WHERE IDcard="%s"`,idCard)
-
+	query := "DELETE FROM Cards_Members_REL WHERE IDcard=" + strconv.Quote(idCard)
 
 	for _,elem := range idMember{
-		query+= fmt.Sprintf(` && IDlabel!="%s"`,elem)
+		query+=  " && IDlabel!=" + strconv.Quote(elem)
 	}
 	query+=";"
 
 	_,err := DB.Exec(query)
 
-	log.Println("Executed query : ",query)
-
 	return err
+}
 }
