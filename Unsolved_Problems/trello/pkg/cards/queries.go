@@ -72,3 +72,32 @@ func (c *Card) updateByShortURL(DB *sql.DB) error {
 	return err
 
 }
+
+
+// Returning slice of label structure with boardid u get labelname and labelid
+func GetCardsFromBoard(db *sql.DB,boardID string)([]Card,error){
+
+	var cards []Card
+
+	rows,err:=db.Query("SELECT ID,checkItems,checkItemsChecked,description,dateLastAcivity,descrip,shortLink,shortUrl,IDlist FROM Cards Where idBoard Like (?)","%"+boardID+"%")
+
+	if err !=nil {
+		return nil,err
+	}
+
+	for rows.Next(){
+
+
+		var c Card
+		err = rows.Scan(&c.ID,&c.Badges.CheckItems,&c.Badges.CheckItemsChecked,&c.Badges.Description,&c.DateLastActivity,&c.Descrip,&c.ShortLink,&c.ShortURL,&c.IDList)
+
+		if err !=nil {
+			return nil,err
+		}
+
+		cards = append(cards,c)
+	}
+
+
+	return cards,nil
+}

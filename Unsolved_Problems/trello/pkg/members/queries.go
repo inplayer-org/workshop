@@ -53,3 +53,48 @@ func (member *Member)updateByUsername(DB *sql.DB)error{
 
 	return err
 }
+
+
+
+
+// Returning string(member username from DB table boards)
+func GetMemberUsername(db *sql.DB,memberID string)(string,error){
+
+
+	var username string
+
+	err := db.QueryRow("SELECT fullname FROM Members WHERE ID=?",memberID).Scan(&username)
+
+	if err!=nil{
+		return username,err
+	}
+
+	return username,nil
+
+}
+
+
+// Returns slice of all members present in the database
+func GetAllMembers(db *sql.DB) ([]Member, error) {
+
+	var members []Member
+	var member Member
+
+	rows, err := db.Query("SELECT ID,fullname,initials,username,email FROM Members;")
+
+	if err != nil {
+		return members, err
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&member.ID, &member.FullName,&member.Initials,&member.Username,&member.Email)
+
+		if err != nil {
+			return members, err
+		}
+
+		members = append(members, member)
+	}
+
+	return members, nil
+}
