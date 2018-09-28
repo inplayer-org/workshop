@@ -33,13 +33,13 @@ func UpdateMembersCardsRelTable(DB *sql.DB,idCard string,idMember ...string)erro
 
 
 	for _,elem := range idMember{
-		postoi,err := validators.ExistsRelation(DB,"Cards_Members_REL",idCard,elem,"IDcard","IDmember")
+		exist,err := validators.ExistsRelation(DB,"Cards_Members_REL",idCard,elem,"IDcard","IDmember")
 
 		if err!=nil{
 			return nil
 		}
 
-		if !postoi {
+		if !exist {
 			err = InsertIntoMembersCardsRel(DB,idCard,elem)
 			if err!=nil{
 				return err
