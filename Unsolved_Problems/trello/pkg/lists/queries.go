@@ -37,3 +37,31 @@ func (list *List)updateByID(DB *sql.DB)error{
 	return err
 }
 
+
+// Returning slice of list structure with boardid u get listID and listName
+func GetListFromBoard(db *sql.DB,boardID string)([]List,error){
+
+	var lists []List
+
+	rows,err:=db.Query("SELECT ID,nameList FROM Lists Where idBoard Like (?)","%"+boardID+"%")
+
+	if err !=nil {
+		return nil,err
+	}
+
+	for rows.Next(){
+
+
+		var l List
+		err = rows.Scan(&l.ID,&l.Name)
+
+		if err !=nil {
+			return nil,err
+		}
+
+		lists = append(lists,l)
+	}
+
+
+	return lists,nil
+}
