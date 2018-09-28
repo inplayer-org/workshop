@@ -5,8 +5,8 @@ import "repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 type Label struct {
 	ID string `json:"id"`
 	IDboard string `json:"idBoard"`
-	nameLabel string `json:"name"`
-	color string `json:"color"`
+	NameLabel string `json:"name"`
+	Color string `json:"color"`
 
 }
 

@@ -13,14 +13,36 @@ func(bb *BigBoard)Insert(DB *sql.DB)error{
 		return errors.Database(err)
 	}
 
-	_,err=DB.Exec("INSERT into Lists (ID,nameList,IDboard) values (?,?,?);",bb.Lists.ID,bb.Lists.Name,bb.Lists.IDBoard)
+	for _,list:=range bb.Lists {
 
-	if err!=nil{
-		return errors.Database(err)
+		err=list.Insert(DB)
+
+		if err != nil {
+			return errors.Database(err)
+		}
+	}
+
+	for _,label:=range bb.Labels {
+
+		err=label.Insert(DB)
+
+		if err != nil {
+			return errors.Database(err)
+	}
+    }
+
+    for _,card:=range bb.Cards{
+
+    	err=card.Insert(DB)
+
+		if err != nil {
+			return errors.Database(err)
+		}
 	}
 
 
-	return nil
+
+return nil
 }
 
 func(bb *BigBoard)Update(DB *sql.DB)error{

@@ -15,7 +15,7 @@ type BigBoard struct {
 	ShortURL       string      `json:"shortUrl"`
 	Cards []cards.Card `json:"cards"`
 	Labels []labels.Label `json:"labels"`
-	Lists lists.List `json:"lists"`
+	Lists []lists.List `json:"lists"`
 	Members []members.Member `json:"members"`
 }
 
