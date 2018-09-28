@@ -1,0 +1,94 @@
+{{define "Header"}}
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.first{
+    background-color: #122023;
+    padding: 0px 16px;
+    display: table;
+
+}
+
+.topnav {
+  overflow: hidden;
+  background-color:#488bf4;
+  margin-bottom: 4%;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #e5a035;
+  color:#122023;
+}
+
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+.logo .img{
+    /* max-width: 100%; */
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    
+  
+}
+.first .logo{
+  vertical-align:middle;
+    display:table-cell;
+    padding-right:5px;
+    width:50px;
+}
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #122023;
+}
+
+
+
+</style>
+</head>
+<body>
+
+<div style="max-height:93px;max-width: 739px" class="first">
+  <div class="logo"><img style="max-width: 200px;max-height: 89px;" src="https://vignette.wikia.nocookie.net/clashofclans/images/6/6c/Clash_Royale_Logo.png/revision/latest?cb=20180217045351" alt=""></div>
+  <div class="search" style="width:600px;margin-top: -10px;">
+     <div class="inlineblock" style="max-width:100%">
+        <form style="display: inline-block; width: auto;margin-top: 10%;max-height: 2px;" method="get" action="/search">
+          <select id="searchby" name="searchby" style="margin-right:18px" >
+            <option value="playerName">Player Name</option>
+            <option value="playerTag">Player Tag</option>
+            <option value="clanName">Clan Name</option>
+            <option value="clanTag">Clan Tag</option>
+          </select>
+          
+          <input class="text" type="text" name="text" style="margin-right:30px">
+                <input type="submit">
+      </form>
+      </div>
+      
+  </div>
+</div>
+<div class="topnav">
+  <a  href="/">Home</a>
+  <a href="/cards">Cards</a>
+  <a href="/locations">Locations</a>
+ 
+</div>
+{{end}}

@@ -1,23 +1,24 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/queries"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/rankedPlayer"
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
 
 func (a *App) Home(w http.ResponseWriter, r *http.Request) {
 
 	wins := "wins"
-	players, err := queries.GetSortedRankedPlayers(a.DB, wins, 10)
+	players, err := rankedPlayer.GetSortedRankedPlayers(a.DB, wins, 10)
 
 	if err != nil {
-		tmpl.Tmpl.ExecuteTemplate(w,"error.html",errors.NewResponseError("Server error","Can't load players something went wrong",503))
+		tmpl.Tmpl.ExecuteTemplate(w, "error.html", errors.NewResponseError("Server error", "Can't load rankedPlayer something went wrong", 503))
 		return
 	}
-
-	tmpl.Tmpl.ExecuteTemplate(w, "home.html", players)
+	log.Println(players)
+	tmpl.Tmpl.ExecuteTemplate(w, "homeNew.html", players)
 
 }

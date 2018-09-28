@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+
+ol
+{
+    /* room for 3 columns */
+  list-style-type: none;
+  margin-top:20px;
+  /* border-bottom: 1px solid #bdbdbd; */
+}
+ol li
+{
+  float: left;
+  height: 75px;
+   /* accommodate the widest item */
+  
+}
+/* stop the floating after the list */
+br
+{
+  clear: left;
+ 
+}
+/* separate the list from what follows it */
+div.wrapper
+{
+  margin-bottom: 1em;
+  padding-left: 30px;
+  width: 70%;
+  margin:auto;
+  /* background-color: #4CAF50; */
+}
+/* anchor styling */
+ol li a
+{
+  display: block;
+  width: 7em;
+  text-decoration: none;
+  margin-top:0px;
+  margin-bottom: 20px;
+  text-align:center;
+  padding: 20px,20px;
+  font-weight: 25px;
+  font-size: 20px;
+  color: #488bf4;
+}
+ol li a:hover
+{
+  color: #FFF; /* white */
+ 
+}.separator{
+  height: 3%;
+  width: 70%;
+  border-bottom:2px solid #488bf4;
+  border-radius:10px;
+  margin:auto;
+  margin-bottom: 35px;
+margin-top: -18px;
+  
+}
+
+</style>
+
+{{template "Header"}}
+{{ range $k, $v := . }}
+<div class="separator"><h3 style="color:#488bf4">{{$k}}</h3></div>
+
+<div class="wrapper">
+    <ol
+    {{range $v}}
+      ><li ><a href="http://localhost:3303/locations/{{ .ID }}"> {{.Name}}</a></li
+       {{end}}
+    ></ol>
+    <br />
+  </div><!-- .wrapper -->
+
+  {{ end }}
+
+{{template "Footer"}}

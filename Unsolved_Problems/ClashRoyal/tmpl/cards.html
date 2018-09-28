@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* Float four columns side by side */
+.column {
+  float: left;
+  width: 20%;
+  padding: 5px 0px;
+    margin:auto;
+}
+
+  Remove extra left and right margins, due to padding
+.row {width:98%;margin: auto;}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 50px;
+  }
+}
+
+/* Style the counter cards */
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  display: table;
+  padding: 14px;
+  width: 80%;
+  background-color: #122023;
+  border:2px solid #488bf4;
+  margin:5px 0;
+}
+div.text{ 
+    vertical-align:text-top;
+    display:table-cell;
+    text-align:center;
+    color: #488bf4;
+   padding-left: 10px;
+  letter-spacing: 1px;
+  margin-left: 10px;
+    float: left;
+}
+div.text.level{
+  vertical-align:middle;
+}
+div.card .img{
+    vertical-align:middle;
+    display:table-cell;
+    padding-right:5px;
+    width:50px; /* you can change width */
+    
+}
+div.img img{ 
+   
+  
+}
+.p1{
+  margin: 0px;
+  margin-left: 10px;
+  text-shadow: 0px 0px 2px #488bf4;
+  font-size: 20px;
+  width: 135px;
+  word-wrap: break-word;
+  height: 2.2em;
+ 
+}
+.p2{
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+
+
+</style>
+
+{{template "Header"}}
+<div class="row">
+{{range .}}
+        <div class="column">
+          <div class="card">
+              <div class="img"><img style=" vertical-align:middle;max-width: 150%;"src={{.IconUrls.Medium}} /></div>
+               <div class="text">
+               <p class="p1">{{.Name}}</p>
+               <p class="p2">Max Level: {{.MaxLevel}}</p>
+                </div>
+          </div>
+        </div>
+       {{end}}
+      </div>  
+  {{template "Footer"}}
+
+
