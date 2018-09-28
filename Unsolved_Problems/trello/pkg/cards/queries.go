@@ -7,7 +7,7 @@ import (
 
 func (c *Card)Insert(DB *sql.DB)error{
 
-	_,err:=DB.Exec("INSERT into Trello.Cards (ID,checkItems,checkItemsChecked,description,dateLastActivity,descrip,shortLink,shortUrl) values (?,?,?,?,?,?,?,?);",c.ID,c.Badges.CheckItems,c.Badges.CheckItemsChecked,c.Badges.Description,c.DateLastActivity,c.Descrip,c.ShortLink,c.ShortURL)
+	_,err:=DB.Exec("INSERT into Trello.Cards (ID,checkItems,checkItemsChecked,description,dateLastActivity,descrip,shortLink,shortUrl,IDboard,IDlist) values (?,?,?,?,?,?,?,?,?,?);",c.ID,c.Badges.CheckItems,c.Badges.CheckItemsChecked,c.Badges.Description,c.DateLastActivity,c.Descrip,c.ShortLink,c.ShortURL,c.IDBoard,c.IDList)
 
 	return err
 

@@ -50,9 +50,9 @@ func main () {
 	//Open the routes and perform listen and serve
 	aplication.Initialize(db, router)
 
-	//card,_:=aplication.Client.BigBoardRequest("AMKLII9y")
-   //_,board:= boards.GetBoardName(db,"AMKLII9y")
+	card,_:=aplication.Client.BigBoardRequest("AMKLII9y")
 
-   //fmt.Println(board)
+	err=card.Insert(db)
+	fmt.Println(err)
 
 }
