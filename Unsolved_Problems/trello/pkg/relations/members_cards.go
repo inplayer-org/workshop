@@ -3,8 +3,6 @@ package relations
 
 import (
 "database/sql"
-"fmt"
-"log"
 	"strconv"
 )
 
@@ -27,5 +25,4 @@ func deleteMembersCardsRel(DB *sql.DB,idCard string,idMember ...string)error{
 	_,err := DB.Exec(query)
 
 	return err
-}
 }
