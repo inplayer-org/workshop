@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+//sholud be moved in vaidation PKG
 type rawDate []byte
 
 func (t rawDate) Time() (time.Time, error) {
