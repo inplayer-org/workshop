@@ -29,3 +29,9 @@ func (c *Card) NewDataStructure() interfaces.DataStructure{
 	return c
 }
 
+func (c *Card) GetIDboards()[]string{
+	var ret []string
+	ret=append(ret,c.IDBoard)
+	return ret
+}
+

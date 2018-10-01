@@ -22,3 +22,9 @@ type BigBoard struct {
 func (bb *BigBoard) NewDataStructure() interfaces.DataStructure {
 	return bb
 }
+
+func (bb *BigBoard) GetIDboards()[]string{
+	var ret []string
+	ret=append(ret,bb.ID)
+	return ret
+}

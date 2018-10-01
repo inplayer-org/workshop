@@ -8,6 +8,12 @@ type List struct{
 	IDBoard string `json:"idBoard"`
 }
 
-func (list *List) NewDataStructure() interfaces.DataStructure{
-	return list
+func (l *List) NewDataStructure() interfaces.DataStructure{
+	return l
+}
+
+func (l *List) GetIDboards()[]string{
+	var ret []string
+	ret=append(ret,l.IDBoard)
+	return ret
 }
