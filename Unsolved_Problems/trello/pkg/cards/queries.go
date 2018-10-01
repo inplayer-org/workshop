@@ -123,13 +123,39 @@ func GetCardsFromBoard(db *sql.DB,boardID string)([]Card,error){
 	return cards,nil
 }
 
-func GetCardsFromList(DB *sql.DB,ListID string)([]Card,error){
+func GetCardsFromList(DB *sql.DB,listID string)([]Card,error){
 
 	var cards []Card
+	rows,err:=DB.Query("SELECT ID,checkItems,checkItemsChecked,description,dateLastActivity,descrip,shortLink,shortUrl,IDboard,IDlist FROM Cards Where IDlist=?;",listID)
 
-	//rows,err:=DB.Query("SELECT ID,checkItems,checkItemsChecked,description,dateLastAcivity,descrip,shortLink,shortUrl,IDlist FROM Cards Where IDlist=?")
+	if err!=nil{
+		return nil,err
+	}
+
+	for rows.Next(){
+
+		var dt rawDate
+
+		var c Card
+
+		err = rows.Scan(&c.ID,&c.Badges.CheckItems,&c.Badges.CheckItemsChecked,&c.Badges.Description,&dt,&c.Descrip,&c.ShortLink,&c.ShortURL,&c.IDBoard,&c.IDList)
+
+		if err !=nil {
+			//fmt.Println(err.Error())
+			return nil,err
+		}
+
+		//fmt.Println(dt.Time())
+
+		c.DateLastActivity,err=dt.Time()
+
+		if err !=nil {
+			return nil,err
+		}
+
+		cards = append(cards,c)
+	}
 
 
 	return cards,nil
-
 }

@@ -51,9 +51,9 @@ func main () {
 	//Open the routes and perform listen and serve
 	aplication.Initialize(db, router)
 
-	card,err:=cards.GetCardsFromBoard(aplication.DB,"5b")
+	card,err:=cards.GetCardsFromList(aplication.DB,"5b7c19f1abfd86855fd07d96")
 
-	fmt.Println(card)
+	fmt.Println(len(card))
 	fmt.Println(err)
 
 }
