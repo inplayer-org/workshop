@@ -1,0 +1,34 @@
+@import "./master.scss";
+
+.listBox {
+  margin: 1%;
+  white-space: normal;
+  display: inline-block;
+  max-height: 96%;
+  width: 25%;
+  background: color(terciary-darken3);
+  box-shadow: shadowSize(mediumSize) color(shadow-transparent3);
+}
+
+.listName{
+  font-weight: bold;
+  margin: 2%;
+  display: inline-block;
+  height: auto;
+  width: auto;
+}
+
+.listContent{
+    background: color(terciary-darken3);
+    overflow: auto;
+    max-height: 90%;
+    height: auto;
+}
+
+.listBox:first-child{
+  margin-left: 2%;
+}
+
+.listBox:last-child{
+  margin-right: 2%;
+}

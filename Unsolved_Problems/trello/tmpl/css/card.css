@@ -1,16 +1,19 @@
 .cardBox {
-  background-color: black;
-  padding: 1%;
-  display: block;
-  margin: 4% 2%;
+  background-color: #1d4272;
+  padding: 2%;
+  display: inline-block;
+  margin: 2%;
+  width: 96%;
   text-align: center;
-  max-height: 60%;
+  height: auto;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.7);
 }
 
 .cardName {
   max-width: 98%;
   padding: 0% 0%;
-  background-color: silver;
+  color: #FDFEFF;
+  background-color: #275A9B;
   border-radius: 5px 5px 0px 0px;
   border-bottom: 0px;
   display: inline-block;
@@ -19,12 +22,11 @@
 }
 
 .card {
-  overflow: auto;
+  display: inline-block;
   padding-bottom: 3%;
   padding-top: 3%;
   height: auto;
-  max-height: 90%;
-  background-color: #a8ffd5;
+  background-color: #3172c4;
 }
 
 .labelBox {
@@ -43,8 +45,9 @@
   border-radius: 15px;
   font-size: 12px;
   font-weight: bold;
-  color: white;
+  color: #FDFEFF;
   background-color: blue;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.7);
 }
 
 .descriptionBox {
@@ -53,7 +56,9 @@
   margin: 3% 2% 3% 2%;
   text-align: left;
   height: auto;
-  background-color: orange;
+  color: #FDFEFF;
+  background-color: #03A8EF;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.7);
 }
 
 .memberBox {
@@ -62,7 +67,9 @@
   padding: 2% 2%;
   margin: 3% 2% 3% 2%;
   height: auto;
-  background-color: purple;
+  color: #FDFEFF;
+  background-color: #03A8EF;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.7);
 }
 
 .memberElem {
