@@ -3,7 +3,16 @@ package cards
 import (
 	"database/sql"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/validators"
+	"time"
 )
+
+type rawDate []byte
+
+func (t rawDate) Time() (time.Time, error) {
+	//fmt.Println(t)
+	return time.Parse("2006-01-02 15:04:05", string(t))
+}
+
 
 func (c *Card)Insert(DB *sql.DB)error{
 
@@ -79,7 +88,7 @@ func GetCardsFromBoard(db *sql.DB,boardID string)([]Card,error){
 
 	var cards []Card
 
-	rows,err:=db.Query("SELECT ID,checkItems,checkItemsChecked,description,dateLastAcivity,descrip,shortLink,shortUrl,IDlist FROM Cards Where idBoard Like (?)","%"+boardID+"%")
+	rows,err:=db.Query("SELECT ID,checkItems,checkItemsChecked,description,dateLastActivity,descrip,shortLink,shortUrl,IDlist FROM Cards Where IDboard Like (?)","%"+boardID+"%")
 
 	if err !=nil {
 		return nil,err
@@ -87,9 +96,21 @@ func GetCardsFromBoard(db *sql.DB,boardID string)([]Card,error){
 
 	for rows.Next(){
 
+		var dt rawDate
 
 		var c Card
-		err = rows.Scan(&c.ID,&c.Badges.CheckItems,&c.Badges.CheckItemsChecked,&c.Badges.Description,&c.DateLastActivity,&c.Descrip,&c.ShortLink,&c.ShortURL,&c.IDList)
+
+
+		err = rows.Scan(&c.ID,&c.Badges.CheckItems,&c.Badges.CheckItemsChecked,&c.Badges.Description,&dt,&c.Descrip,&c.ShortLink,&c.ShortURL,&c.IDList)
+
+		if err !=nil {
+			//fmt.Println(err.Error())
+			return nil,err
+		}
+
+		//fmt.Println(dt.Time())
+
+		c.DateLastActivity,err=dt.Time()
 
 		if err !=nil {
 			return nil,err
@@ -100,4 +121,15 @@ func GetCardsFromBoard(db *sql.DB,boardID string)([]Card,error){
 
 
 	return cards,nil
+}
+
+func GetCardsFromList(DB *sql.DB,ListID string)([]Card,error){
+
+	var cards []Card
+
+	//rows,err:=DB.Query("SELECT ID,checkItems,checkItemsChecked,description,dateLastAcivity,descrip,shortLink,shortUrl,IDlist FROM Cards Where IDlist=?")
+
+
+	return cards,nil
+
 }

@@ -28,3 +28,5 @@ func (a *App) GetMemberByUsername(w http.ResponseWriter, r *http.Request) {
 	tag := vars["tag"]
 	log.Println(tag)
 }
+
+
