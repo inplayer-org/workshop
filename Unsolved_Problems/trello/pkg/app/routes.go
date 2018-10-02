@@ -18,6 +18,6 @@ func (a *App) initializeRoutes() {
 
 
 func serveCSS(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "../tmpl/css/board.css")
+	http.ServeFile(w, r, "../tmpl/css/*.css")
 
 }
