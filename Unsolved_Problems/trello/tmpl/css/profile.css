@@ -1,0 +1,91 @@
+#bg1 {
+  margin: 0;
+  height: 100%;
+  width: 90%;
+  position: absolute;
+  background-color: #00A5E5;
+  z-index: -2;
+}
+
+#bg2 {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: #00AAE7;
+  z-index: -1;
+  -webkit-clip-path: polygon(0 0, 33% 0, 79% 100%, 0% 100%);
+  clip-path: polygon(0 0, 33% 0, 79% 100%, 0% 100%);
+}
+
+.profileHeader {
+  font-weight: bold;
+  color: #FDFEFF;
+  display: inline-block;
+  height: 10%;
+  width: 80%;
+}
+
+.profileName {
+  vertical-align: middle;
+  font-size: 23px;
+  text-align: left;
+  float: left;
+  width: 50%;
+  padding: 2%;
+  padding-left: 10%;
+}
+
+.currentBoardName {
+  font-size: 25px;
+  text-align: right;
+  float: right;
+  width: 50%;
+  padding: 2%;
+  padding-right: 10%;
+}
+
+.profileInfoRow {
+  color: #FDFEFF;
+  display: inline-block;
+  height: 35%;
+  width: 80%;
+  padding: 2%;
+}
+
+.profileImageBlock {
+  display: inline-block;
+  width: 50%;
+  text-align: left;
+  justify-content: center;
+  vertical-align: middle;
+  padding-left: 8%;
+}
+
+.profileImageBlock .profileImage {
+  border: 2px solid gray;
+  display: inline-block;
+  width: 50%;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.7);
+}
+
+.profileInfo {
+  font-size: 20px;
+  text-align: right;
+  float: right;
+  display: table;
+  width: 50%;
+}
+
+.infoBlock {
+  display: table-row;
+  height: 33.3%;
+}
+
+.infoBlock p {
+  height: auto;
+  width: auto;
+  margin: 0;
+  padding-right: 10%;
+  display: table-cell;
+  vertical-align: bottom;
+}

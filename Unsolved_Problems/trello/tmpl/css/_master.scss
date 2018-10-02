@@ -10,6 +10,9 @@ $colors: (
   secondary-darken2: darken(#03A8EF,20),
   secondary-lighten1: lighten(#03A8EF,10),
   secondary-lighten2: lighten(#03A8EF,20),
+  secondary-lighten3: lighten(#03A8EF,30),
+  secondary-lighten4: lighten(#03A8EF,40),
+  secondary-lighten5: lighten(#03A8EF,50),
 
   terciary: #FDFEFF,
   terciary-darken1: darken(#FDFEFF,10),
@@ -17,11 +20,14 @@ $colors: (
   terciary-darken3: darken(#FDFEFF,30),
   terciary-lighten1: lighten(#FDFEFF,10),
 
+  background1: #00A5E5,
+  backgroundd2:  	#00AAE7,
+
   shadow: #000000,
   shadow-transparent1: transparentize(#000000,0.1),
   shadow-transparent2: transparentize(#000000,0.2),
   shadow-transparent3: transparentize(#000000,0.3),
-  shadow-transparent4: transparentize(#000000,0.4)
+  shadow-transparent4: transparentize(#000000,0.4),
 
 );
 
@@ -31,8 +37,18 @@ $shadow-sizes: (
   largeSize: 0 4.5px 4.5px 0
 );
 
-@function shadowSize($sizeSize) {
-  @return map-get($shadow-sizes,$sizeSize);
+$profile-sizes: (
+  BoxWidth: 80%,
+  BoxPadding: 2%,
+  HeaderFont: 23px
+);
+
+@function profileSize($size){
+  @return map-get($profile-sizes,$size);
+}
+
+@function shadowSize($size) {
+  @return map-get($shadow-sizes,$size);
 }
 
 @function color($color-name) {
