@@ -13,8 +13,8 @@ func (board *Board) NewDataStructure() interfaces.DataStructure {
 	return board
 }
 
-func (bb *Board) GetIDboards()[]string{
+func (bb *Board) GetIDboards() []string {
 	var ret []string
-	ret=append(ret,bb.ID)
+	ret = append(ret, bb.ID)
 	return ret
 }

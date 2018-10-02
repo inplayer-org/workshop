@@ -1,0 +1,93 @@
+@import "./master.scss";
+
+#bg1{
+  margin: 0;
+  height: 100%;
+  width: 90%;
+  position: absolute;
+  background-color: color(background1);
+  z-index: -2;
+}
+#bg2{
+    height: 100%;
+    width: 100%;
+  position: absolute;
+  background-color: color(backgroundd2);
+  z-index: -1;
+  -webkit-clip-path: polygon(0 0, 33% 0, 79% 100%, 0% 100%);
+  clip-path: polygon(0 0, 33% 0, 79% 100%, 0% 100%);
+}
+
+.profileHeader {
+  font-weight: bold;
+  color: color(terciary);
+  display: inline-block;
+  height: 10%;
+  width: profileSize(BoxWidth);
+
+}
+
+.profileName {
+  vertical-align: middle;
+  font-size: 23px;
+  text-align: left;
+  float: left;
+  width: 50%;
+  padding: profileSize(BoxPadding);
+  padding-left:  10%;
+}
+
+.currentBoardName {
+  font-size: 25px;
+  text-align: right;
+  float: right;
+  width: 50%;
+  padding: profileSize(BoxPadding);
+  padding-right:  10%
+}
+
+.profileInfoRow {
+    color: color(terciary);
+  display: inline-block;
+  height: 35%;
+  width: profileSize(BoxWidth);
+  padding: profileSize(BoxPadding);
+}
+
+.profileImageBlock {
+  display: inline-block;
+  width: 50%;
+  text-align: left;
+  justify-content: center;
+  vertical-align: middle;
+  padding-left:  8%;
+  .profileImage {
+    border: 2px solid gray;
+    display: inline-block;
+    width: 50%;
+    box-shadow: shadowSize(mediumSize) color(shadow-transparent3);
+
+  }
+}
+
+.profileInfo {
+  font-size: 20px;
+  text-align: right;
+  float: right;
+  display: table;
+  width: 50%;
+}
+
+.infoBlock {
+  display: table-row;
+  height: 33.3%;
+
+  p {
+    height: auto;
+    width: auto;
+    margin: 0;
+      padding-right:  10%;
+    display: table-cell;
+    vertical-align: bottom;
+  }
+}
