@@ -2,10 +2,12 @@
 
 .listBox {
   margin: 1%;
+  margin-left: 0.5%;
+  margin-right: 0.5%;
   white-space: normal;
   display: inline-block;
   max-height: 96%;
-  width: 25%;
+  width: 29%;
   background: color(terciary-darken3);
   box-shadow: shadowSize(mediumSize) color(shadow-transparent3);
 }
@@ -26,9 +28,9 @@
 }
 
 .listBox:first-child{
-  margin-left: 2%;
+  margin-left: 1%;
 }
 
 .listBox:last-child{
-  margin-right: 2%;
+  margin-right: 1%;
 }
