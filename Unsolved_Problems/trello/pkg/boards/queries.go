@@ -80,3 +80,20 @@ func GetAllBoards(db *sql.DB) ([]Board, error) {
 
 	return boards, nil
 }
+
+
+func GetBoardbyID(db *sql.DB,boardID string)(Board,error){
+
+
+
+	var board Board
+
+	err := db.QueryRow("SELECT nameBoard,descrip,shortUrl FROM Boards WHERE ID=?",boardID).Scan(&board.Name,&board.Desc,&board.ShortUrl)
+
+	if err!=nil{
+		return board,err
+	}
+
+	return board,nil
+
+}
