@@ -98,3 +98,4 @@ func GetAllMembers(db *sql.DB) ([]Member, error) {
 
 	return members, nil
 }
+
