@@ -1,19 +1,24 @@
-.cardBox{
-  background-color: black;
-  padding: 1%;
-  display: block;
+@import "./master.scss";
 
-  margin: 4% 2%;
+.cardBox{
+  background-color: color(primary-darken1);
+  padding: 2%;
+  display: inline-block;
+  margin: 2%;
+  width: 96%;
   text-align: center;
-  max-height: 60%;
+  height: auto;
+  box-shadow: shadowSize(mediumSize) color(shadow-transparent3);
 }
+
 
 .cardName{
 
   max-width: 98%;
   padding: 0% 0%;
 
-  background-color: silver;
+  color: color(terciary);
+  background-color: color(primary);
 
   border-radius: 5px 5px 0px 0px;
   border-bottom: 0px;
@@ -23,12 +28,11 @@
 }
 
 .card{
-  overflow: auto;
+  display: inline-block;
   padding-bottom: 3%;
   padding-top: 3%;
   height: auto;
-  max-height: 90%;
-  background-color: rgb(168, 255, 213);
+  background-color: color(primary-lighten1);
 }
 
 .labelBox{
@@ -49,17 +53,22 @@
   font-size: 12px;
   font-weight: bold;
 
-  color: white;
+  color: color(terciary);
   background-color: blue;
+    box-shadow: shadowSize(smallSize) color(shadow-transparent3);
 }
 
 .descriptionBox{
+
   width: 96%;
   padding: 2% 2%;
   margin: 3% 2% 3% 2%;
   text-align: left;
   height: auto;
-  background-color: orange;
+
+  color: color(terciary);
+  background-color: color(secondary);
+    box-shadow: shadowSize(smallSize) color(shadow-transparent3);
 
 }
 
@@ -69,7 +78,9 @@
   padding: 2% 2%;
   margin: 3% 2% 3% 2%;
   height: auto;
-  background-color: purple;
+  color: color(terciary);
+  background-color: color(secondary);
+    box-shadow: shadowSize(smallSize) color(shadow-transparent3);
 
 }
 

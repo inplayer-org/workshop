@@ -6,11 +6,10 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
 
 func (a *App) Home(w http.ResponseWriter, r *http.Request) {
-	tmpl.Tmpl.ExecuteTemplate(w, "home.html", nil)
+	//tmpl.Tmpl.ExecuteTemplate(w, "home.html", nil)
 }
 
 func (a *App) Search(w http.ResponseWriter, r *http.Request) {
@@ -29,3 +28,5 @@ func (a *App) GetMemberByUsername(w http.ResponseWriter, r *http.Request) {
 	tag := vars["tag"]
 	log.Println(tag)
 }
+
+

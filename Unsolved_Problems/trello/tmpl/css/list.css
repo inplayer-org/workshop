@@ -1,0 +1,32 @@
+.listBox {
+  margin: 1%;
+  white-space: normal;
+  display: inline-block;
+  max-height: 96%;
+  width: 25%;
+  background: #64b2ff;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.7);
+}
+
+.listName {
+  font-weight: bold;
+  margin: 2%;
+  display: inline-block;
+  height: auto;
+  width: auto;
+}
+
+.listContent {
+  background: #64b2ff;
+  overflow: auto;
+  max-height: 90%;
+  height: auto;
+}
+
+.listBox:first-child {
+  margin-left: 2%;
+}
+
+.listBox:last-child {
+  margin-right: 2%;
+}

@@ -8,8 +8,13 @@ type Member struct{
 	Initials string `json:"initials"`
 	Username string `json:"username"`
 	Email string `json:"email"`
+	IDboards []string `json:"idBoards"`
 }
 
-func (member *Member) NewDataStructure() interfaces.DataStructure{
-	return member
+func (m *Member) NewDataStructure() interfaces.DataStructure{
+	return m
+}
+
+func (m *Member)GetIDboards()[]string{
+	return m.IDboards
 }

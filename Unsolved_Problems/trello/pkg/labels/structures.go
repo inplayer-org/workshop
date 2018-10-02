@@ -10,6 +10,12 @@ type Label struct {
 
 }
 
-func (label *Label) NewDataStructure() interfaces.DataStructure{
-	return label
+func (l *Label) NewDataStructure() interfaces.DataStructure{
+	return l
+}
+
+func (l *Label) GetIDboards()[]string{
+	var ret []string
+	ret=append(ret,l.IDboard)
+	return ret
 }

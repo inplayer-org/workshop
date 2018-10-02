@@ -16,7 +16,7 @@ func (c *MyClient)GetLabel(labelID string)(interfaces.DataStructure,error){
 	var label labels.Label
 
 	urlStr:="https://api.trello.com/1/labels/"+labelID
-	req,err:=NewGetRequest(urlStr,nil)
+	req,err:=NewGetRequest(urlStr,LabelsQuery())
 
 	if err!=nil {
 		return label.NewDataStructure(),err
@@ -44,7 +44,7 @@ func (c *MyClient)GetMember(memberID string)(interfaces.DataStructure,error){
 	var member members.Member
 
 	urlStr:="https://api.trello.com/1/members/"+memberID
-	req,err:=NewGetRequest(urlStr,nil)
+	req,err:=NewGetRequest(urlStr,MembersQuery())
 
 	if err!=nil{
 		return member.NewDataStructure(),err
@@ -73,7 +73,7 @@ func (c *MyClient) GetBoard(boardID string) (interfaces.DataStructure, error) {
 	var board boards.Board
 
 	urlStr := "https://api.trello.com/1/boards/" + boardID
-	req, err := NewGetRequest(urlStr,nil)
+	req, err := NewGetRequest(urlStr,BigBoardQuery())
 
 	if err != nil {
 		return board.NewDataStructure(), err
@@ -98,7 +98,7 @@ func (c *MyClient)GetCard(cardID string)(interfaces.DataStructure,error){
 	var card cards.Card
 
 	urlStr:="https://api.trello.com/1/cards/"+cardID
-	req,err:=NewGetRequest(urlStr,nil)
+	req,err:=NewGetRequest(urlStr,CardsQuery())
 
 	if err!=nil{
 		return card.NewDataStructure(),err
@@ -172,3 +172,4 @@ func(c *MyClient)BigBoardRequest(boardID string)(interfaces.DataStructure,error)
 	return bb.NewDataStructure(),nil
 
 	}
+

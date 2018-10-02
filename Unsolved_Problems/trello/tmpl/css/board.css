@@ -1,0 +1,11 @@
+.boardBox {
+  white-space: nowrap;
+  display: inline-block;
+  margin: 2%;
+  width: 96%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-color: #275A9B;
+  height: 80%;
+  box-shadow: 0 4.5px 4.5px 0 rgba(0, 0, 0, 0.7);
+}

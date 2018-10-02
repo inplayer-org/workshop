@@ -1,9 +1,9 @@
 package cards
 
 import (
-	"time"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
+	"time"
 )
 
 type Card struct {
@@ -27,5 +27,11 @@ type Card struct {
 
 func (c *Card) NewDataStructure() interfaces.DataStructure{
 	return c
+}
+
+func (c *Card) GetIDboards()[]string{
+	var ret []string
+	ret=append(ret,c.IDBoard)
+	return ret
 }
 

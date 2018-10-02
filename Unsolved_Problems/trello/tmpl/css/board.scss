@@ -1,0 +1,14 @@
+@import "./master.scss";
+
+.boardBox{
+  white-space: nowrap;
+  display: inline-block;
+  margin: 2%;
+  width: 96%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background-color: color(primary);
+  height: 80%;
+  box-shadow: shadowSize(largeSize) color(shadow-transparent3);
+
+}

@@ -4,13 +4,13 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/app"
+	"log"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/relations"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
-	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/cards"
+	_ "github.com/go-sql-driver/mysql"
+
 )
 
-//enterFlags flags for DbName UserName and Password
 func enterFlags() (string,string,string) {
 
 	DbName := flag.String("database", "Trello", "the name of you database")
@@ -43,17 +43,19 @@ func main () {
 	}
 
 	//Creating a router
-	router := mux.NewRouter()
+	//router := mux.NewRouter()
 
 	//App structure for connected database and router
-	var aplication app.App
+	//var aplication app.App
 
 	//Open the routes and perform listen and serve
-	aplication.Initialize(db, router)
+	//aplication.Initialize(db, router)
 
-	card,err:=cards.GetCardsFromList(aplication.DB,"5b7c19f1abfd86855fd07d96")
+	var str []string
+	str = append(str,"test")
+	str = append(str,"random")
+	er := relations.DeleteRemovedCardsLabelsRelation(db,"test",str...)
+	log.Println(er)
 
-	fmt.Println(len(card))
-	fmt.Println(err)
 
 }
