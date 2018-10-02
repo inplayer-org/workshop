@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/pkg/errors"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/cmd/dailyupdates/pkg/workers"
@@ -72,7 +73,7 @@ func main() {
 
 	//Panic if there is error with reading the locations from our database since there will be no data for processing or it will be corrupted
 	err = errors.Database(err)
-	if err!=nil{
+	if err != nil {
 		log.Println("There was an error with getting clans from the database, or no clans exist in the database")
 		panic(err)
 	}
@@ -82,11 +83,10 @@ func main() {
 	//Section 2 - Update rankedPlayer from locations table
 
 	//Starting Workers
-	for i := 0; i < 40; i++ {
+	for i := 0; i < 30; i++ {
 		go workers.StartWorker(db, locationInfoChan, done)
 
 	}
-
 
 	//Sending Locations to workers
 	go func() {

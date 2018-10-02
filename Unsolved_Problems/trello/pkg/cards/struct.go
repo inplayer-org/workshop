@@ -1,9 +1,9 @@
 package cards
 
 import (
-	"time"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/labels"
+	"time"
 )
 
 type Card struct {

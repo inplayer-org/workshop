@@ -19,6 +19,6 @@ func (a *App) Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println(players)
-	tmpl.Tmpl.ExecuteTemplate(w, "homeNew.html", players)
+	tmpl.Tmpl.ExecuteTemplate(w, "home.html", players)
 
 }

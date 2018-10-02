@@ -5,21 +5,20 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-
+	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
 )
 
 func (a *App) Home(w http.ResponseWriter, r *http.Request) {
-	//tmpl.Tmpl.ExecuteTemplate(w, "home.html", nil)
+	tmpl.Tmpl.ExecuteTemplate(w, "home.html", nil)
 }
 
 func (a *App) Search(w http.ResponseWriter, r *http.Request) {
-	option := r.FormValue("searchby")
-	text := r.FormValue("text")
-	if option == "id" {
-		http.Redirect(w, r, "http://localhost:3303", http.StatusTemporaryRedirect)
-	} else {
-		http.Redirect(w, r, "http://localhost:3303/members/"+text, http.StatusTemporaryRedirect)
+	board := r.FormValue("board")
+	member := r.FormValue("member")
+	if len(board) > 0 && len(member) > 0 {
+		log.Println("you have to enter eather board or member ")
 	}
+	log.Println("member", member, board)
 
 }
 
