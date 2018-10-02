@@ -24,7 +24,7 @@ type ClientInterface interface {
 	GetTagByClans(string) (playerTags.PlayerTags, error)
 	GetClan(string) (clans.Clan, error)
 	GetCards() (cards.Cards, error)
-	GetChestsForPlayer(string) (playerStats.Chest,error)
+	GetChestsForPlayer(string) (playerStats.Chest, error)
 }
 
 //MyClient structure have client that Do rquests
@@ -40,8 +40,9 @@ func NewClient() ClientInterface {
 //SetHeaders sets the headers to make the request
 func SetHeaders(req *http.Request) {
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjBkMTUxODQ4LWM0ZTgtNGU1Zi05NzRiLWQzNjQ1ZjAxMzk2MiIsImlhdCI6MTUzNDg1NDQ2MCwic3ViIjoiZGV2ZWxvcGVyL2U1ODJhZWJlLWNlNGUtNGVhMC1hZTgwLTk5MTdhMmNkMGZhYyIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI2Mi4xNjIuMTY4LjE5NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.8-GoA48DGZScCOi6EU4AAuJUcXbY2kqqHwsEXg22w4hDHJegjuSaS6jjDSoZcZFSS9x6Fbkd825eSagpAjbX4Q")
+	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjJmNDM0NTU0LTc0NjEtNGY1Zi04YWE3LTI4ZGVmOGY0Mjc1NyIsImlhdCI6MTUzODMwNTQxNiwic3ViIjoiZGV2ZWxvcGVyL2VmZGNkYjRlLTI1ZWEtN2Q3Mi1lMjY3LTQ2MWUzMmUxZWQxMCIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI5NS4xODAuMjU0LjIxNiJdLCJ0eXBlIjoiY2xpZW50In1dfQ.hkLJkL3VsMOQbOJY5t6EBvx4h9MmpCcztdv_a7yJd3L22IZ_iymbNk5Ca4UmssqqWfw7mt0KcNuQTbbaO03uIg")
 }
+
 //NewGetRequest makes the request with the headers
 func NewGetRequest(url string) (*http.Request, error) {
 	req, err := http.NewRequest("GET", url, nil)
@@ -52,18 +53,17 @@ func NewGetRequest(url string) (*http.Request, error) {
 	return req, nil
 }
 
-func (c *MyClient) GetChestsForPlayer(playerTag string) (playerStats.Chest,error) {
+func (c *MyClient) GetChestsForPlayer(playerTag string) (playerStats.Chest, error) {
 	tag := parser.ToRequestTag(playerTag)
 
 	var chests playerStats.Chest
-	urlStr := "https://api.clashroyale.com/v1/players/"+tag+"/upcomingchests"
+	urlStr := "https://api.clashroyale.com/v1/players/" + tag + "/upcomingchests"
 	req, err := NewGetRequest(urlStr)
 
 	//fail to parse url
 	if err != nil {
 		return chests, errors.Default("URL", err)
 	}
-
 
 	resp, err := c.client.Do(req)
 
@@ -188,7 +188,6 @@ func (c *MyClient) GetRequestForPlayer(tag string) (playerStats.PlayerStats, err
 
 	return currentPlayer, nil
 }
-
 
 func (c *MyClient) GetLocations() (locations.Locations, error) {
 
