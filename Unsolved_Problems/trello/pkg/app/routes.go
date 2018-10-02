@@ -1,12 +1,16 @@
 package app
 
-import "net/http"
+import (
+	"github.com/gorilla/mux"
+	"log"
+	"net/http"
+)
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/",a.Home).Methods("GET")
 	a.Router.HandleFunc("/search", a.Search).Methods("GET")
 
-	a.Router.HandleFunc("/css/",serveCSS)
+	a.Router.HandleFunc("/css/{cssName}",a.serveCSS)
 
 	a.Router.HandleFunc("/members/{tag}", a.GetMemberByUsername).Methods("GET")
 
@@ -17,7 +21,16 @@ func (a *App) initializeRoutes() {
 }
 
 
-func serveCSS(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "../tmpl/css/*.css")
+func (a *App) serveCSS(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+
+	cssFileName := vars["cssName"]
+
+	log.Println(cssFileName)
+
+	filePath := "../tmpl/css/" + cssFileName + ".css"
+
+	http.ServeFile(w, r, filePath)
 
 }
