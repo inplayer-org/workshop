@@ -38,7 +38,7 @@ func ( session *Session)  updateByID(DB *sql.DB) error {
 
 func (session *Session) Delete (DB *sql.DB) error {
 
-	_, err := DB.Exec("DELETE  FROM Trello.Sessions WHERE UID=?;", session.UID, session.IDuser)
+	_, err := DB.Exec("DELETE  FROM Trello.Sessions WHERE uid=?;", session.UID, session.IDuser)
 
 	return err
 
