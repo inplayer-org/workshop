@@ -5,12 +5,22 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/user"
+	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/session"
 )
 
-func (a *App) Home(w http.ResponseWriter, r *http.Request) {
-	tmpl.Tmpl.ExecuteTemplate(w, "login.html", nil)
-
+func (a *App) Home(w http.ResponseWriter, req *http.Request) {
+	c,err:=req.Cookie("sessions")
+	if err!=nil{
+		http.Redirect(w,req,"/loginform",303)
+	}else {
+		u, err := user.WhoAmI(a.DB,c)
+		if err != nil {
+			http.Redirect(w, req, "/loginform", 303)
+		}
+		tmpl.ExecuteTemplate(w, "home.html", u.Username)
+	}
 }
 
 func (a *App) Search(w http.ResponseWriter, r *http.Request) {
@@ -23,17 +33,48 @@ func (a *App) Search(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) GetMemberByUsername(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func (a *App) GetMemberByUsername(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
 	tag := vars["tag"]
 	log.Println(tag)
 }
 
-func (a *App) LoginTry(w http.ResponseWriter, r *http.Request) {
-	log.Println("tukasi")
-	username := r.FormValue("username")
-	password := r.FormValue("password")
+func (a *App)LoginForm(w http.ResponseWriter,req *http.Request){
 
-	log.Println("print", username, password)
+	tmpl.ExecuteTemplate(w,"login.html",nil)
+
+}
+
+func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
+	c,err:=req.Cookie("sessions")
+	if err!=nil{
+		c=&http.Cookie{
+			Name:"sessions",
+			Value:"test",
+		}
+		http.SetCookie(w,c)
+	}
+	fmt.Println(c)
+
+	username:=req.FormValue("username")
+	password:=req.FormValue("password")
+
+	u:=user.User{Username:username,Password:password,Token:""}
+
+	id,err:=user.GetUserID(a.DB,u.Username)
+
+	if err!=nil{
+		log.Println(err.Error())
+	}
+
+	s:=session.Session{UID:c.Value,IDuser:id}
+
+	s.Insert(a.DB)
+
+	err=u.Insert(a.DB)
+	if err!=nil{
+		log.Println(err.Error())
+	}
+	tmpl.ExecuteTemplate(w,"home.html",u)
 
 }

@@ -15,6 +15,6 @@ func (m *Member) NewDataStructure() interfaces.DataStructure{
 	return m
 }
 
-func (m *Member)GetIDboards()[]string{
-	return m.IDboards
+func DataStructureToMember(ds interfaces.DataStructure)*Member{
+	return ds.(*Member)
 }

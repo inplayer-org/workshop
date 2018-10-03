@@ -8,6 +8,10 @@ import (
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/",a.Home).Methods("GET")
+
+	a.Router.HandleFunc("/loginform",a.LoginForm)
+	a.Router.HandleFunc("/logingin",a.LogingIn)
+
 	a.Router.HandleFunc("/search", a.Search).Methods("GET")
 
 	a.Router.HandleFunc("/css/{cssName}.css",a.serveCSS)
