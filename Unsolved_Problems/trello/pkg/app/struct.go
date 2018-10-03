@@ -10,7 +10,14 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/client"
+	"html/template"
 )
+
+var tmpl *template.Template
+
+func intit(){
+	tmpl=template.Must(template.ParseGlob("../tmpl/*"))
+}
 
 //App
 type App struct {

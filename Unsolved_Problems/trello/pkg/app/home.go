@@ -5,11 +5,19 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"repo.inplayer.com/workshop/Unsolved_Problems/ClashRoyal/tmpl"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/user"
 )
 
 func (a *App) Home(w http.ResponseWriter, r *http.Request) {
-	tmpl.Tmpl.ExecuteTemplate(w, "login.html", nil)
+	c,err:=r.Cookie("sessions")
+	if err!=nil{
+		http.Redirect(w,r,"/loginform",303)
+	}
+	user,err:=user.WhoAmI(c)
+	if err!=nil{
+		http.Redirect(w,r,"/loginform",303)
+	}
+	tmpl.ExecuteTemplate(w,"home.html",user)
 
 }
 
@@ -29,7 +37,13 @@ func (a *App) GetMemberByUsername(w http.ResponseWriter, r *http.Request) {
 	log.Println(tag)
 }
 
-func (a *App) LoginTry(w http.ResponseWriter, r *http.Request) {
+func (a *App)LoginForm(w http.ResponseWriter,req *http.Request){
+
+	tmpl
+
+}
+
+func (a *App) LogingIn(w http.ResponseWriter, r *http.Request) {
 	log.Println("tukasi")
 	username := r.FormValue("username")
 	password := r.FormValue("password")
