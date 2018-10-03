@@ -13,13 +13,14 @@ func (a *App) Home(w http.ResponseWriter, req *http.Request) {
 	c,err:=req.Cookie("sessions")
 	if err!=nil{
 		http.Redirect(w,req,"/loginform",303)
+	}else {
+		_, err := user.WhoAmI(c)
+		u:=user.User{ID:12,Username:"Asd",Password:"asd",Token:""}
+		if err != nil {
+			http.Redirect(w, req, "/loginform", 303)
+		}
+		tmpl.ExecuteTemplate(w, "home.html", u.Username)
 	}
-	u,err:=user.WhoAmI(c)
-	if err!=nil{
-		http.Redirect(w,req,"/loginform",303)
-	}
-	tmpl.ExecuteTemplate(w,"home.html",u)
-
 }
 
 func (a *App) Search(w http.ResponseWriter, r *http.Request) {

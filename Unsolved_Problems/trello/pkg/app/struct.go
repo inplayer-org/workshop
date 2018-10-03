@@ -15,7 +15,7 @@ import (
 
 var tmpl *template.Template
 
-func intit(){
+func init(){
 	tmpl=template.Must(template.ParseGlob("../tmpl/src/*.html"))
 }
 
