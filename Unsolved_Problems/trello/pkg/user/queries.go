@@ -7,15 +7,15 @@ import (
 
 
 
-func (user *User) Insert(DB *sql.DB) error {
+func (user *User) Insert (DB *sql.DB) error {
 
-	_, err := DB.Exec("INSERT INTO Trello.Users (ID,username,pass,token) VALUES (?,?,?,?);", user.ID, user.Username, user.Password, user.token)
+	_, err := DB.Exec("INSERT INTO Trello.Users (ID,username,pass,token) VALUES (?,?,?,?);", user.ID, user.Username, user.Password, user.Token)
 
 	return err
 
 }
 
-func (user *User)  Update(DB *sql.DB) error {
+func (user *User)  Update (DB *sql.DB) error {
 
 	exists, err := validators.ExistsElementInColumn(DB, "Users", user.ID, "ID")
 
@@ -46,7 +46,7 @@ func GetFromUser(db *sql.DB,userID string)(User,error){
 
 	var user User
 
-	err := db.QueryRow("SELECT username,pass,token FROM Users WHERE ID=?",user).Scan(&user.Username,&user.Password,&user.Token)
+	err := db.QueryRow("SELECT username,pass,token FROM Users WHERE ID=?",userID).Scan(&user.Username,&user.Password,&user.Token)
 
 	if err!=nil{
 		return user,err
