@@ -39,7 +39,7 @@ func (a *App) GetMemberByUsername(w http.ResponseWriter, r *http.Request) {
 
 func (a *App)LoginForm(w http.ResponseWriter,req *http.Request){
 
-	tmpl
+	tmpl.ExecuteTemplate(w,"login.html",nil)
 
 }
 
