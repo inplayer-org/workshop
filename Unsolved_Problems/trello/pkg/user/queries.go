@@ -64,3 +64,20 @@ func GetFromUser(db *sql.DB,userID string)(User,error){
 	return user,nil
 
 }
+
+
+func GetUserID(db *sql.DB,username string)(User,error){
+
+
+
+	var user User
+
+	err := db.QueryRow("SELECT ID FROM Users WHERE username=?",username).Scan(&user.ID)
+
+	if err!=nil{
+		return user,err
+	}
+
+	return user,nil
+
+}
