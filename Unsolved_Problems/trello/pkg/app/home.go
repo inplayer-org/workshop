@@ -16,10 +16,11 @@ func (a *App) Home(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w,req,"/loginform",303)
 	}else {
 		u, err := user.WhoAmI(a.DB,c)
+
 		if err != nil {
 			http.Redirect(w, req, "/loginform", 303)
 		}
-		tmpl.ExecuteTemplate(w, "home.html", u.Username)
+		tmpl.ExecuteTemplate(w, "home.html", u)
 	}
 }
 
@@ -47,6 +48,7 @@ func (a *App)LoginForm(w http.ResponseWriter,req *http.Request){
 
 func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 	c,err:=req.Cookie("sessions")
+
 	if err!=nil{
 		c=&http.Cookie{
 			Name:"sessions",

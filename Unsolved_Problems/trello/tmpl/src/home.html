@@ -69,10 +69,94 @@ body,html {
     width: 100%;
     height: 7%;
 }
+
+
+body,html {
+    font-size: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+
+}
+
+/* Increase the font size of the h1 element */
+.header h1 {
+    font-size: 40px;
+}
+
+/* Style the top navigation bar */
+.navbar {
+    width: 100%;
+    height: 10%;
+    overflow: hidden;
+    background-color: #333;
+}
+
+/* Style the navigation bar links */
+.navbar .nav {
+    height: 100%;
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-size: 20px;
+
+    line-height:40px;
+}
+
+/* Right-aligned link */
+.navbar a.right {
+    height: 100%;
+    float: right;
+    text-align: center;
+    isplay: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+    font-size: 20px;
+
+    line-height:40px;
+
+
+
+}
+
+/* Change color on hover */
+.navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+img{
+    height: 100%;
+}
+.navbar .logo{
+    height: 100%;
+
+    float: left;
+    display: block;
+
+
+    margin-right: 8%;
+}
 </style>
 </head>
 <!-- <body> -->
-{{template "Header"}}
+
+<body>
+
+
+
+<div class="navbar">
+    <a  class="logo" href="#"><img  src="https://upload.wikimedia.org/wikipedia/commons/9/9a/InPlayer_Logo.png" alt=""></a>
+    <a class="nav" href="#">Home</a>
+    <a class="nav" href="#">About</a>
+
+    <a href="#" class="right">{{.Username}}</a>
+</div>
+
     <div class="background_img">
         <img src="https://media1.mensxp.com/media/content/2016/Mar/what-does-your-work-desk-reveal-about-your-personality980-1458197897_1100x513.jpg">
         <div class="centered">

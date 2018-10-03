@@ -23,7 +23,7 @@ func WhoAmI(DB *sql.DB,cookie *http.Cookie)(User,error){
 		return u,err
 	}
 
-	u,err=GetFromUser(DB,IDuser.IDuser)
+	u,err=GetFromUser(DB,IDuser)
 
 	return u,nil
 }
