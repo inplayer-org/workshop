@@ -12,6 +12,8 @@ func UpdateMember(c interfaces.ClientInterface, DB *sql.DB,memberID string)error
 
 	member,err:=c.GetMember(memberID)
 
+
+
 	if err!=nil{
 		return err
 	}

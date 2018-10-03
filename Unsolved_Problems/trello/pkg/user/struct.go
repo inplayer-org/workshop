@@ -11,4 +11,7 @@ type User struct{
 
 func WhoAmI(cookie *http.Cookie)(User,error){
 
+	var u User
+
+	return u,nil
 }

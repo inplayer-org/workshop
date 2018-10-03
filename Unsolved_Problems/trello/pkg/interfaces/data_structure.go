@@ -1,6 +1,8 @@
 package interfaces
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type DataStructure interface {
 	NewDataStructure()DataStructure
@@ -8,4 +10,3 @@ type DataStructure interface {
 	Update(*sql.DB)error
 	GetIDboards()[]string
 }
-

@@ -6,18 +6,19 @@ import (
 
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/user"
+	"fmt"
 )
 
-func (a *App) Home(w http.ResponseWriter, r *http.Request) {
-	c,err:=r.Cookie("sessions")
+func (a *App) Home(w http.ResponseWriter, req *http.Request) {
+	c,err:=req.Cookie("sessions")
 	if err!=nil{
-		http.Redirect(w,r,"/loginform",303)
+		http.Redirect(w,req,"/loginform",303)
 	}
-	user,err:=user.WhoAmI(c)
+	u,err:=user.WhoAmI(c)
 	if err!=nil{
-		http.Redirect(w,r,"/loginform",303)
+		http.Redirect(w,req,"/loginform",303)
 	}
-	tmpl.ExecuteTemplate(w,"home.html",user)
+	tmpl.ExecuteTemplate(w,"home.html",u)
 
 }
 
@@ -31,8 +32,8 @@ func (a *App) Search(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (a *App) GetMemberByUsername(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func (a *App) GetMemberByUsername(w http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
 	tag := vars["tag"]
 	log.Println(tag)
 }
@@ -43,11 +44,31 @@ func (a *App)LoginForm(w http.ResponseWriter,req *http.Request){
 
 }
 
-func (a *App) LogingIn(w http.ResponseWriter, r *http.Request) {
-	log.Println("tukasi")
-	username := r.FormValue("username")
-	password := r.FormValue("password")
+func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
+	c,err:=req.Cookie("sessions")
+	if err!=nil{
+		c=&http.Cookie{
+			Name:"sessions",
+			Value:"test",
+		}
+		http.SetCookie(w,c)
+	}
+	fmt.Println(c)
+	var p string
 
-	log.Println("print", username, password)
+
+
+	username:=req.FormValue("username")
+	password:=req.FormValue("password")
+
+	//	dbSessions[c.Value]=username
+	//	dbUsers[username]=password
+
+
+	fmt.Println(username)
+	p=password
+
+
+	tmpl.ExecuteTemplate(w,"home.html",p)
 
 }
