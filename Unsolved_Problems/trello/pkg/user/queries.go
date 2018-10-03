@@ -39,6 +39,15 @@ func (user *User)  updateByID(DB *sql.DB) error {
 }
 
 
+func (user *User) Delete (DB *sql.DB) error {
+
+	_, err := DB.Exec("DELETE FROM Trello.Users (ID,username,pass,token) VALUES (?,?,?,?);", user.ID, user.Username,user.Password,user.Token)
+
+	return err
+
+}
+
+
 
 func GetFromUser(db *sql.DB,userID string)(User,error){
 
