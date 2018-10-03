@@ -17,23 +17,23 @@ func (user *User) Insert (DB *sql.DB) error {
 
 func (user *User)  Update (DB *sql.DB) error {
 
-	exists, err := validators.ExistsElementInColumn(DB, "Users", user.ID, "ID")
+	exists, err := validators.ExistsElementInColumn(DB, "Users", user.Username, "username")
 
 	if err != nil {
 		return err
 	}
 
 	if exists {
-		return user.updateByID(DB)
+		return user.updatebyUsername(DB)
 	}
 
 	return user.Insert(DB)
 
 }
 
-func (user *User)  updateByID(DB *sql.DB) error {
+func (user *User)  updatebyUsername(DB *sql.DB) error {
 
-	_, err := DB.Exec("UPDATE Trello.Users SET username=?,pass=?,token=? WHERE ID=?", user.Username, user.Password, user.Token,user.ID)
+	_, err := DB.Exec("UPDATE Trello.Users SET pass=?,token=? WHERE username=?", user.Password, user.Token,user.Username)
 
 	return err
 }
