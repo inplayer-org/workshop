@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/user"
 	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/session"
 )
 
 func (a *App) Home(w http.ResponseWriter, req *http.Request) {
@@ -14,8 +15,7 @@ func (a *App) Home(w http.ResponseWriter, req *http.Request) {
 	if err!=nil{
 		http.Redirect(w,req,"/loginform",303)
 	}else {
-		_, err := user.WhoAmI(c)
-		u:=user.User{ID:12,Username:"Asd",Password:"asd",Token:""}
+		u, err := user.WhoAmI(a.DB,c)
 		if err != nil {
 			http.Redirect(w, req, "/loginform", 303)
 		}
@@ -55,21 +55,22 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 		http.SetCookie(w,c)
 	}
 	fmt.Println(c)
-	var p string
-
-
 
 	username:=req.FormValue("username")
 	password:=req.FormValue("password")
 
-	//	dbSessions[c.Value]=username
-	//	dbUsers[username]=password
+	u:=user.User{Username:username,Password:password,Token:""}
 
+	u.GetID(a.DB,u.Username)
 
-	fmt.Println(username)
-	p=password
+	s:=session.Session{UID:c.Value,IDuser:u.ID}
 
+	s.Insert(a.DB)
 
-	tmpl.ExecuteTemplate(w,"home.html",p)
+	err=u.Insert(a.DB)
+	if err!=nil{
+		log.Println(err.Error())
+	}
+	tmpl.ExecuteTemplate(w,"home.html",u)
 
 }

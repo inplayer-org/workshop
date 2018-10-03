@@ -40,11 +40,9 @@ func ( session *Session)  updateByID(DB *sql.DB) error {
 
 func GetFromSeassions(db *sql.DB,seasionID string)(Session,error){
 
-
-
 	var seassion Session
 
-	err := db.QueryRow("SELECT IDuser FROM Seassions WHERE uid=?",seassion).Scan(&seassion.IDuser)
+	err := db.QueryRow("SELECT IDuser FROM Seassions WHERE uid=?",seasionID).Scan(&seassion.IDuser)
 
 	if err!=nil{
 		return seassion,err
