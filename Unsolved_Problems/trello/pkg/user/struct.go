@@ -17,7 +17,7 @@ func WhoAmI(DB *sql.DB,cookie *http.Cookie)(User,error){
 
 	var u User
 
-	IDuser,err:=session.GetFromSeassions(DB,cookie.Value)
+	IDuser,err:=session.GetFromSessions(DB,cookie.Value)
 
 	if err!=nil{
 		return u,err
