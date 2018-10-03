@@ -3,6 +3,7 @@ package client
 import (
 	"database/sql"
 	"fmt"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/members"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/interfaces"
 )
 
@@ -32,7 +33,9 @@ func UpdateMember(c interfaces.ClientInterface, DB *sql.DB,memberID string)error
 
 	fmt.Println("looping in boards id")
 
-	for _,IDboard:=range member.GetIDboards(){
+	ms:=members.DataStructureToMember(member)
+
+	for _,IDboard:=range ms.IDboards{
 
 		fmt.Println("start geting big boards")
 

@@ -11,9 +11,3 @@ type List struct{
 func (l *List) NewDataStructure() interfaces.DataStructure{
 	return l
 }
-
-func (l *List) GetIDboards()[]string{
-	var ret []string
-	ret=append(ret,l.IDBoard)
-	return ret
-}

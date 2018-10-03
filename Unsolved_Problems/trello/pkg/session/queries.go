@@ -36,6 +36,13 @@ func ( session *Session)  updateByID(DB *sql.DB) error {
 	return err
 }
 
+func (session *Session) Delete (DB *sql.DB) error {
+
+	_, err := DB.Exec("DELETE FROM Trello.Sessions (uid,IDuser) VALUES (?,?);", session.UID, session.IDuser)
+
+	return err
+
+}
 
 
 func GetFromSeassions(db *sql.DB,seasionID string)(Session,error){

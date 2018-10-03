@@ -14,8 +14,3 @@ func (l *Label) NewDataStructure() interfaces.DataStructure{
 	return l
 }
 
-func (l *Label) GetIDboards()[]string{
-	var ret []string
-	ret=append(ret,l.IDboard)
-	return ret
-}

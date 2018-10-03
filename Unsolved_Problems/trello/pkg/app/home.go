@@ -61,9 +61,13 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 
 	u:=user.User{Username:username,Password:password,Token:""}
 
-	u.GetID(a.DB,u.Username)
+	id,err:=user.GetUserID(a.DB,u.Username)
 
-	s:=session.Session{UID:c.Value,IDuser:u.ID}
+	if err!=nil{
+		log.Println(err.Error())
+	}
+
+	s:=session.Session{UID:c.Value,IDuser:id}
 
 	s.Insert(a.DB)
 
