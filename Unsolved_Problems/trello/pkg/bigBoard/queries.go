@@ -64,6 +64,15 @@ func(bb *BigBoard)Insert(DB *sql.DB)error{
 		}
 	}
 
+    for _,membership:=range bb.Memberships{
+
+    	err=membership.Update(DB)
+
+		if err != nil {
+			return errors.Database(err)
+		}
+	}
+
 return nil
 }
 
@@ -126,6 +135,14 @@ func(bb *BigBoard)Update(DB *sql.DB)error{
 			}
 
 			err=relations.UpdateMembersCardsRelTable(DB,card.ID,card.IDmembers...)
+
+			if err != nil {
+				return errors.Database(err)
+			}
+		}
+		for _,membership:=range bb.Memberships{
+
+			err=membership.Update(DB)
 
 			if err != nil {
 				return errors.Database(err)

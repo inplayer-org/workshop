@@ -169,6 +169,12 @@ func(c *MyClient)BigBoardRequest(boardID string)(interfaces.DataStructure,error)
 
 	json.NewDecoder(resp.Body).Decode(&bb)
 
+	for index := range bb.Memberships{
+
+		bb.Memberships[index].IDboard = bb.ID
+
+	}
+
 	return bb.NewDataStructure(),nil
 
 	}

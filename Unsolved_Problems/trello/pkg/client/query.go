@@ -31,6 +31,7 @@ func BigBoardQuery()url.Values{
 	q.Add("list_fields","all")
 	q.Add("members","all")
 	q.Add("members_fields","all")
+	q.Add("memberships","all")
 
 	return q
 
