@@ -8,7 +8,7 @@ type Membership struct{
 	IDboard string `json:"idBoard"`
 	MemberType string `json:"memberType"`
 	Unconfirmed bool `json:"unconfirmed"`
-	Deactivated string `json:"deactivated"`
+	Deactivated bool `json:"deactivated"`
 }
 
 func (m *Membership) NewDataStructure() interfaces.DataStructure{
