@@ -1,4 +1,4 @@
-package template
+package tmpl
 
 import "html/template"
 
