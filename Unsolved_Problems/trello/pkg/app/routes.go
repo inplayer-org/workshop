@@ -9,8 +9,11 @@ import (
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/",a.Home).Methods("GET")
 
-	a.Router.HandleFunc("/loginform",a.LoginForm)
-	a.Router.HandleFunc("/logingin",a.LogingIn)
+	a.Router.HandleFunc("/loginform",a.LoginForm).Methods("GET")
+	a.Router.HandleFunc("/loginform",a.LogingIn).Methods("POST")
+
+	a.Router.HandleFunc("/registerform",a.RegisterForm).Methods("GET")
+	a.Router.HandleFunc("/registerform" ,a.Registering).Methods("POST")
 
 	a.Router.HandleFunc("/search", a.Search).Methods("GET")
 

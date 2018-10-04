@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/session"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/validators"
+	uuid2 "github.com/nu7hatch/gouuid"
 )
 
 func (a *App) Home(w http.ResponseWriter, req *http.Request) {
@@ -56,13 +57,30 @@ func (a *App)LoginForm(w http.ResponseWriter,req *http.Request){
 
 }
 
-func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
+func (a *App)RegisterForm(w http.ResponseWriter,req *http.Request){
+	c,err:=req.Cookie("sessions")
+
+	if err!=nil {
+		tmpl.ExecuteTemplate(w, "register.html", nil)
+	}else{
+		_,err:=user.WhoAmI(a.DB,c)
+		if err!=nil {
+			tmpl.ExecuteTemplate(w, "register.html", nil)
+		}
+		http.Redirect(w,req,"/",303)
+	}
+
+}
+
+func (a *App)Registering(w http.ResponseWriter,req *http.Request){
+
 	c,err:=req.Cookie("sessions")
 
 	if err!=nil{
+		cookieValue,_:=uuid2.NewV4()
 		c=&http.Cookie{
 			Name:"sessions",
-			Value:"test1",
+			Value:cookieValue.String(),
 		}
 		http.SetCookie(w,c)
 	}
@@ -80,7 +98,7 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if exist{
-		tmpl.ExecuteTemplate(w,"home.html",u)
+		http.Redirect(w,req,"/",303)
 	}
 	username:=req.FormValue("username")
 	password:=req.FormValue("password")
@@ -90,17 +108,48 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 	id,err:=user.GetUserID(a.DB,u.Username)
 
 	if err!=nil{
-		log.Println(err.Error())
+		log.Println("error kaj get user ID")
 	}
 
 	s:=session.Session{UID:c.Value,IDuser:id}
 
-	s.Insert(a.DB)
-
 	err=u.Insert(a.DB)
 	if err!=nil{
-		log.Println(err.Error())
+		log.Println("inserting user error")
 	}
-	tmpl.ExecuteTemplate(w,"home.html",u)
+
+	err=s.Insert(a.DB)
+	if err!=nil{
+		log.Println("inserting session error")
+	}
+
+	http.Redirect(w,req,"/",303)
+
+}
+
+func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
+	c,err:=req.Cookie("sessions")
+
+	if err!=nil {
+		tmpl.ExecuteTemplate(w, "login.html", nil)
+	}else{
+		_,err:=user.WhoAmI(a.DB,c)
+		if err!=nil {
+			username:=req.FormValue("username")
+			password:=req.FormValue("password")
+
+			id,err:=user.GetUserID(a.DB,username)
+
+			if err!=nil{
+				tmpl.ExecuteTemplate(w, "login.html", nil)
+			}
+
+			s:=session.Session{UID:c.Value,IDuser:id}
+			s.Insert(a.DB)
+
+
+		}
+		http.Redirect(w,req,"/",303)
+	}
 
 }

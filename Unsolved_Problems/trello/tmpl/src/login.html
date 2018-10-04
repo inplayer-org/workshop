@@ -130,15 +130,9 @@ input[type="submit"]:active {
 </head>
 <body>
 {{template "Header"}}
-{if not .Username.releaseNotes}
-<a href="#" class="right">{{.Username}}</a>
-{if:else}
-<a href="#" class="right">Register</a>
-{/if}
-
-    {{template "Header2"}}
+{{template "RegisterButton"}}    {{template "Header2"}}
     <div class="login">
-      <form action="/logingin">
+      <form method="post" action="/loginform">
         <input type="text" placeholder="Username" name="username" id="username">  
       <input type="password" placeholder="password" name="password" id="password">  
       <a href="#" class="forgot">forgot password?</a>
