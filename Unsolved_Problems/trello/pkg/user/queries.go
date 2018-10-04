@@ -81,3 +81,19 @@ func GetUserID(db *sql.DB,username string)(int,error){
 	return id,nil
 
 }
+
+func GetUserPassword(db *sql.DB,username string)(string,error){
+
+
+
+	var pw string
+
+	err := db.QueryRow("SELECT pass FROM Users WHERE username=?",username).Scan(&id)
+
+	if err!=nil{
+		return pw,err
+	}
+
+	return pw,nil
+
+}
