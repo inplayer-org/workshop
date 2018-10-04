@@ -149,14 +149,9 @@ img{
 
 
 
-<div class="navbar">
-    <a  class="logo" href="#"><img  src="https://upload.wikimedia.org/wikipedia/commons/9/9a/InPlayer_Logo.png" alt=""></a>
-    <a class="nav" href="#">Home</a>
-    <a class="nav" href="#">About</a>
-
-    <a href="#" class="right">{{.Username}}</a>
-</div>
-
+{{template "Header"}}
+<a href="#" class="right">{{.Username}}</a>
+{{template "Header2"}}
     <div class="background_img">
         <img src="https://media1.mensxp.com/media/content/2016/Mar/what-does-your-work-desk-reveal-about-your-personality980-1458197897_1100x513.jpg">
         <div class="centered">

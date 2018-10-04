@@ -49,7 +49,7 @@ func GetFromSessions(db *sql.DB,sessionID string)(int,error){
 
 	var IDuser int
 
-	err := db.QueryRow("SELECT IDuser FROM Sessions WHERE uid=?",seasionID).Scan(&IDuser)
+	err := db.QueryRow("SELECT IDuser FROM Sessions WHERE uid=?",sessionID).Scan(&IDuser)
 
 	if err!=nil{
 		return IDuser,err

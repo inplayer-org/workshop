@@ -8,6 +8,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/user"
 	"fmt"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/session"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/validators"
 )
 
 func (a *App) Home(w http.ResponseWriter, req *http.Request) {
@@ -41,8 +42,17 @@ func (a *App) GetMemberByUsername(w http.ResponseWriter, req *http.Request) {
 }
 
 func (a *App)LoginForm(w http.ResponseWriter,req *http.Request){
+	c,err:=req.Cookie("sessions")
 
-	tmpl.ExecuteTemplate(w,"login.html",nil)
+	if err!=nil {
+		tmpl.ExecuteTemplate(w, "login.html", nil)
+	}else{
+		_,err:=user.WhoAmI(a.DB,c)
+		if err!=nil {
+			tmpl.ExecuteTemplate(w, "login.html", nil)
+		}
+		http.Redirect(w,req,"/",303)
+	}
 
 }
 
@@ -52,16 +62,30 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 	if err!=nil{
 		c=&http.Cookie{
 			Name:"sessions",
-			Value:"test",
+			Value:"test1",
 		}
 		http.SetCookie(w,c)
 	}
 	fmt.Println(c)
 
+	u,err:=user.WhoAmI(a.DB,c)
+
+	if err!=nil{
+		log.Println(err.Error())
+	}
+	exist,err:=validators.ExistsElementInColumn(a.DB,"Users",u.Username,"username")
+
+	if err!=nil{
+		log.Println(err.Error())
+	}
+
+	if exist{
+		tmpl.ExecuteTemplate(w,"home.html",u)
+	}
 	username:=req.FormValue("username")
 	password:=req.FormValue("password")
 
-	u:=user.User{Username:username,Password:password,Token:""}
+	u=user.User{Username:username,Password:password,Token:""}
 
 	id,err:=user.GetUserID(a.DB,u.Username)
 

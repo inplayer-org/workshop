@@ -129,6 +129,14 @@ input[type="submit"]:active {
 </style>
 </head>
 <body>
+{{template "Header"}}
+{if not .Username.releaseNotes}
+<a href="#" class="right">{{.Username}}</a>
+{if:else}
+<a href="#" class="right">Register</a>
+{/if}
+
+    {{template "Header2"}}
     <div class="login">
       <form action="/logingin">
         <input type="text" placeholder="Username" name="username" id="username">  
