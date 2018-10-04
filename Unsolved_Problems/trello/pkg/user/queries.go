@@ -88,7 +88,7 @@ func GetUserPassword(db *sql.DB,username string)(string,error){
 
 	var pw string
 
-	err := db.QueryRow("SELECT pass FROM Users WHERE username=?",username).Scan(&id)
+	err := db.QueryRow("SELECT pass FROM Users WHERE username=?",username).Scan(&pw)
 
 	if err!=nil{
 		return pw,err

@@ -132,6 +132,7 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 
 	if err!=nil {
 		tmpl.ExecuteTemplate(w, "login.html", nil)
+		return
 	}else{
 		_,err:=user.WhoAmI(a.DB,c)
 		if err!=nil {
@@ -142,14 +143,26 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 
 			if err!=nil{
 				tmpl.ExecuteTemplate(w, "login.html", nil)
+				return
 			}
 
 			s:=session.Session{UID:c.Value,IDuser:id}
-			s.Insert(a.DB)
+			err=s.Insert(a.DB)
 
+			if err!=nil{
+				tmpl.ExecuteTemplate(w, "login.html", nil)
+				return
+			}
 
+			p,err:=user.GetUserPassword(a.DB,username)
+			if p!=password{
+
+			}
+			http.Redirect(w,req,"/",303)
+			return
 		}
 		http.Redirect(w,req,"/",303)
+		return
 	}
 
 }
