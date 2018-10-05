@@ -105,6 +105,11 @@ func (a *App)Registering(w http.ResponseWriter,req *http.Request){
 
 	u=user.User{Username:username,Password:password,Token:""}
 
+	err=u.Insert(a.DB)
+	if err!=nil{
+		log.Println("inserting user error")
+	}
+
 	id,err:=user.GetUserID(a.DB,u.Username)
 
 	if err!=nil{
@@ -112,11 +117,6 @@ func (a *App)Registering(w http.ResponseWriter,req *http.Request){
 	}
 
 	s:=session.Session{UID:c.Value,IDuser:id}
-
-	err=u.Insert(a.DB)
-	if err!=nil{
-		log.Println("inserting user error")
-	}
 
 	err=s.Insert(a.DB)
 	if err!=nil{
@@ -131,18 +131,26 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 	c,err:=req.Cookie("sessions")
 
 	if err!=nil {
-		tmpl.ExecuteTemplate(w, "login.html", nil)
-		return
-	}else{
-		_,err:=user.WhoAmI(a.DB,c)
-		if err!=nil {
+		cookieValue,_:=uuid2.NewV4()
+		c=&http.Cookie{
+			Name:"sessions",
+			Value:cookieValue.String(),
+		}
+		http.SetCookie(w,c)
+	}
+
+		u,err:=user.WhoAmI(a.DB,c)
+
+		exist,_:=validators.ExistsElementInColumn(a.DB,"Users",u.Username,"username")
+
+		if err!=nil || !exist{
 			username:=req.FormValue("username")
 			password:=req.FormValue("password")
 
 			id,err:=user.GetUserID(a.DB,username)
 
 			if err!=nil{
-				tmpl.ExecuteTemplate(w, "login.html", nil)
+				http.Redirect(w,req,"/loginform",303)
 				return
 			}
 
@@ -150,19 +158,21 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 			err=s.Insert(a.DB)
 
 			if err!=nil{
-				tmpl.ExecuteTemplate(w, "login.html", nil)
+				http.Redirect(w,req,"/loginform",303)
 				return
 			}
 
 			p,err:=user.GetUserPassword(a.DB,username)
 			if p!=password{
 
+				http.Redirect(w,req,"/loginform",303)
+				return
 			}
 			http.Redirect(w,req,"/",303)
 			return
 		}
 		http.Redirect(w,req,"/",303)
 		return
-	}
+
 
 }
