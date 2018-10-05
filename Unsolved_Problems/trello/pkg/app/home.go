@@ -176,3 +176,22 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 
 
 }
+
+func (a *App)LogOut(w http.ResponseWriter,req *http.Request){
+fmt.Println("vleguva" )
+	c,_:=req.Cookie("sessions")
+
+	fmt.Println(c)
+
+	u,_:=user.WhoAmI(a.DB,c)
+
+	id,_:=user.GetUserID(a.DB,u.Username)
+
+	s:=session.Session{UID:c.Value,IDuser:id}
+
+	err:=s.Delete(a.DB)
+
+	fmt.Println(err)
+
+	http.Redirect(w,req,"/",301)
+}

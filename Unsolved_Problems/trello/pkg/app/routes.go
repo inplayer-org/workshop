@@ -15,6 +15,8 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/registerform",a.RegisterForm).Methods("GET")
 	a.Router.HandleFunc("/registerform" ,a.Registering).Methods("POST")
 
+	a.Router.HandleFunc("/logout",a.LogOut).Methods("DELETE")
+
 	a.Router.HandleFunc("/search", a.Search).Methods("GET")
 
 	a.Router.HandleFunc("/css/{cssName}.css",a.serveCSS)
