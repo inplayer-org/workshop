@@ -10,17 +10,21 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/session"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/validators"
 	uuid2 "github.com/nu7hatch/gouuid"
+	"time"
 )
 
 func (a *App) Home(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("home" )
 	c,err:=req.Cookie("sessions")
 	if err!=nil{
 		http.Redirect(w,req,"/loginform",303)
+		return
 	}else {
 		u, err := user.WhoAmI(a.DB,c)
 
 		if err != nil {
 			http.Redirect(w, req, "/loginform", 303)
+			return
 		}
 		tmpl.ExecuteTemplate(w, "home.html", u)
 	}
@@ -192,6 +196,6 @@ fmt.Println("vleguva" )
 	err:=s.Delete(a.DB)
 
 	fmt.Println(err)
-
-	http.Redirect(w,req,"/",301)
+	time.Sleep(time.Second*5)
+	tmpl.ExecuteTemplate(w,"login.html",nil)
 }
