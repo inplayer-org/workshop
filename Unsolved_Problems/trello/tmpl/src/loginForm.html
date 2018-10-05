@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Trello App</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/card.css">
+  <link rel="stylesheet" href="/css/list.css">
+  <link rel="stylesheet" href="/css/board.css">
+  <link rel="stylesheet" href="/css/login.css">
+  <script type="text/javascript" src="/js/loginForm.js"></script>
+
+
+</head>
+
+<body>
+
+  <div class="loginBox">
+    <div class="loginHeader">
+
+      <div class="loginHeaderElement selectedHeader" id="logInHeader">
+            Log In
+        </div>
+
+
+        <div class="loginHeaderElement" id="signUpHeader">
+          Sign Up
+        </div>
+
+
+    </div>
+    <form class="loginForm" action="index.html" method="post" id="logInForm">
+    <div class="loginDetailsBox detailsBox">
+      <div class="loginElement">
+        <div class="loginElementText">
+          Username
+        </div>
+        <input class="loginElementInputText" type="text" id="loginUsername" placeholder="Enter your username">
+
+
+      </div>
+      <div class="loginElement">
+        <div class="loginElementText">
+          Password
+        </div>
+        <input class="loginElementInputText" type="password" id="loginPassword" placeholder="Enter your password">
+
+
+      </div>
+      <div class="loginElement">
+        <input type="submit" name="submitButtonName" value="Log In" class="submitButton">
+      </div>
+    </div>
+
+  </form>
+  <form class="signUpForm hideForm" action="index.html" method="post" id="signUpForm">
+  <div class="loginDetailsBox detailsBox">
+    <div class="loginElement">
+      <div class="loginElementText">
+        Username
+      </div>
+      <input class="loginElementInputText" type="text" id="loginUsername" placeholder="Enter your new username">
+
+
+    </div>
+    <div class="loginElement">
+      <div class="loginElementText">
+        Password
+      </div>
+      <input class="loginElementInputText" type="password" id="loginPassword" placeholder="Enter your new password">
+
+
+    </div>
+    <div class="loginElement">
+      <input type="submit" name="submitButtonName" value="SignUp Now!" class="submitButton">
+    </div>
+  </div>
+
+</form>
+  </div>
+
+
+</body>
+
+</html>
