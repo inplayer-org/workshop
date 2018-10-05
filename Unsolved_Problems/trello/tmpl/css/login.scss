@@ -1,0 +1,128 @@
+@import "./master.scss";
+
+.loginBox{
+  box-shadow: shadowSize(largeSize) color(shadow-transparent3);
+    font-size: 0;
+  height: 100%;
+  width: 40%;
+  margin: 0 30%;
+  background-color: color(primary-lighten2);
+}
+
+form{
+  display: block;
+}
+
+.hideForm{
+  display: none;
+}
+
+
+
+.loginHeader{
+  cursor: pointer;
+  background-color: color(primary-darken2);
+  display: inline-flex;
+  width: 90%;
+  height: 15%;
+  margin: 5%;
+  box-shadow: shadowSize(mediumSize) color(shadow-transparent3);
+
+  div:not(.selectedHeader):hover{
+    background-color: color(primary-darken1);
+  }
+
+  div:not(.selectedHeader):active{
+    border: 2px solid rgb(164, 164, 164);
+    border-top-color: rgb(20,20,20);
+    border-left-color: rgb(20,20,20);
+
+  }
+
+  .selectedHeader:hover{
+    border-radius: inherit;
+    background-color: lighten(cyan,15);
+    color: black;
+  }
+
+  .selectedHeader{
+    border-radius: inherit;
+    background-color: lighten(cyan,15);
+    color: black;
+  }
+
+
+
+}
+
+
+
+#logInHeader{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#signUpHeader{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.loginHeaderElement{
+  color: color(terciary);
+  vertical-align: middle;
+  justify-content: center;
+    align-items: center;
+    font-size: 22px;
+  display: inline-flex;
+}
+
+
+.detailsBox{
+  width: 100%;
+  height: 78%;
+  padding: 10%;
+}
+
+.loginElement{
+  width: 100%;
+  height: 32%;
+  .loginElementText{
+    text-align: left;
+    font-size: 18px;
+    width: 100%;
+    height: 30%;
+    padding: 1% 6% 0% 6%;
+  }
+  .loginElementInputText{
+    width: 94%;
+    height: 50%;
+    margin: 0% 3% 7% 3%;
+    margin-bottom: 6%;
+    margin-top: 0;
+    padding: 1% 3%;
+    background-color: color(secondary-lighten5);
+  }
+
+  .loginElementInputText:focus{
+    background-color: color(secondary-lighten3);
+  }
+
+  .submitButton:hover{
+    background-color: color(primary-darken1);
+      box-shadow: shadowSize(largeSize) color(shadow-transparent3);
+  }
+
+  .submitButton{
+    box-shadow: shadowSize(mediumSize) color(shadow-transparent3);
+    background-color: color(primary-darken2);
+    border-color: color(primary-darken1);
+    cursor: pointer;
+    color: color(terciary);
+    display: flex;
+    height: 60%;
+    width: 60%;
+    margin: 5% 20%;
+
+  }
+
+}

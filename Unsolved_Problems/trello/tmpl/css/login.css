@@ -1,0 +1,117 @@
+.loginBox {
+  box-shadow: 0 4.5px 4.5px 0 rgba(0, 0, 0, 0.7);
+  font-size: 0;
+  height: 100%;
+  width: 40%;
+  margin: 0 30%;
+  background-color: #548cd4;
+}
+
+form {
+  display: block;
+}
+
+.hideForm {
+  display: none;
+}
+
+.loginHeader {
+  cursor: pointer;
+  background-color: #122b4a;
+  display: inline-flex;
+  width: 90%;
+  height: 15%;
+  margin: 5%;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.7);
+}
+
+.loginHeader div:not(.selectedHeader):hover {
+  background-color: #1d4272;
+}
+
+.loginHeader div:not(.selectedHeader):active {
+  border: 2px solid #a4a4a4;
+  border-top-color: #141414;
+  border-left-color: #141414;
+}
+
+.loginHeader .selectedHeader:hover {
+  border-radius: inherit;
+  background-color: #4dffff;
+  color: black;
+}
+
+.loginHeader .selectedHeader {
+  border-radius: inherit;
+  background-color: #4dffff;
+  color: black;
+}
+
+#logInHeader {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#signUpHeader {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.loginHeaderElement {
+  color: #FDFEFF;
+  vertical-align: middle;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  display: inline-flex;
+}
+
+.detailsBox {
+  width: 100%;
+  height: 78%;
+  padding: 10%;
+}
+
+.loginElement {
+  width: 100%;
+  height: 32%;
+}
+
+.loginElement .loginElementText {
+  text-align: left;
+  font-size: 18px;
+  width: 100%;
+  height: 30%;
+  padding: 1% 6% 0% 6%;
+}
+
+.loginElement .loginElementInputText {
+  width: 94%;
+  height: 50%;
+  margin: 0% 3% 7% 3%;
+  margin-bottom: 6%;
+  margin-top: 0;
+  padding: 1% 3%;
+  background-color: #f2fbff;
+}
+
+.loginElement .loginElementInputText:focus {
+  background-color: #8ddcfe;
+}
+
+.loginElement .submitButton:hover {
+  background-color: #1d4272;
+  box-shadow: 0 4.5px 4.5px 0 rgba(0, 0, 0, 0.7);
+}
+
+.loginElement .submitButton {
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.7);
+  background-color: #122b4a;
+  border-color: #1d4272;
+  cursor: pointer;
+  color: #FDFEFF;
+  display: flex;
+  height: 60%;
+  width: 60%;
+  margin: 5% 20%;
+}
