@@ -9,6 +9,7 @@ import (
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/errors"
 
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/bigBoard"
+	"log"
 )
 
 //enterFlags flags for DbName UserName and Password
@@ -52,9 +53,13 @@ func main () {
 	//Open the routes and perform listen and serve
 	aplication.Initialize(db, router)
 
-	bb,err:=aplication.Client.BigBoardRequest("AMKLII9y")
-asd:=bb.(*bigBoard.BigBoard)
-	fmt.Println(asd)
-	fmt.Println(err)
+	bb,err:=aplication.Client.BigBoardRequest("FdEVpcMl")
+	asd := bb.(*bigBoard.BigBoard)
+err=bb.Update(db)
+	log.Println(err)
+
+	err=asd.Memberships[0].Update(db)
+	log.Println(err)
+	fmt.Println(asd.Memberships)
 
 }
