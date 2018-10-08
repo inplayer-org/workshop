@@ -64,3 +64,31 @@ func GetBoardsByMember (db *sql.DB,memberID string)([]Membership,error){
 
 	return boards,nil
 }
+
+
+func GetMemberByBoards (db *sql.DB,boardID string)([]Membership,error){
+
+	var members []Membership
+
+	rows,err:=db.Query("SELECT IDmember FROM Memberships Where IDboard Like (?)","%"+boardID+"%")
+
+	if err !=nil {
+		return nil,err
+	}
+
+	for rows.Next(){
+
+
+		var m Membership
+		err = rows.Scan(&m.IDmember)
+
+		if err !=nil {
+			return nil,err
+		}
+
+		members = append(members,m)
+	}
+
+
+	return members,nil
+}
