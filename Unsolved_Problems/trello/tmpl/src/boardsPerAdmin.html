@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body,html {
+            font-size: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+
+        }
+
+        /* Float four columns side by side */
+        .column {
+            float: left;
+            height: 100%;
+            width: 25%;
+            padding: 0 10px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+        }
+
+        /* Remove extra left and right margins, due to padding */
+        .row {
+            /* margin: 0 -5px; */
+            background-color: yellow;
+
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+
+        }
+
+        /* Responsive columns */
+        @media screen and (max-width: 600px) {
+            .column {
+                width: 100%;
+                display: block;
+                margin-bottom: 10%;
+                background-color: blue;
+            }
+        }
+
+        /* Style the counter cards */
+        .card {
+            width:100%;
+            height: 150px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            /* padding: 16px; */
+            text-align: left;
+            background-color: red;
+            font-size: 20px;
+        }
+        .card h3{
+            color: yellow;
+
+        }
+        .card img{
+            height: 100%;
+            width: 100%;;
+        }
+    </style>
+</head>
+<body>
+
+<div class="row">
+    <div class="column">
+        <div class="card">
+            <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+        </div>
+    </div><div class="column">
+    <div class="card">
+        <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+    </div>
+</div>
+    <div class="column">
+        <div class="card">
+            <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+        </div>
+    </div>
+    <div class="column">
+        <div class="card">
+            <img src="https://leader.pubs.asha.org/data/Journals/ASHANL/934378/NIB1_web.png">
+
+        </div>
+    </div>
+
+
+</div>
+
+</body>
+</html>
