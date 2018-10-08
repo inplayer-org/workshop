@@ -15,7 +15,7 @@ func (a *App) initializeRoutes() {
 	//a.Router.HandleFunc("/registerform",a.RegisterForm).Methods("GET")
 	a.Router.HandleFunc("/registerform" ,a.Registering).Methods("POST")
 
-	a.Router.HandleFunc("/logoutform",a.LogOut).Methods("POST")
+	a.Router.HandleFunc("/logoutform",a.LogOut).Methods("GET")
 
 	a.Router.HandleFunc("/search", a.Search).Methods("GET")
 
@@ -30,7 +30,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/board",a.GetBoards).Methods("GET")
 	a.Router.HandleFunc("/board/{id}",a.GetBoardByID).Methods("GET")
 
-	a.Router.HandleFunc("/",a.Home).Methods("GET")
+	a.Router.HandleFunc("/",a.Home)
 
 }
 

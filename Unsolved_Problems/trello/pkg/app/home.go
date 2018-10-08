@@ -196,5 +196,5 @@ fmt.Println("vleguva" )
 
 	fmt.Println(err)
 
-tmpl.ExecuteTemplate(w,"loginForm.html",nil)
+	http.Redirect(w,req,"/",302)
 	}
