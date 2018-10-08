@@ -55,7 +55,20 @@ func (member *Member)updateByUsername(DB *sql.DB)error{
 }
 
 
+func GetMemberWithUsername(db *sql.DB,username string)(Member,error){
 
+
+	var member Member
+
+	err := db.QueryRow("SELECT ID,fullname,initials,username,email FROM Members WHERE username=?",username).Scan(&member.ID,&member.FullName,&member.Initials,&member.Email)
+
+	if err!=nil{
+		return member,err
+	}
+
+	return member,nil
+
+}
 
 // Returning string(member username from DB table boards)
 func GetMemberUsername(db *sql.DB,memberID string)(string,error){

@@ -19,6 +19,8 @@ func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/search", a.Search).Methods("GET")
 
+	a.Router.HandleFunc("/boards",a.Boards).Methods("GET")
+
 	a.Router.HandleFunc("/css/{cssName}.css",a.serveCSS)
 	a.Router.HandleFunc("/img/{imageName}.png",a.serveImagePng)
 	a.Router.HandleFunc("/img/{imageName}.jpg",a.serveImageJpg)
