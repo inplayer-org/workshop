@@ -7,10 +7,9 @@ import (
 	"github.com/gorilla/mux"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/user"
 	"fmt"
-	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/session"
 	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/validators"
-	uuid2 "github.com/nu7hatch/gouuid"
-	"time"
+	"repo.inplayer.com/workshop/Unsolved_Problems/trello/pkg/session"
+	"github.com/nu7hatch/gouuid"
 )
 
 func (a *App) Home(w http.ResponseWriter, req *http.Request) {
@@ -50,38 +49,38 @@ func (a *App)LoginForm(w http.ResponseWriter,req *http.Request){
 	c,err:=req.Cookie("sessions")
 
 	if err!=nil {
-		tmpl.ExecuteTemplate(w, "login.html", nil)
+		tmpl.ExecuteTemplate(w, "loginForm.html", nil)
 	}else{
 		_,err:=user.WhoAmI(a.DB,c)
 		if err!=nil {
-			tmpl.ExecuteTemplate(w, "login.html", nil)
+			tmpl.ExecuteTemplate(w, "loginForm.html", nil)
 		}
 		http.Redirect(w,req,"/",303)
 	}
 
 }
 
-func (a *App)RegisterForm(w http.ResponseWriter,req *http.Request){
+/*func (a *App)RegisterForm(w http.ResponseWriter,req *http.Request){
 	c,err:=req.Cookie("sessions")
 
 	if err!=nil {
-		tmpl.ExecuteTemplate(w, "register.html", nil)
+		tmpl.ExecuteTemplate(w, "loginForm.html", nil)
 	}else{
 		_,err:=user.WhoAmI(a.DB,c)
 		if err!=nil {
-			tmpl.ExecuteTemplate(w, "register.html", nil)
+			tmpl.ExecuteTemplate(w, "loginForm.html", nil)
 		}
 		http.Redirect(w,req,"/",303)
 	}
 
-}
+}*/
 
 func (a *App)Registering(w http.ResponseWriter,req *http.Request){
 
 	c,err:=req.Cookie("sessions")
 
 	if err!=nil{
-		cookieValue,_:=uuid2.NewV4()
+		cookieValue,_:=uuid.NewV4()
 		c=&http.Cookie{
 			Name:"sessions",
 			Value:cookieValue.String(),
@@ -135,7 +134,7 @@ func (a *App) LogingIn(w http.ResponseWriter, req *http.Request) {
 	c,err:=req.Cookie("sessions")
 
 	if err!=nil {
-		cookieValue,_:=uuid2.NewV4()
+		cookieValue,_:=uuid.NewV4()
 		c=&http.Cookie{
 			Name:"sessions",
 			Value:cookieValue.String(),
@@ -196,6 +195,6 @@ fmt.Println("vleguva" )
 	err:=s.Delete(a.DB)
 
 	fmt.Println(err)
-	time.Sleep(time.Second*5)
-	tmpl.ExecuteTemplate(w,"login.html",nil)
-}
+
+tmpl.ExecuteTemplate(w,"loginForm.html",nil)
+	}

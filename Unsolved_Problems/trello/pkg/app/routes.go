@@ -12,16 +12,17 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/loginform",a.LoginForm).Methods("GET")
 	a.Router.HandleFunc("/loginform",a.LogingIn).Methods("POST")
 
-	a.Router.HandleFunc("/registerform",a.RegisterForm).Methods("GET")
+	//a.Router.HandleFunc("/registerform",a.RegisterForm).Methods("GET")
 	a.Router.HandleFunc("/registerform" ,a.Registering).Methods("POST")
 
-	a.Router.HandleFunc("/logoutform",a.LogOut).Methods("GET")
+	a.Router.HandleFunc("/logoutform",a.LogOut).Methods("POST")
 
 	a.Router.HandleFunc("/search", a.Search).Methods("GET")
 
 	a.Router.HandleFunc("/css/{cssName}.css",a.serveCSS)
 	a.Router.HandleFunc("/img/{imageName}.png",a.serveImagePng)
 	a.Router.HandleFunc("/img/{imageName}.jpg",a.serveImageJpg)
+	a.Router.HandleFunc("/js/{jsName}.js",a.serveJS)
 
 	a.Router.HandleFunc("/members/{tag}", a.GetMemberByUsername).Methods("GET")
 
@@ -73,5 +74,17 @@ func (a *App) serveImageJpg(w http.ResponseWriter, r *http.Request){
 	filePath := "../tmpl/img/" + imageFileName + ".jpg"
 
 	http.ServeFile(w, r, filePath)
+
+}
+
+func (a *App) serveJS(w http.ResponseWriter, req *http.Request){
+
+	vars:=mux.Vars(req)
+
+	jsFileName:=vars["jsName"]
+
+	filePath:="../tmpl/js/"+jsFileName+".js"
+
+	http.ServeFile(w,req,filePath)
 
 }

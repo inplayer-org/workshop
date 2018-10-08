@@ -30,13 +30,13 @@
 
 
     </div>
-    <form class="loginForm" action="index.html" method="post" id="logInForm">
+    <form class="loginForm" action="/loginform" method="post" id="logInForm">
     <div class="loginDetailsBox detailsBox">
       <div class="loginElement">
         <div class="loginElementText">
           Username
         </div>
-        <input class="loginElementInputText" type="text" id="loginUsername" placeholder="Enter your username">
+        <input class="loginElementInputText" name="username" type="text" id="loginUsername" placeholder="Enter your username">
 
 
       </div>
@@ -44,7 +44,7 @@
         <div class="loginElementText">
           Password
         </div>
-        <input class="loginElementInputText" type="password" id="loginPassword" placeholder="Enter your password">
+        <input class="loginElementInputText" name="password" type="password" id="loginPassword" placeholder="Enter your password">
 
 
       </div>
@@ -54,13 +54,13 @@
     </div>
 
   </form>
-  <form class="signUpForm hideForm" action="index.html" method="post" id="signUpForm">
+  <form class="signUpForm hideForm" action="/registerform" method="post" id="signUpForm">
   <div class="loginDetailsBox detailsBox">
     <div class="loginElement">
       <div class="loginElementText">
         Username
       </div>
-      <input class="loginElementInputText" type="text" id="loginUsername" placeholder="Enter your new username">
+      <input class="loginElementInputText" name="username" type="text" id="loginUsername" placeholder="Enter your new username">
 
 
     </div>
@@ -68,7 +68,7 @@
       <div class="loginElementText">
         Password
       </div>
-      <input class="loginElementInputText" type="password" id="loginPassword" placeholder="Enter your new password">
+      <input class="loginElementInputText" name="password" type="password" id="loginPassword" placeholder="Enter your new password">
 
 
     </div>
