@@ -38,18 +38,29 @@ func (membership *Membership)updateByID(DB *sql.DB)error{
 }
 
 
-func GetBoardsByMember(db *sql.DB,memberid string)(string,error){
+func GetBoardsByMember (db *sql.DB,memberID string)([]Membership,error){
 
+	var boards []Membership
 
+	rows,err:=db.Query("SELECT IDboard FROM Memberships Where IDmember Like (?)","%"+memberID+"%")
 
-	var boardID string
-
-	err := db.QueryRow("SELECT IDboard FROM Memberships WHERE IDmember=?",memberid).Scan(&boardID)
-
-	if err!=nil{
-		return boardID,err
+	if err !=nil {
+		return nil,err
 	}
 
-	return boardID,nil
+	for rows.Next(){
 
+
+		var m Membership
+		err = rows.Scan(&m.IDboard)
+
+		if err !=nil {
+			return nil,err
+		}
+
+		boards = append(boards,m)
+	}
+
+
+	return boards,nil
 }
