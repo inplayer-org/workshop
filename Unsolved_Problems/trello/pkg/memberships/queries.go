@@ -32,7 +32,7 @@ func  (membership *Membership)Update(DB *sql.DB)error{
 
 func (membership *Membership)updateByID(DB *sql.DB)error{
 
-	_,err := DB.Exec("UPDATE Trello.Members SET IDmember=?,IDboard=?,memberType=?,unconfirmed=?,deactivated=? WHERE ID=?",membership.IDmember,membership.IDboard,membership.MemberType,membership.Unconfirmed,membership.Deactivated,membership.ID)
+	_,err := DB.Exec("UPDATE Trello.Memberships SET IDmember=?,IDboard=?,memberType=?,unconfirmed=?,deactivated=? WHERE ID=?",membership.IDmember,membership.IDboard,membership.MemberType,membership.Unconfirmed,membership.Deactivated,membership.ID)
 
 	return err
 }
