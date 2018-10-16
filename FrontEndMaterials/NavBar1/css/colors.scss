@@ -1,0 +1,9 @@
+$colorScheme:(
+  primary: brown,
+  secondary: gold,
+  terciary: orange,
+);
+
+@function pickColor($nameOfColor) {
+  @return map-get($colorScheme,$nameOfColor);
+}
