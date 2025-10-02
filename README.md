@@ -1,3 +1,6 @@
+**THIS REPOSITORY IS MOVED TO GITLAB**
+  
+  
   Internship workshop
   ==================
   Mesto za chuvanje na site kodovi od bilo kakvi vezhbi
